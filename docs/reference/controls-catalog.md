@@ -55,14 +55,35 @@ All custom controls live in `WorkbenchUI.Wpf.Controls` (theming APIs live in `Wo
 | `LogConsole` | `Control` | `Source` (`LogBuffer`), `FlushInterval`, `ShowTimestamps` |
 | `LogBuffer` | `sealed` | Thread-safe `Append(LogLevel, string)` / `Append(LogEntry)`, `Clear()`, `Flush()`, `Capacity`, `Entries` |
 
-## Workflow, Progress & Helpers
+## Workflow, Progress, Icons & Helpers
 
-- **Workflow & Playback**: `PlaybackBar`, `ProcessRail` (`ProcessRailItem`, `IProcessRailStep`, `ProcessChapterState`), `ChapterHost` (`ChapterHostItem`), `Wizard` (`WizardStep`, `WizardNavigatingEventArgs`), `StepIndicator` (`StepIndicatorItem`, `StepState`).
-- **Progress**: `ProgressDisplay` (bar + status + elapsed time + cancel `ICommand`), `ProgressRing`.
-- **Icons**: `WorkbenchIcon` (`Icon`, `Size`), `WorkbenchIcons` (68 built-in `Geometry` properties + `Wb.Icon.*` resources).
-- **Attached Assistants & Converters**: `ButtonAssist` (`Icon`, `IconSize`), `DataGridAssist` (`AutoApplyColumnStyles`), `ColorMapToBrushConverter`, `TreeIndentConverter`, `VisibilityToBooleanConverter`.
+| Type | Kind | Key Members & Purpose |
+| --- | --- | --- |
+| `PlaybackBar` | `Control` | Frame playback controls (play/pause, step, speed, loop, frame slider) |
+| `ProcessRail` | `Selector` | Multi-step workflow rail (`ProcessRailItem`, `IProcessRailStep`, `ProcessChapterState`) |
+| `ChapterHost` | `ItemsControl` | Hosts the active workflow chapter view (`ChapterHostItem`) |
+| `Wizard` | `ItemsControl` | Multi-step guided wizard (`WizardStep`, `WizardNavigatingEventArgs`) |
+| `StepIndicator` | `ItemsControl` | Progress step display (`StepIndicatorItem`, `StepState`) |
+| `ProgressDisplay` | `Control` | Single-job progress bar, status text, elapsed time, and cancel `ICommand` |
+| `ProgressRing` | `Control` | Indeterminate circular activity indicator |
+| `WorkbenchIcon` | `Control` | Renders a vector `Geometry` (`Icon`, `Size`) scaled via `Viewbox` |
+| `WorkbenchIcons` | `static` | 67 frozen `16×16` `Geometry` properties and `Wb.Icon.*` resources |
+| `ButtonAssist` | `static` | Attached properties `Icon` and `IconSize` for button templates |
+| `DataGridAssist` | `static` | Attached `AutoApplyColumnStyles` helper for standard `DataGrid` columns |
+| `ColorMapToBrushConverter` | `IValueConverter` | Converts a `ColorMap` into a horizontal `LinearGradientBrush` |
+| `TreeIndentConverter` | `IValueConverter` | Converts tree node depth level into left `Thickness` indentation |
+| `VisibilityToBooleanConverter` | `IValueConverter` | Two-way converter between `Visibility` and `bool` |
 
 ## Styled Standard WPF Controls
 
-`WorkbenchTheme` provides consistent Dark and Light templates/styles for:
-`Button`, `ToggleButton`, `RepeatButton`, `CheckBox`, `RadioButton`, `TextBox`, `PasswordBox`, `RichTextBox`, `ComboBox`, `ListBox`, `ListView` (+ `GridView`), `TreeView`, `DataGrid` (headers, cells, editing, validation error template, row details, grouping), `TabControl`, `Menu`, `ContextMenu`, `ToolBar`, `ToolBarTray`, `StatusBar`, `Expander`, `GroupBox`, `Slider`, `ProgressBar`, `ScrollBar`, `ToolTip`, `GridSplitter`, `Separator`, `Label`, `Hyperlink`.
+`WorkbenchTheme` includes implicit Dark and Light styles for the following standard WPF controls:
+
+| Category | Controls |
+| --- | --- |
+| **Buttons** | `Button`, `ToggleButton`, `RepeatButton`, `CheckBox`, `RadioButton` |
+| **Text Input** | `TextBox`, `PasswordBox`, `RichTextBox` |
+| **Selection & Lists** | `ComboBox`, `ListBox`, `ListView` (including `GridView`), `TreeView` |
+| **Data & Tables** | `DataGrid` (column/row headers, cell editing, validation tooltips, row details, grouping) |
+| **Navigation & Menus** | `TabControl`, `Menu`, `ContextMenu`, `ToolBar`, `ToolBarTray`, `StatusBar` |
+| **Layout & Containers** | `Expander`, `GroupBox`, `GridSplitter`, `Separator` |
+| **Feedback & Chrome** | `Slider`, `ProgressBar`, `ScrollBar`, `ToolTip`, `Label`, `Hyperlink` |

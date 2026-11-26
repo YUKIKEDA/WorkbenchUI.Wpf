@@ -63,11 +63,14 @@ Use `DynamicResource` for all `Wb.Color.*` and `Wb.Brush.*` tokens. Every `Wb.Co
 | `Wb.Color.Accent.Pressed` | `#005A9E` | `#005A9E` | Accent pressed (derived via HSL) |
 | `Wb.Color.Accent.Muted` | `#094771` | `#C7E0F4` | Accent muted fill (derived per variant) |
 
-Additional brush-only overlay tokens:
-- `Wb.Brush.Border.Focus` (bound to `Wb.Color.Accent.Default`)
-- `Wb.Brush.Surface.Alternate` (`#08FFFFFF` Dark / `#06000000` Light)
-- `Wb.Brush.State.Hover` (`#14FFFFFF` Dark / `#0D000000` Light)
-- `Wb.Brush.State.Pressed` (`#1FFFFFFF` Dark / `#1A000000` Light)
+## Brush-Only Overlay Tokens
+
+| Key | Dark | Light | Role |
+| --- | --- | --- | --- |
+| `Wb.Brush.Border.Focus` | Follows `Accent.Default` | Follows `Accent.Default` | Keyboard focus ring |
+| `Wb.Brush.Surface.Alternate` | `#08FFFFFF` | `#06000000` | Alternating row shading |
+| `Wb.Brush.State.Hover` | `#14FFFFFF` | `#0D000000` | Translucent row/item hover overlay |
+| `Wb.Brush.State.Pressed` | `#1FFFFFFF` | `#1A000000` | Translucent row/item pressed overlay |
 
 ## Keyed Control Styles
 

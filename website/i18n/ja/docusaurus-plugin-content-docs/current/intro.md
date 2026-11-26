@@ -19,7 +19,7 @@ sidebar_position: 1
 
 | パッケージ | 役割 | 外部依存 |
 | --- | --- | --- |
-| `WorkbenchUI.Wpf` | テーマ基盤 (`Dark`/`Light`)、セマンティックトークン、68 種のベクタアイコン、基本/ワークベンチコントロール | なし（WPF 標準のみ） |
+| `WorkbenchUI.Wpf` | テーマ基盤 (`Dark`/`Light`)、セマンティックトークン、67 種のベクタアイコン、基本/ワークベンチコントロール | なし（WPF 標準のみ） |
 | `WorkbenchUI.Wpf.Charts` | ScottPlot 5 テーマ同期と技術計算向け複合チャート | `ScottPlot.WPF` (MIT) |
 | `WorkbenchUI.Wpf.Docking` | AvalonDock トークン連動テーマと XML レイアウト永続化 | `Dirkster.AvalonDock` (Ms-PL) |
 | `WorkbenchUI.Wpf.Viewport3D` | Direct3D 11 ベースの 3D ビューポート（メッシュ、疎ボクセル、コンター、変形、断面、プローブ） | `Silk.NET` Direct3D / DXGI (MIT) |
@@ -32,7 +32,23 @@ xmlns:wb="https://schemas.workbenchui.dev/wpf"
 
 ## ドキュメント
 
-- **チュートリアル** — [最初の Workbench アプリを作る](tutorials/first-workbench-app.md) では、空の WPF プロジェクトからテーマ付きワークベンチ画面をステップバイステップで構築します。
-- **ハウツーガイド** — [テーマとアクセントの変更](how-to/theming-and-accent.md)、[単位換算と数値入力](how-to/units-and-numeric-input.md)、[PropertyGrid の活用](how-to/property-grid.md)、[ModelTree の実装](how-to/model-tree.md)、[Docking と Charts の統合](how-to/docking-and-charts.md)、[3D ビューポートの描画](how-to/viewport-3d.md)。
-- **リファレンス** — [デザイントークン一覧](reference/design-tokens.md)、[コントロールカタログ](reference/controls-catalog.md)、[内蔵アイコン一覧](reference/icons.md)、[拡張パッケージ API](reference/extension-packages.md)。
-- **解説** — [テーマアーキテクチャ](explanation/theme-architecture.md)、[パッケージ・API 設計](explanation/package-architecture.md)。
+### チュートリアル
+- [最初の Workbench アプリを作る](tutorials/first-workbench-app.md)
+
+### ハウツーガイド
+- [テーマとアクセントの変更](how-to/theming-and-accent.md)
+- [単位換算と数値入力](how-to/units-and-numeric-input.md)
+- [PropertyGrid の活用](how-to/property-grid.md)
+- [ModelTree の実装](how-to/model-tree.md)
+- [Docking と Charts の統合](how-to/docking-and-charts.md)
+- [3D ビューポートの描画](how-to/viewport-3d.md)
+
+### リファレンス
+- [デザイントークン & 名前付きスタイル](reference/design-tokens.md)
+- [コントロールカタログ](reference/controls-catalog.md)
+- [内蔵アイコン一覧](reference/icons.md)
+- [拡張パッケージ API](reference/extension-packages.md)
+
+### 解説
+- [テーマアーキテクチャ](explanation/theme-architecture.md)
+- [パッケージ・API 設計](explanation/package-architecture.md)

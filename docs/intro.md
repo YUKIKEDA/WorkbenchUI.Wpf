@@ -19,7 +19,7 @@ Its neutral-gray surfaces, compact 24 px control metrics, and dynamic Dark/Light
 
 | Package | Role | External Dependencies |
 | --- | --- | --- |
-| `WorkbenchUI.Wpf` | Theme foundation (`Dark`/`Light`), semantic tokens, 68 vector icons, core & workbench controls | None (WPF only) |
+| `WorkbenchUI.Wpf` | Theme foundation (`Dark`/`Light`), semantic tokens, 67 vector icons, core & workbench controls | None (WPF only) |
 | `WorkbenchUI.Wpf.Charts` | ScottPlot 5 theme synchronization & composite engineering plots | `ScottPlot.WPF` (MIT) |
 | `WorkbenchUI.Wpf.Docking` | AvalonDock token-driven theme & XML layout persistence | `Dirkster.AvalonDock` (Ms-PL) |
 | `WorkbenchUI.Wpf.Viewport3D` | Direct3D 11 3D viewport for meshes, sparse voxels, contours, deformation, and probing | `Silk.NET` Direct3D / DXGI (MIT) |
@@ -32,7 +32,23 @@ xmlns:wb="https://schemas.workbenchui.dev/wpf"
 
 ## Documentation
 
-- **Tutorials** — [Build Your First Workbench App](tutorials/first-workbench-app.md) walks you step by step from an empty WPF project to a themed workbench window.
-- **How-to Guides** — Practical recipes for [Theming & Accent Colors](how-to/theming-and-accent.md), [Units & Numeric Input](how-to/units-and-numeric-input.md), [PropertyGrid](how-to/property-grid.md), [ModelTree](how-to/model-tree.md), [Docking & Charts](how-to/docking-and-charts.md), and [3D Viewport](how-to/viewport-3d.md).
-- **Reference** — Complete tables for [Design Tokens](reference/design-tokens.md), [Controls Catalog](reference/controls-catalog.md), [Built-in Icons](reference/icons.md), and [Extension Packages](reference/extension-packages.md).
-- **Explanation** — Deep dives into the [Theme Architecture](explanation/theme-architecture.md) and [Package Architecture](explanation/package-architecture.md).
+### Tutorials
+- [Build Your First Workbench App](tutorials/first-workbench-app.md)
+
+### How-to Guides
+- [Customize Themes & Accent Colors](how-to/theming-and-accent.md)
+- [Work with Units & Numeric Inputs](how-to/units-and-numeric-input.md)
+- [Build Dynamic Property Grids](how-to/property-grid.md)
+- [Use ModelTree with Tri-State Visibility](how-to/model-tree.md)
+- [Integrate Docking & Charts](how-to/docking-and-charts.md)
+- [Render 3D Meshes & Voxels](how-to/viewport-3d.md)
+
+### Reference
+- [Design Tokens & Named Styles](reference/design-tokens.md)
+- [Controls Catalog](reference/controls-catalog.md)
+- [Built-in Icons](reference/icons.md)
+- [Extension Packages](reference/extension-packages.md)
+
+### Explanation
+- [Theme Architecture](explanation/theme-architecture.md)
+- [Package & API Architecture](explanation/package-architecture.md)

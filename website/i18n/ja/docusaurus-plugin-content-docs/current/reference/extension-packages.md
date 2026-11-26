@@ -37,7 +37,7 @@ sidebar_position: 4
 | 型 | 役割 | 主なメンバー |
 | --- | --- | --- |
 | `WorkbenchDockTheme` | AvalonDock `DictionaryTheme` | `Wb.Color.*` に動的バインドされた VS2013 テンプレートを適用 |
-| `DockLayout` | レイアウト永続化ヘルパー | `Save(manager, path)`, `SaveToString(manager)`, `Load(manager, path, resolveContent)`, `LoadFromString(manager, xml, resolveContent)` |
+| `DockLayout` | レイアウト永続化ヘルパー | `Save(...)`, `SaveToString(...)`, `Load(...)`, `LoadFromString(...)` |
 
 ---
 
@@ -46,9 +46,11 @@ sidebar_position: 4
 - **外部依存**: `Silk.NET.Direct3D11`, `Direct3D9`, `DXGI`, `Direct3D.Compilers` (`2.23.0`, MIT)
 - **名前空間**: `WorkbenchUI.Wpf.Viewport3D`
 
+### データモデル・補助型
+
 | 型 | 役割 | 主なメンバー |
 | --- | --- | --- |
-| `WorkbenchViewport` | D3D11 3D ビューポート | `MeshSource`, `VoxelSource`, `ColorScale`, `ShowContours`, `ShowEdges`, `Projection`, `UpAxis`, `ShowAxisTriad`, `ShowViewCube`, `PickMode`, `DeformationScale`, `IsDeformationAnimated`, `ShowUndeformedWireframe`, `SectionPlane`, `ShowSectionPlaneIndicator`, `ShowGlyphs`, `GlyphScale`, `GlyphColorScale`, `IsHoverHighlightEnabled`, `RubberBandSelectionMode`, `IsGeometryBuilding`, `Camera`, `Selection`, `Annotations`, `FitToView()`, `SetStandardView(...)`, `GetStatistics()`, `GetSuggestedDeformationScale()`, `GetSuggestedGlyphScale()`, `InvalidateViewport()` |
+| `WorkbenchViewport` | D3D11 3D ビューポート | 下表の [WorkbenchViewport メンバー一覧](#workbenchviewport-メンバー一覧) を参照 |
 | `ViewportMesh` | 三角形サーフェスメッシュ | `Name`, `Positions`, `TriangleIndices`, `ScalarValues`, `Displacements`, `VectorValues`, `Color`, `IsVisible`, `ShowEdges`, `IsClippable`, `Opacity` |
 | `ViewportVoxelGrid` | 疎ボクセル格子モデル | `OriginX/Y/Z`, `CellSizeX/Y/Z`, `ResolutionX/Y/Z`, `ActiveCellIndices`, `RegionIds`, `ScalarValues`, `VectorValues`, `Color`, `IsVisible`, `ShowEdges`, `IsClippable` |
 | `ViewportVoxelIndexing` | 線形索引ヘルパー | `Encode(i, j, k, nx, ny)`, `TryDecode(...)` |
@@ -60,4 +62,24 @@ sidebar_position: 4
 | `ViewportStatistics` | 統計情報 | メッシュ・三角形・エッジ・グリフ数、構築時間 |
 | `Bounds3D` | 軸平行境界ボックス | 最小/最大座標、中心、サイズ、対角長 |
 | `ViewportHoverInfo` | ホバープリハイライト情報 | `Mesh`, `TriangleIndex`, `NodeIndex`, `IsPart` |
-| 列挙型 | 各種設定 | `ViewportProjection`, `ViewportUpAxis`, `ViewportPickMode`, `ViewportStandardView`, `ViewportRubberBandSelectionMode` |
+
+### `WorkbenchViewport` メンバー一覧
+
+| 分類 | メンバー |
+| --- | --- |
+| **データソース** | `MeshSource`, `VoxelSource`, `IsGeometryBuilding`, `GeometryBuildProgressChanged`, `GeometryBuildCompleted` |
+| **コンター・表示** | `ColorScale`, `ShowContours`, `ShowEdges`, `Projection`, `UpAxis`, `ShowAxisTriad`, `ShowViewCube` |
+| **変形・断面カット** | `DeformationScale`, `IsDeformationAnimated`, `DeformationAnimationPeriod`, `ShowUndeformedWireframe`, `SectionPlane`, `ShowSectionPlaneIndicator`, `GetSuggestedDeformationScale()` |
+| **ベクトルグリフ** | `ShowGlyphs`, `GlyphScale`, `GlyphStride`, `GlyphColorScale`, `GetSuggestedGlyphScale()` |
+| **選択・プローブ** | `PickMode`, `Selection`, `SelectionChanged`, `IsHoverHighlightEnabled`, `HoverChanged`, `RubberBandSelectionMode`, `ProbePicked`, `VoxelProbePicked`, `ProbeLabelFormatter`, `VoxelProbeLabelFormatter`, `Annotations` |
+| **カメラ・操作** | `Camera`, `FitToView()`, `SetStandardView(...)`, `GetStatistics()`, `InvalidateViewport()`, `IsSoftwareRendering` |
+
+### ビューポート列挙型
+
+| 列挙型 | 用途 |
+| --- | --- |
+| `ViewportProjection` | 投影方式（`Perspective` / `Orthographic`） |
+| `ViewportUpAxis` | 上方向軸（`ZUp` / `YUp`） |
+| `ViewportPickMode` | ピック粒度（`None`, `Part`, `Element`, `Node`, `Probe`, `Cell`） |
+| `ViewportStandardView` | 標準視点（`Front`, `Back`, `Left`, `Right`, `Top`, `Bottom`, `Isometric`） |
+| `ViewportRubberBandSelectionMode` | 矩形選択判定（`Window`, `Crossing`） |

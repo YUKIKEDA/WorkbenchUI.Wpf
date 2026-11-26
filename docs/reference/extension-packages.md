@@ -17,7 +17,7 @@ Each extension package depends on `WorkbenchUI.Wpf` and isolates its external de
 
 | Type | Role | Key Members |
 | --- | --- | --- |
-| `WorkbenchPlot` | `ScottPlot.WPF.WpfPlot` subclass | `WheelZoomRequiresCtrl` (default `true`), `ThemeApplied`, automatic `ThemeManager.ThemeChanged` sync |
+| `WorkbenchPlot` | `ScottPlot.WPF.WpfPlot` subclass | `WheelZoomRequiresCtrl`, `ThemeApplied`, automatic `ThemeManager.ThemeChanged` sync |
 | `WorkbenchChartTheme` | Theme helper | `Apply(ScottPlot.Plot)`, `GetSeriesPalette()`, `ToScottPlotColor(Color)` |
 | `ConvergenceMonitor` | Log residual monitor | `SeriesSource`, `Threshold`, `IsLogScale`, `XLabel`, `YLabel` |
 | `ConvergenceSeries` | Thread-safe residual series | `Name`, `Color`, `Count`, `Append(double)`, `Clear()`, `Snapshot()`, `Changed` |
@@ -37,7 +37,7 @@ Each extension package depends on `WorkbenchUI.Wpf` and isolates its external de
 | Type | Role | Key Members |
 | --- | --- | --- |
 | `WorkbenchDockTheme` | AvalonDock `DictionaryTheme` | Applies VS2013 templates dynamically bound to `Wb.Color.*` tokens |
-| `DockLayout` | Layout persistence helper | `Save(manager, path)`, `SaveToString(manager)`, `Load(manager, path, resolveContent)`, `LoadFromString(manager, xml, resolveContent)` |
+| `DockLayout` | Layout persistence helper | `Save(...)`, `SaveToString(...)`, `Load(...)`, `LoadFromString(...)` |
 
 ---
 
@@ -46,9 +46,11 @@ Each extension package depends on `WorkbenchUI.Wpf` and isolates its external de
 - **External Dependency**: `Silk.NET.Direct3D11`, `Direct3D9`, `DXGI`, `Direct3D.Compilers` (`2.23.0`, MIT)
 - **Namespace**: `WorkbenchUI.Wpf.Viewport3D`
 
+### Data Models & Supporting Types
+
 | Type | Role | Key Members |
 | --- | --- | --- |
-| `WorkbenchViewport` | Direct3D 11 3D viewport control | `MeshSource`, `VoxelSource`, `ColorScale`, `ShowContours`, `ShowEdges`, `Projection`, `UpAxis`, `ShowAxisTriad`, `ShowViewCube`, `PickMode`, `DeformationScale`, `IsDeformationAnimated`, `ShowUndeformedWireframe`, `SectionPlane`, `ShowSectionPlaneIndicator`, `ShowGlyphs`, `GlyphScale`, `GlyphColorScale`, `IsHoverHighlightEnabled`, `RubberBandSelectionMode`, `IsGeometryBuilding`, `Camera`, `Selection`, `Annotations`, `FitToView()`, `SetStandardView(...)`, `GetStatistics()`, `GetSuggestedDeformationScale()`, `GetSuggestedGlyphScale()`, `InvalidateViewport()` |
+| `WorkbenchViewport` | Direct3D 11 3D viewport control | See [WorkbenchViewport Members](#workbenchviewport-members) below |
 | `ViewportMesh` | Triangle surface mesh model | `Name`, `Positions`, `TriangleIndices`, `ScalarValues`, `Displacements`, `VectorValues`, `Color`, `IsVisible`, `ShowEdges`, `IsClippable`, `Opacity` |
 | `ViewportVoxelGrid` | Sparse voxel grid model | `OriginX/Y/Z`, `CellSizeX/Y/Z`, `ResolutionX/Y/Z`, `ActiveCellIndices`, `RegionIds`, `ScalarValues`, `VectorValues`, `Color`, `IsVisible`, `ShowEdges`, `IsClippable` |
 | `ViewportVoxelIndexing` | Linear index helpers | `Encode(i, j, k, nx, ny)`, `TryDecode(...)` |
@@ -60,4 +62,24 @@ Each extension package depends on `WorkbenchUI.Wpf` and isolates its external de
 | `ViewportStatistics` | Build & frame telemetry | Mesh/triangle/edge/glyph counts, build timing |
 | `Bounds3D` | Axis-aligned bounding box | Min/max coordinates, center, size, diagonal |
 | `ViewportHoverInfo` | Hover pre-highlight payload | `Mesh`, `TriangleIndex`, `NodeIndex`, `IsPart` |
-| Enums | Viewport options | `ViewportProjection`, `ViewportUpAxis`, `ViewportPickMode`, `ViewportStandardView`, `ViewportRubberBandSelectionMode` |
+
+### `WorkbenchViewport` Members
+
+| Area | Members |
+| --- | --- |
+| **Data Sources** | `MeshSource`, `VoxelSource`, `IsGeometryBuilding`, `GeometryBuildProgressChanged`, `GeometryBuildCompleted` |
+| **Contours & Display** | `ColorScale`, `ShowContours`, `ShowEdges`, `Projection`, `UpAxis`, `ShowAxisTriad`, `ShowViewCube` |
+| **Deformation & Section** | `DeformationScale`, `IsDeformationAnimated`, `DeformationAnimationPeriod`, `ShowUndeformedWireframe`, `SectionPlane`, `ShowSectionPlaneIndicator`, `GetSuggestedDeformationScale()` |
+| **Vector Glyphs** | `ShowGlyphs`, `GlyphScale`, `GlyphStride`, `GlyphColorScale`, `GetSuggestedGlyphScale()` |
+| **Selection & Probing** | `PickMode`, `Selection`, `SelectionChanged`, `IsHoverHighlightEnabled`, `HoverChanged`, `RubberBandSelectionMode`, `ProbePicked`, `VoxelProbePicked`, `ProbeLabelFormatter`, `VoxelProbeLabelFormatter`, `Annotations` |
+| **Camera & Commands** | `Camera`, `FitToView()`, `SetStandardView(...)`, `GetStatistics()`, `InvalidateViewport()`, `IsSoftwareRendering` |
+
+### Viewport Enums
+
+| Enum | Purpose |
+| --- | --- |
+| `ViewportProjection` | `Perspective` or `Orthographic` projection |
+| `ViewportUpAxis` | World up-axis convention (`ZUp` or `YUp`) |
+| `ViewportPickMode` | Picking mode (`None`, `Part`, `Element`, `Node`, `Probe`, `Cell`) |
+| `ViewportStandardView` | Standard camera orientations (`Front`, `Back`, `Left`, `Right`, `Top`, `Bottom`, `Isometric`) |
+| `ViewportRubberBandSelectionMode` | Box selection inclusion rule (`Window`, `Crossing`) |

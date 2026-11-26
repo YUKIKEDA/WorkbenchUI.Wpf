@@ -63,11 +63,14 @@ sidebar_position: 1
 | `Wb.Color.Accent.Pressed` | `#005A9E` | `#005A9E` | アクセント押下（HSL 自動派生） |
 | `Wb.Color.Accent.Muted` | `#094771` | `#C7E0F4` | 淡色/暗色アクセント（バリアント別派生） |
 
-追加のブラシ専用トークン:
-- `Wb.Brush.Border.Focus`（`Wb.Color.Accent.Default` に連動）
-- `Wb.Brush.Surface.Alternate`（Dark: `#08FFFFFF` / Light: `#06000000`）
-- `Wb.Brush.State.Hover`（Dark: `#14FFFFFF` / Light: `#0D000000`）
-- `Wb.Brush.State.Pressed`（Dark: `#1FFFFFFF` / Light: `#1A000000`）
+## ブラシ専用オーバーレイトークン
+
+| キー | Dark | Light | 役割 |
+| --- | --- | --- | --- |
+| `Wb.Brush.Border.Focus` | `Accent.Default` に連動 | `Accent.Default` に連動 | フォーカス枠 |
+| `Wb.Brush.Surface.Alternate` | `#08FFFFFF` | `#06000000` | 交互行などの控えめな面差 |
+| `Wb.Brush.State.Hover` | `#14FFFFFF` | `#0D000000` | 半透明ホバーオーバーレイ |
+| `Wb.Brush.State.Pressed` | `#1FFFFFFF` | `#1A000000` | 半透明押下オーバーレイ |
 
 ## キー付きコントロールスタイル
 

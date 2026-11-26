@@ -55,14 +55,35 @@ sidebar_position: 2
 | `LogConsole` | `Control` | `Source` (`LogBuffer`), `FlushInterval`, `ShowTimestamps` |
 | `LogBuffer` | `sealed` | スレッドセーフな `Append(LogLevel, string)` / `Append(LogEntry)`, `Clear()`, `Flush()`, `Capacity`, `Entries` |
 
-## 工程ワークフロー・進捗・ヘルパー
+## 工程ワークフロー・進捗・アイコン・ヘルパー
 
-- **工程・再生**: `PlaybackBar`, `ProcessRail` (`ProcessRailItem`, `IProcessRailStep`, `ProcessChapterState`), `ChapterHost` (`ChapterHostItem`), `Wizard` (`WizardStep`, `WizardNavigatingEventArgs`), `StepIndicator` (`StepIndicatorItem`, `StepState`)
-- **進捗**: `ProgressDisplay`（進捗バー + ステータス + 経過時間 + キャンセル `ICommand`）、`ProgressRing`
-- **アイコン**: `WorkbenchIcon` (`Icon`, `Size`), `WorkbenchIcons`（68 種の静的 `Geometry` と `Wb.Icon.*` リソース）
-- **添付ヘルパー & コンバータ**: `ButtonAssist` (`Icon`, `IconSize`), `DataGridAssist` (`AutoApplyColumnStyles`), `ColorMapToBrushConverter`, `TreeIndentConverter`, `VisibilityToBooleanConverter`
+| 型 | 種別 | 主なメンバー・用途 |
+| --- | --- | --- |
+| `PlaybackBar` | `Control` | フレーム再生コントロール（再生/一時停止、ステップ、速度、ループ、スライダー） |
+| `ProcessRail` | `Selector` | 工程レール (`ProcessRailItem`, `IProcessRailStep`, `ProcessChapterState`) |
+| `ChapterHost` | `ItemsControl` | アクティブな工程章を表示するホスト (`ChapterHostItem`) |
+| `Wizard` | `ItemsControl` | マルチステップウィザード (`WizardStep`, `WizardNavigatingEventArgs`) |
+| `StepIndicator` | `ItemsControl` | ステップ進捗インジケータ (`StepIndicatorItem`, `StepState`) |
+| `ProgressDisplay` | `Control` | 単一ジョブの進捗バー + ステータス + 経過時間 + キャンセル `ICommand` |
+| `ProgressRing` | `Control` | 不確定モードの円形スピナー |
+| `WorkbenchIcon` | `Control` | ベクタ `Geometry` (`Icon`, `Size`) を `Viewbox` でスケーリング描画 |
+| `WorkbenchIcons` | `static` | 67 種の Frozen 済み `16×16` `Geometry` と `Wb.Icon.*` リソース |
+| `ButtonAssist` | `static` | ボタンにアイコンを付与する添付プロパティ (`Icon`, `IconSize`) |
+| `DataGridAssist` | `static` | `DataGrid` 列スタイルの自動適用 (`AutoApplyColumnStyles`) |
+| `ColorMapToBrushConverter` | `IValueConverter` | `ColorMap` を水平 `LinearGradientBrush` へ変換 |
+| `TreeIndentConverter` | `IValueConverter` | ツリー階層の深さから左インデント `Thickness` を算出 |
+| `VisibilityToBooleanConverter` | `IValueConverter` | `Visibility` と `bool` の双方向コンバータ |
 
 ## スタイル提供済みの WPF 標準コントロール
 
 `WorkbenchTheme` には以下の標準コントロールの Dark / Light スタイルが含まれます:
-`Button`, `ToggleButton`, `RepeatButton`, `CheckBox`, `RadioButton`, `TextBox`, `PasswordBox`, `RichTextBox`, `ComboBox`, `ListBox`, `ListView` (+ `GridView`), `TreeView`, `DataGrid`, `TabControl`, `Menu`, `ContextMenu`, `ToolBar`, `ToolBarTray`, `StatusBar`, `Expander`, `GroupBox`, `Slider`, `ProgressBar`, `ScrollBar`, `ToolTip`, `GridSplitter`, `Separator`, `Label`, `Hyperlink`
+
+| カテゴリ | コントロール |
+| --- | --- |
+| **ボタン系** | `Button`, `ToggleButton`, `RepeatButton`, `CheckBox`, `RadioButton` |
+| **テキスト入力** | `TextBox`, `PasswordBox`, `RichTextBox` |
+| **選択・リスト** | `ComboBox`, `ListBox`, `ListView`（`GridView` 含む）, `TreeView` |
+| **表・データ** | `DataGrid`（列/行ヘッダー、セル編集、検証エラーツールチップ、行詳細、グループ化） |
+| **ナビゲーション・メニュー** | `TabControl`, `Menu`, `ContextMenu`, `ToolBar`, `ToolBarTray`, `StatusBar` |
+| **レイアウト・コンテナ** | `Expander`, `GroupBox`, `GridSplitter`, `Separator` |
+| **フィードバック・補助** | `Slider`, `ProgressBar`, `ScrollBar`, `ToolTip`, `Label`, `Hyperlink` |
