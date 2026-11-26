@@ -68,3 +68,9 @@ Thumbs.db
 Desktop.ini
 $RECYCLE.BIN/
 .DS_Store
+
+# Docusaurus
+node_modules/
+website/.docusaurus/
+website/build/
+.cache-loader/

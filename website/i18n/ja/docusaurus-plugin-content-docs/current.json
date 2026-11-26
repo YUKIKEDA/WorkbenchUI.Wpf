@@ -1,0 +1,14 @@
+{
+  "sidebar.docsSidebar.category.Tutorials": {
+    "message": "チュートリアル"
+  },
+  "sidebar.docsSidebar.category.How-to Guides": {
+    "message": "ハウツーガイド"
+  },
+  "sidebar.docsSidebar.category.Reference": {
+    "message": "リファレンス"
+  },
+  "sidebar.docsSidebar.category.Explanation": {
+    "message": "解説"
+  }
+}

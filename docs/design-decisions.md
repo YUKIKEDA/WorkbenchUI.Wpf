@@ -1,3 +1,9 @@
+---
+title: Architecture & Design Decisions
+description: Architectural Decision Records (ADRs) for WorkbenchUI.Wpf.
+sidebar_position: 3
+---
+
 # Architecture & Design Decisions
 
 This document records the architectural, naming, packaging, and API decisions made when redefining and extracting the internal prototype (`WpfCustomUI`) into the public open-source library **WorkbenchUI.Wpf**.
@@ -108,3 +114,14 @@ This document records the architectural, naming, packaging, and API decisions ma
   - Enable **Central Package Management** (`Directory.Packages.props`), deterministic builds, built-in .NET 10 SDK **SourceLink**, symbol packages (`.snupkg`), XML doc generation (`GenerateDocumentationFile=true`), and GitHub Actions CI (`windows-latest`).
   - Standardize on **English** for all source comments, XML docs, Gallery UI, and primary READMEs, with a `README.ja.md` overview for Japanese-speaking users.
   - Port `WorkbenchUI.Wpf.Tests` and `WorkbenchUI.Wpf.Viewport3D.Tests`, and add `WorkbenchUI.Wpf.Charts.Tests` and `WorkbenchUI.Wpf.Docking.Tests` so all four packages have automated test coverage.
+
+---
+
+## ADR-08: User Documentation (Diátaxis + Docusaurus 3 Bilingual EN/JA)
+
+- **Status**: Accepted
+- **Context**: Public library adopters need task-oriented guides, exact token/control references, and architectural context in addition to XML API comments. Both English and Japanese documentation are desired, hosted cleanly on GitHub Pages.
+- **Decision**:
+  - Structure all user documentation according to the **Diátaxis** framework (`Tutorials`, `How-to Guides`, `Reference`, `Explanation`).
+  - Author English source pages under `docs/` (so they remain directly readable in the Git repository) and host a bilingual **Docusaurus 3** site (`en` + `ja`) under `website/`, with Japanese translations under `website/i18n/ja/docusaurus-plugin-content-docs/current/`.
+  - Automate strict link validation and GitHub Pages deployment via `.github/workflows/docs.yml`.

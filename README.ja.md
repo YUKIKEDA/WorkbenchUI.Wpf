@@ -42,6 +42,12 @@ dotnet test WorkbenchUI.Wpf.slnx -c Release
 dotnet run --project samples/WorkbenchUI.Wpf.Gallery
 ```
 
+## ドキュメント
+
+- **ユーザードキュメントサイト (日本語 / English)**: [https://yukikeda.github.io/WorkbenchUI.Wpf/ja/](https://yukikeda.github.io/WorkbenchUI.Wpf/ja/)
+- [English README](README.md)
+- [設計意思決定ドキュメント (ADRs)](docs/design-decisions.md)
+
 ## ライセンス
 
 [MIT License](LICENSE)（`WorkbenchUI.Wpf.Docking` が依存する `Dirkster.AvalonDock` は Ms-PL ライセンスです）。

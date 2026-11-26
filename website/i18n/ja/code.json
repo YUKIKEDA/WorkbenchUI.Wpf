@@ -1,0 +1,56 @@
+{
+  "homepage.description": {
+    "message": ".NET 10 / WPF 向けのエンジニアリング・科学技術デスクトップアプリケーション向け高密度・無彩色 UI ライブラリ。"
+  },
+  "homepage.tagline": {
+    "message": ".NET 10 / WPF 向けのエンジニアリング・科学技術デスクトップアプリケーション向け高密度・無彩色 UI ライブラリ"
+  },
+  "homepage.cta.tutorial": {
+    "message": "チュートリアルを始める"
+  },
+  "homepage.cta.docs": {
+    "message": "ドキュメントを読む"
+  },
+  "homepage.diataxis.title": {
+    "message": "ドキュメント構成 (Diátaxis)"
+  },
+  "homepage.q.tutorials.title": {
+    "message": "チュートリアル (Tutorials)"
+  },
+  "homepage.q.tutorials.desc": {
+    "message": "最初のエンジニアリング Workbench ウィンドウをステップバイステップで構築するハンズオンガイド。"
+  },
+  "homepage.q.howto.title": {
+    "message": "ハウツーガイド (How-to Guides)"
+  },
+  "homepage.q.howto.desc": {
+    "message": "テーマ・アクセント変更、単位プロバイダー、PropertyGrid、ModelTree、チャート、ドッキング、3D ビューポートの実践レシピ。"
+  },
+  "homepage.q.ref.title": {
+    "message": "リファレンス (Reference)"
+  },
+  "homepage.q.ref.desc": {
+    "message": "デザイントークン、コントロールカタログ、内蔵アイコン一覧、拡張パッケージ API の網羅的リファレンス。"
+  },
+  "homepage.q.exp.title": {
+    "message": "解説 (Explanation)"
+  },
+  "homepage.q.exp.desc": {
+    "message": "無彩色・高密度テーマ設計、ゼロ依存コア戦略、設計意思決定 (ADR) の背景解説。"
+  },
+  "homepage.packages.title": {
+    "message": "モジュラーパッケージ構成"
+  },
+  "homepage.pkg.core": {
+    "message": "外部依存ゼロのコア: Dark/Light テーマ基盤、68 種のベクタアイコン、高密度ワークベンチコントロール群。"
+  },
+  "homepage.pkg.charts": {
+    "message": "ScottPlot 5 テーマ同期と技術計算向け複合チャート（収束モニタ、履歴、Bode FRF、ヒストグラム）。"
+  },
+  "homepage.pkg.docking": {
+    "message": "Wb.Color.* トークンに動的追従する AvalonDock テーマと ContentId ベースのレイアウト保存ヘルパー。"
+  },
+  "homepage.pkg.viewport": {
+    "message": "サーフェスメッシュ、疎ボクセル格子、コンター、GPU 変形、断面カット、プローブ対応の自作 Direct3D 11 ビューポート。"
+  }
+}
