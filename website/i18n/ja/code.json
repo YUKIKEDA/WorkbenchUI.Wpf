@@ -36,7 +36,7 @@
     "message": "解説 (Explanation)"
   },
   "homepage.q.exp.desc": {
-    "message": "無彩色・高密度テーマ設計、ゼロ依存コア戦略、設計意思決定 (ADR) の背景解説。"
+    "message": "無彩色・高密度テーマシステムとゼロ依存モジュラーパッケージ構成の背景解説。"
   },
   "homepage.packages.title": {
     "message": "モジュラーパッケージ構成"

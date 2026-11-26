@@ -23,9 +23,6 @@
   "link.item.label.Explanation": {
     "message": "解説"
   },
-  "link.item.label.Design Decisions (ADRs)": {
-    "message": "設計意思決定 (ADR)"
-  },
   "link.item.label.MIT License": {
     "message": "MIT ライセンス"
   }

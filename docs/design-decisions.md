@@ -1,9 +1,3 @@
----
-title: Architecture & Design Decisions
-description: Architectural Decision Records (ADRs) for WorkbenchUI.Wpf.
-sidebar_position: 3
----
-
 # Architecture & Design Decisions
 
 This document records the architectural, naming, packaging, and API decisions made when redefining and extracting the internal prototype (`WpfCustomUI`) into the public open-source library **WorkbenchUI.Wpf**.
@@ -124,4 +118,5 @@ This document records the architectural, naming, packaging, and API decisions ma
 - **Decision**:
   - Structure all user documentation according to the **Diátaxis** framework (`Tutorials`, `How-to Guides`, `Reference`, `Explanation`).
   - Author English source pages under `docs/` (so they remain directly readable in the Git repository) and host a bilingual **Docusaurus 3** site (`en` + `ja`) under `website/`, with Japanese translations under `website/i18n/ja/docusaurus-plugin-content-docs/current/`.
+  - Keep `docs/design-decisions.md` in the repository as maintainer-facing documentation and intentionally **exclude** it from the public Docusaurus user site (`exclude: ['design-decisions.md']` in `website/docusaurus.config.ts`) so the published site focuses strictly on library consumers.
   - Automate strict link validation and GitHub Pages deployment via `.github/workflows/docs.yml`.

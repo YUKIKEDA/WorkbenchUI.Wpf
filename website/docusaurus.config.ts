@@ -41,6 +41,7 @@ const config: Config = {
           path: '../docs',
           routeBasePath: 'docs',
           sidebarPath: './sidebars.ts',
+          exclude: ['design-decisions.md'],
         },
         blog: false,
         theme: {
@@ -124,7 +125,6 @@ const config: Config = {
         {
           title: 'Project',
           items: [
-            {label: 'Design Decisions (ADRs)', to: '/docs/design-decisions'},
             {label: 'GitHub', href: 'https://github.com/YUKIKEDA/WorkbenchUI.Wpf'},
             {label: 'MIT License', href: 'https://github.com/YUKIKEDA/WorkbenchUI.Wpf/blob/main/LICENSE'},
           ],

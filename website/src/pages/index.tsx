@@ -58,7 +58,7 @@ export default function Home(): ReactNode {
               </Link>
               <Link className={styles.card} to="/docs/explanation/theme-architecture">
                 <h3><Translate id="homepage.q.exp.title">Explanation</Translate></h3>
-                <p><Translate id="homepage.q.exp.desc">Architectural rationale behind the neutral-gray theme system, zero-dependency core, and design decisions.</Translate></p>
+                <p><Translate id="homepage.q.exp.desc">Architectural rationale behind the neutral-gray theme system and zero-dependency modular packages.</Translate></p>
               </Link>
             </div>
           </div>

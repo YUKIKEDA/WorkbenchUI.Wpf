@@ -36,7 +36,6 @@ const sidebars: SidebarsConfig = {
       items: [
         'explanation/theme-architecture',
         'explanation/package-architecture',
-        'design-decisions',
       ],
     },
   ],
