@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>WorkbenchUI.Wpf.Charts</PackageId>
+    <AssemblyName>WorkbenchUI.Wpf.Charts</AssemblyName>
+    <RootNamespace>WorkbenchUI.Wpf.Charts</RootNamespace>
+    <Description>ScottPlot-based charting integration (theme adapter and engineering composite charts) for WorkbenchUI.Wpf.</Description>
+    <IsPackable>true</IsPackable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <!-- SkiaSharp.Views.WPF targets net4x in its NuGet metadata but works on net10.0-windows (official ScottPlot.WPF setup). -->
+    <NoWarn>$(NoWarn);NU1701</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="WorkbenchUI.Wpf.Charts.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WorkbenchUI.Wpf\WorkbenchUI.Wpf.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <PackageReference Include="ScottPlot.WPF" />
+  </ItemGroup>
+
+</Project>

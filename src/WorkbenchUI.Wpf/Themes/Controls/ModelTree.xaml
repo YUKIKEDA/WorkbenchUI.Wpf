@@ -1,0 +1,194 @@
+<!--
+    Default style for ModelTree.
+    The row template is self-contained so it resolves cleanly even in Generic.xaml alone
+    (StaticResource references to other control dictionaries are avoided to prevent merge-order coupling).
+-->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:wb="clr-namespace:WorkbenchUI.Wpf.Controls">
+
+    <wb:TreeIndentConverter x:Key="Wb.ModelTree.IndentConverter" IndentSize="16" />
+    <BooleanToVisibilityConverter x:Key="Wb.ModelTree.BoolToVisibility" />
+
+    <!-- Eye icon (visibility toggle); FillRule=EvenOdd cuts out the pupil -->
+    <Geometry x:Key="Wb.Icon.Eye">M8,3.5 C11.1,3.5 13.6,5.4 14.6,8 C13.6,10.6 11.1,12.5 8,12.5 C4.9,12.5 2.4,10.6 1.4,8 C2.4,5.4 4.9,3.5 8,3.5 Z M8,5.6 C6.67,5.6 5.6,6.67 5.6,8 C5.6,9.33 6.67,10.4 8,10.4 C9.33,10.4 10.4,9.33 10.4,8 C10.4,6.67 9.33,5.6 8,5.6 Z</Geometry>
+    <Geometry x:Key="Wb.Icon.EyeOff">M2.3,1.6 L14.4,13.7 L13.7,14.4 L1.6,2.3 Z M8,3.5 C11.1,3.5 13.6,5.4 14.6,8 C13.6,10.6 11.1,12.5 8,12.5 C4.9,12.5 2.4,10.6 1.4,8 C2.4,5.4 4.9,3.5 8,3.5 Z M8,5.6 C6.67,5.6 5.6,6.67 5.6,8 C5.6,9.33 6.67,10.4 8,10.4 C9.33,10.4 10.4,9.33 10.4,8 C10.4,6.67 9.33,5.6 8,5.6 Z</Geometry>
+
+    <!-- Shared transparent style for small inline icon buttons (chevron, eye) -->
+    <Style x:Key="Wb.ModelTree.GhostButton" TargetType="{x:Type ButtonBase}">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Width" Value="18" />
+        <Setter Property="Height" Value="18" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ButtonBase}">
+                    <Border x:Name="Root" Background="Transparent" CornerRadius="2">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Root" Property="Background"
+                                    Value="{DynamicResource Wb.Brush.State.Hover}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Single row template -->
+    <DataTemplate x:Key="Wb.ModelTree.ItemTemplate" DataType="{x:Type wb:FlatTreeItem}">
+        <DockPanel Background="Transparent">
+            <!-- Eye icon pinned to the right edge (unaffected by indent); tri-state managed by Node.IsVisible -->
+            <Button x:Name="PART_VisibilityToggle"
+                    DockPanel.Dock="Right"
+                    Style="{StaticResource Wb.ModelTree.GhostButton}"
+                    Margin="4,0,0,0"
+                    Visibility="{Binding ShowVisibilityToggles,
+                                         RelativeSource={RelativeSource AncestorType={x:Type wb:ModelTree}},
+                                         Converter={StaticResource Wb.ModelTree.BoolToVisibility}}">
+                <Path x:Name="EyeIcon"
+                      Data="{StaticResource Wb.Icon.Eye}"
+                      Fill="{DynamicResource Wb.Brush.Text.Secondary}"
+                      Width="14" Height="14"
+                      Stretch="Uniform" />
+            </Button>
+            <StackPanel Orientation="Horizontal"
+                        Margin="{Binding Level, Converter={StaticResource Wb.ModelTree.IndentConverter}}">
+                <ToggleButton x:Name="Chevron"
+                              Style="{StaticResource Wb.ModelTree.GhostButton}"
+                              Width="16" Height="16"
+                              ClickMode="Press"
+                              IsChecked="{Binding Node.IsExpanded, Mode=TwoWay}">
+                    <Path x:Name="ChevronIcon"
+                          Data="M 0,0 L 4,4 L 0,8"
+                          Stroke="{DynamicResource Wb.Brush.Text.Secondary}"
+                          StrokeThickness="1.4"
+                          RenderTransformOrigin="0.5,0.5">
+                        <Path.RenderTransform>
+                            <RotateTransform Angle="0" />
+                        </Path.RenderTransform>
+                    </Path>
+                </ToggleButton>
+                <Path x:Name="NodeIcon"
+                      Data="{Binding Node.Icon}"
+                      Fill="{DynamicResource Wb.Brush.Text.Secondary}"
+                      Width="14" Height="14"
+                      Stretch="Uniform"
+                      Margin="2,0,0,0"
+                      VerticalAlignment="Center" />
+                <TextBlock x:Name="NameText"
+                           Text="{Binding Node.Name}"
+                           Margin="4,0,0,0"
+                           VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis" />
+                <!-- Inline rename; shown only while IsRenaming is true, with focus and commit managed by ModelTree -->
+                <TextBox x:Name="PART_RenameBox"
+                         Text="{Binding Node.Name, Mode=OneWay}"
+                         Visibility="Collapsed"
+                         MinWidth="100"
+                         Margin="4,-2,0,-2"
+                         Padding="2,0"
+                         VerticalAlignment="Center" />
+            </StackPanel>
+        </DockPanel>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding IsRenaming}" Value="True">
+                <Setter TargetName="NameText" Property="Visibility" Value="Collapsed" />
+                <Setter TargetName="PART_RenameBox" Property="Visibility" Value="Visible" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Node.IsExpanded}" Value="True">
+                <Setter TargetName="ChevronIcon" Property="RenderTransform">
+                    <Setter.Value>
+                        <RotateTransform Angle="90" />
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+            <!-- Leaf node: chevron hidden while reserving space for indent alignment -->
+            <DataTrigger Binding="{Binding HasChildren}" Value="False">
+                <Setter TargetName="Chevron" Property="Visibility" Value="Hidden" />
+            </DataTrigger>
+            <!-- Tri-state visibility indicator: visible = eye / mixed = semi-transparent eye / hidden = crossed-out eye + dimmed label -->
+            <DataTrigger Binding="{Binding Node.IsVisible}" Value="{x:Null}">
+                <Setter TargetName="EyeIcon" Property="Opacity" Value="0.45" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Node.IsVisible}" Value="False">
+                <Setter TargetName="EyeIcon" Property="Data" Value="{StaticResource Wb.Icon.EyeOff}" />
+                <Setter TargetName="EyeIcon" Property="Fill" Value="{DynamicResource Wb.Brush.Text.Disabled}" />
+                <Setter TargetName="NameText" Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Disabled}" />
+                <Setter TargetName="NodeIcon" Property="Fill" Value="{DynamicResource Wb.Brush.Text.Disabled}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Node.Icon}" Value="{x:Null}">
+                <Setter TargetName="NodeIcon" Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <!-- Row container (full-width selection) -->
+    <Style x:Key="Wb.ModelTree.ItemContainer" TargetType="{x:Type ListBoxItem}">
+        <Setter Property="IsSelected" Value="{Binding Node.IsSelected, Mode=TwoWay}" />
+        <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Primary}" />
+        <Setter Property="Padding" Value="4,1" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                    <Border x:Name="Root"
+                            Background="Transparent"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource Wb.Brush.State.Hover}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource Wb.Brush.State.Selected}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True" />
+                                <Condition Property="Selector.IsSelectionActive" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource Wb.Brush.State.SelectedInactive}" />
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type wb:ModelTree}">
+        <Setter Property="Background" Value="{DynamicResource Wb.Brush.Surface.Panel}" />
+        <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Primary}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Border.Default}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type wb:ModelTree}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{DynamicResource Wb.CornerRadius}">
+                        <ListBox x:Name="PART_List"
+                                 ItemsSource="{TemplateBinding FlatItems}"
+                                 SelectionMode="{TemplateBinding SelectionMode}"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Padding="0,2"
+                                 Foreground="{TemplateBinding Foreground}"
+                                 ItemContainerStyle="{StaticResource Wb.ModelTree.ItemContainer}"
+                                 ItemTemplate="{StaticResource Wb.ModelTree.ItemTemplate}"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 VirtualizingPanel.IsVirtualizing="True"
+                                 VirtualizingPanel.VirtualizationMode="Recycling" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

@@ -1,0 +1,47 @@
+<wb:WorkbenchWindow x:Class="WorkbenchUI.Wpf.Gallery.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:wb="https://schemas.workbenchui.dev/wpf"
+        mc:Ignorable="d"
+        Title="WorkbenchUI.Wpf Gallery"
+        Height="720" Width="1080">
+    <DockPanel>
+        <!-- Left navigation -->
+        <Border DockPanel.Dock="Left"
+                Width="200"
+                Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                BorderThickness="0,0,1,0">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top"
+                           Text="WorkbenchUI.Wpf"
+                           FontSize="{StaticResource Wb.FontSize.L}"
+                           FontWeight="SemiBold"
+                           Margin="12,12,12,4" />
+                <TextBlock DockPanel.Dock="Top"
+                           Text="Gallery"
+                           Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                           Margin="12,0,12,12" />
+
+                <!-- Theme toggle -->
+                <StackPanel DockPanel.Dock="Bottom" Margin="12,8,12,12">
+                    <Separator Margin="0,0,0,10" />
+                    <wb:ToggleSwitch x:Name="ThemeToggle"
+                                     Content="Light Theme"
+                                     Checked="ThemeToggle_Checked"
+                                     Unchecked="ThemeToggle_Unchecked" />
+                </StackPanel>
+
+                <ListBox x:Name="NavList"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         SelectionChanged="NavList_SelectionChanged" />
+            </DockPanel>
+        </Border>
+
+        <!-- Page host -->
+        <ContentControl x:Name="PageHost" Margin="16" />
+    </DockPanel>
+</wb:WorkbenchWindow>

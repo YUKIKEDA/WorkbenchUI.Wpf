@@ -1,0 +1,125 @@
+<!--
+    Text input control styles.
+    TextBox and RichTextBox share Wb.TextBoxBase.
+    PasswordBox does not derive from TextBoxBase, so it defines a separate style with matching visuals.
+-->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="Wb.TextBoxBase" TargetType="{x:Type TextBoxBase}">
+        <Setter Property="Background" Value="{DynamicResource Wb.Brush.Surface.Input}" />
+        <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Primary}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Border.Default}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="{DynamicResource Wb.Padding.Input}" />
+        <Setter Property="MinHeight" Value="{DynamicResource Wb.ControlHeight}" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="CaretBrush" Value="{DynamicResource Wb.Brush.Text.Primary}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource Wb.Brush.Accent.Muted}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Validation.ErrorTemplate" Value="{DynamicResource Wb.ValidationErrorTemplate}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TextBoxBase}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{DynamicResource Wb.CornerRadius}">
+                        <ScrollViewer x:Name="PART_ContentHost"
+                                      Margin="{TemplateBinding Padding}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      Focusable="False"
+                                      HorizontalScrollBarVisibility="Hidden"
+                                      VerticalScrollBarVisibility="Hidden" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Border.Strong}" />
+            </Trigger>
+            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Border.Focus}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Disabled}" />
+                <Setter Property="Opacity" Value="0.6" />
+            </Trigger>
+            <Trigger Property="IsReadOnly" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Wb.Brush.Surface.Panel}" />
+            </Trigger>
+            <!-- Validation error: red border + tooltip (layout-preserving) -->
+            <Trigger Property="Validation.HasError" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Error}" />
+                <Setter Property="ToolTip"
+                        Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)/ErrorContent}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="Wb.TextBox" TargetType="{x:Type TextBox}"
+           BasedOn="{StaticResource Wb.TextBoxBase}" />
+
+    <!-- RichTextBox defaults to multi-line, so align content to top with vertical scrolling -->
+    <Style x:Key="Wb.RichTextBox" TargetType="{x:Type RichTextBox}"
+           BasedOn="{StaticResource Wb.TextBoxBase}">
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+    </Style>
+
+    <!-- PasswordBox: matches TextBox visuals; identical except without IsReadOnly -->
+    <Style x:Key="Wb.PasswordBox" TargetType="{x:Type PasswordBox}">
+        <Setter Property="Background" Value="{DynamicResource Wb.Brush.Surface.Input}" />
+        <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Primary}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Border.Default}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="{DynamicResource Wb.Padding.Input}" />
+        <Setter Property="MinHeight" Value="{DynamicResource Wb.ControlHeight}" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="CaretBrush" Value="{DynamicResource Wb.Brush.Text.Primary}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource Wb.Brush.Accent.Muted}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Validation.ErrorTemplate" Value="{DynamicResource Wb.ValidationErrorTemplate}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type PasswordBox}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{DynamicResource Wb.CornerRadius}">
+                        <ScrollViewer x:Name="PART_ContentHost"
+                                      Margin="{TemplateBinding Padding}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      Focusable="False"
+                                      HorizontalScrollBarVisibility="Hidden"
+                                      VerticalScrollBarVisibility="Hidden" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Border.Strong}" />
+            </Trigger>
+            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Border.Focus}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Disabled}" />
+                <Setter Property="Opacity" Value="0.6" />
+            </Trigger>
+            <Trigger Property="Validation.HasError" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Error}" />
+                <Setter Property="ToolTip"
+                        Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)/ErrorContent}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource Wb.TextBox}" />
+    <Style TargetType="{x:Type RichTextBox}" BasedOn="{StaticResource Wb.RichTextBox}" />
+    <Style TargetType="{x:Type PasswordBox}" BasedOn="{StaticResource Wb.PasswordBox}" />
+
+</ResourceDictionary>

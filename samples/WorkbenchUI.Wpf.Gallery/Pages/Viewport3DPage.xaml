@@ -1,0 +1,111 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.Viewport3DPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="Hint" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Secondary}" />
+            <Setter Property="FontSize" Value="{StaticResource Wb.FontSize.S}" />
+            <Setter Property="Margin" Value="0,2,0,0" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel MaxWidth="860" HorizontalAlignment="Left">
+
+            <TextBlock Text="3D Viewport (Direct3D 11)" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4" />
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="WorkbenchUI.Wpf.Viewport3D is a custom rendering engine built on Silk.NET Direct3D 11 bindings + D3DImage (depending only on Silk.NET, keeping the core assembly zero-dependency). Middle-drag = Orbit / Shift+Middle-drag = Pan / Wheel = Zoom to cursor / Middle double-click = Fit. In pick mode: Left-click = Select / Ctrl+click = Toggle / Left-drag = Box select (visible only). Use the top-right ViewCube or the view buttons below to jump to standard views." />
+
+            <!-- Controls row -->
+            <WrapPanel Margin="0,12,0,8" ItemHeight="28">
+                <wb:ToggleSwitch x:Name="OrthoToggle" Content="Orthographic"
+                                 Checked="OnOrthoChanged" Unchecked="OnOrthoChanged" />
+                <wb:ToggleSwitch x:Name="ContourToggle" Content="Contours" IsChecked="True" Margin="20,0,0,0" />
+                <wb:ToggleSwitch x:Name="EdgeToggle" Content="Edges" IsChecked="True" Margin="20,0,0,0" />
+                <wb:ToggleSwitch x:Name="DiscreteToggle" Content="Discrete (10 levels)"
+                                 Checked="OnDiscreteChanged" Unchecked="OnDiscreteChanged" Margin="20,0,0,0" />
+                <wb:ToggleSwitch x:Name="BossToggle" Content="Show Boss" IsChecked="True"
+                                 Checked="OnBossChanged" Unchecked="OnBossChanged" Margin="20,0,0,0" />
+                <Button Content="Fit" Click="OnFitClick" MinWidth="60" Margin="20,0,0,0" />
+            </WrapPanel>
+
+            <!-- Selection -->
+            <WrapPanel Margin="0,0,0,4" ItemHeight="26">
+                <TextBlock Text="Pick:" VerticalAlignment="Center" Margin="0,0,8,0" />
+                <RadioButton x:Name="PickNoneRadio" Content="None" GroupName="PickMode" IsChecked="True"
+                             VerticalAlignment="Center" Checked="OnPickModeChanged" />
+                <RadioButton x:Name="PickPartRadio" Content="Part" GroupName="PickMode"
+                             VerticalAlignment="Center" Margin="12,0,0,0" Checked="OnPickModeChanged" />
+                <RadioButton x:Name="PickFaceRadio" Content="Face" GroupName="PickMode"
+                             VerticalAlignment="Center" Margin="12,0,0,0" Checked="OnPickModeChanged" />
+                <RadioButton x:Name="PickNodeRadio" Content="Node" GroupName="PickMode"
+                             VerticalAlignment="Center" Margin="12,0,0,0" Checked="OnPickModeChanged" />
+                <Button Content="Clear Selection" Click="OnClearSelectionClick" Margin="20,0,0,0" />
+                <TextBlock x:Name="SelectionSummary"
+                           AutomationProperties.AutomationId="SelectionSummary"
+                           Text="Parts: 0, Faces: 0, Nodes: 0"
+                           VerticalAlignment="Center" Margin="16,0,0,0"
+                           Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
+            </WrapPanel>
+
+            <!-- Hover pre-highlight + Through selection -->
+            <WrapPanel Margin="0,0,0,4" ItemHeight="26">
+                <wb:ToggleSwitch x:Name="HoverToggle" Content="Hover Pre-highlight" IsChecked="True"
+                                 AutomationProperties.AutomationId="HoverToggle"
+                                 Checked="OnHoverToggleChanged" Unchecked="OnHoverToggleChanged" />
+                <wb:ToggleSwitch x:Name="ThroughToggle" Content="Through Box Select" Margin="20,0,0,0"
+                                 AutomationProperties.AutomationId="ThroughToggle"
+                                 Checked="OnThroughToggleChanged" Unchecked="OnThroughToggleChanged" />
+                <TextBlock x:Name="HoverText"
+                           AutomationProperties.AutomationId="HoverText"
+                           Text="Hover: -"
+                           VerticalAlignment="Center" Margin="16,0,0,0"
+                           Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
+            </WrapPanel>
+
+            <!-- Standard views -->
+            <WrapPanel Margin="0,0,0,8" ItemHeight="26">
+                <TextBlock Text="View:" VerticalAlignment="Center" Margin="0,0,8,0" />
+                <Button Content="Front" Tag="Front" Click="OnStandardViewClick" MinWidth="48" />
+                <Button Content="Right" Tag="Right" Click="OnStandardViewClick" MinWidth="48" Margin="6,0,0,0" />
+                <Button Content="Top" Tag="Top" Click="OnStandardViewClick" MinWidth="48" Margin="6,0,0,0" />
+                <Button Content="Isometric" Tag="Isometric" Click="OnStandardViewClick" MinWidth="64" Margin="6,0,0,0" />
+            </WrapPanel>
+
+            <!-- Viewport + Legend -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <wb:WorkbenchViewport x:Name="Viewport"
+                                Grid.Column="0"
+                                Height="480"
+                                ShowContours="{Binding IsChecked, ElementName=ContourToggle}"
+                                ShowEdges="{Binding IsChecked, ElementName=EdgeToggle}" />
+
+                <wb:ColorMapLegend x:Name="Legend"
+                                   Grid.Column="1"
+                                   Height="300"
+                                   Margin="16,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Title="von Mises [MPa]" />
+            </Grid>
+            <TextBlock x:Name="RendererInfo" Style="{StaticResource Hint}" />
+
+            <TextBlock Style="{StaticResource Hint}" Margin="0,12,0,0"
+                       Text="Demo: Uniaxial tension of a plate with a circular hole (Kirsch analytical solution showing stress concentration factor 3 at the hole edge). ViewportMesh (node coordinates + triangle indices + nodal scalars) binds to MeshSource while sharing the same ColorScale instance with ColorMapLegend. Tessellation from FEM elements to triangles is the application's responsibility (generated from a structured grid here). Coordinates are accepted in double precision and recentered before GPU upload to eliminate jitter on large-coordinate models." />
+            <TextBlock Style="{StaticResource Hint}" Margin="0,6,0,0"
+                       Text="Rendering is on-demand (only on interaction or data changes), follows runtime theme switches automatically, and falls back to WARP (software) + WriteableBitmap when no hardware GPU is available." />
+            <TextBlock Style="{StaticResource Hint}" Margin="0,6,0,0"
+                       Text="Selection uses GPU ID picking (rendering part ID + triangle ID offscreen and reading pixels back), so cost depends on viewport resolution rather than mesh size. Results populate ViewportSelection with render-level face/node indices (mapping back to FEM elements is application-side), and accent-colored face/node highlights are built in." />
+
+            <Border Height="24" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

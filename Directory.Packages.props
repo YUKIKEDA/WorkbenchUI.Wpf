@@ -1,0 +1,19 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageVersion Include="ScottPlot.WPF" Version="5.1.59" />
+    <PackageVersion Include="Dirkster.AvalonDock" Version="4.74.1" />
+    <PackageVersion Include="Dirkster.AvalonDock.Themes.VS2013" Version="4.74.1" />
+    <PackageVersion Include="Silk.NET.Direct3D.Compilers" Version="2.23.0" />
+    <PackageVersion Include="Silk.NET.Direct3D11" Version="2.23.0" />
+    <PackageVersion Include="Silk.NET.Direct3D9" Version="2.23.0" />
+    <PackageVersion Include="Silk.NET.DXGI" Version="2.23.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+  </ItemGroup>
+</Project>

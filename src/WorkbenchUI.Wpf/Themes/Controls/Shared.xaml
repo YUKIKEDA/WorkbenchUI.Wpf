@@ -1,0 +1,33 @@
+<!--
+    Shared resources used across controls.
+    Reference via DynamicResource from other files to avoid dictionary merge-order dependencies.
+-->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Keyboard focus visual (dotted rectangle) -->
+    <Style x:Key="Wb.FocusVisual">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Rectangle Margin="-2"
+                               StrokeThickness="1"
+                               Stroke="{DynamicResource Wb.Brush.Border.Focus}"
+                               StrokeDashArray="1 2"
+                               SnapsToDevicePixels="True" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--
+        Validation error visual convention: red border + tooltip.
+        Because the red border is drawn via Style.Triggers on the control's BorderBrush,
+        the default Adorner is disabled to avoid double borders.
+    -->
+    <ControlTemplate x:Key="Wb.ValidationErrorTemplate">
+        <AdornedElementPlaceholder />
+    </ControlTemplate>
+
+</ResourceDictionary>

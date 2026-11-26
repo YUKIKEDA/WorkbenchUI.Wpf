@@ -1,0 +1,140 @@
+<wb:WorkbenchWindow x:Class="WorkbenchUI.Wpf.Gallery.DockingShellWindow"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:wb="https://schemas.workbenchui.dev/wpf"
+              xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock"
+              xmlns:adl="clr-namespace:AvalonDock.Layout;assembly=AvalonDock"
+              Title="CAE Shell — Integrated Demo"
+              Height="800" Width="1280">
+    <DockPanel>
+        <!-- Menu -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_View">
+                <MenuItem Header="Model" Tag="Shell.ModelTree" Click="OnShowToolWindow" />
+                <MenuItem Header="Properties" Tag="Shell.Properties" Click="OnShowToolWindow" />
+                <MenuItem Header="Legend" Tag="Shell.Legend" Click="OnShowToolWindow" />
+                <MenuItem Header="Log" Tag="Shell.Log" Click="OnShowToolWindow" />
+            </MenuItem>
+            <MenuItem Header="_Layout">
+                <MenuItem Header="Save Layout" Click="OnSaveLayout" />
+                <MenuItem Header="Restore Layout" Click="OnLoadLayout" />
+                <Separator />
+                <MenuItem Header="Reset to Default Layout" Click="OnResetLayout" />
+            </MenuItem>
+        </Menu>
+
+        <!-- Status bar (selection/hover/stats synchronize with the active viewport) -->
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem x:Name="StatusMessage" Content="Ready" />
+            <Separator />
+            <StatusBarItem>
+                <TextBlock x:Name="SelectionStatus"
+                           AutomationProperties.AutomationId="ShellSelectionStatus"
+                           Text="Selection: None" />
+            </StatusBarItem>
+            <Separator />
+            <StatusBarItem>
+                <TextBlock x:Name="HoverStatus"
+                           AutomationProperties.AutomationId="ShellHoverStatus"
+                           Text="Hover: -" />
+            </StatusBarItem>
+            <Separator />
+            <StatusBarItem>
+                <TextBlock x:Name="StatsStatus"
+                           AutomationProperties.AutomationId="ShellStatsStatus"
+                           Text="" />
+            </StatusBarItem>
+        </StatusBar>
+
+        <!-- Docking area -->
+        <ad:DockingManager x:Name="Dock">
+            <ad:DockingManager.Theme>
+                <wb:WorkbenchDockTheme />
+            </ad:DockingManager.Theme>
+
+            <adl:LayoutRoot>
+                <adl:LayoutPanel Orientation="Horizontal">
+
+                    <!-- Left: Model Tree -->
+                    <adl:LayoutAnchorablePane DockWidth="260">
+                        <adl:LayoutAnchorable Title="Model" ContentId="Shell.ModelTree">
+                            <wb:ModelTree x:Name="Tree" />
+                        </adl:LayoutAnchorable>
+                    </adl:LayoutAnchorablePane>
+
+                    <!-- Center: Documents (two WorkbenchViewport instances) + bottom Log -->
+                    <adl:LayoutPanel Orientation="Vertical">
+                        <adl:LayoutDocumentPane>
+                            <adl:LayoutDocument Title="Static: Plate with Hole" ContentId="Shell.Doc.Case1">
+                                <DockPanel x:Name="StaticDoc" Background="{DynamicResource Wb.Brush.Surface.Window}">
+                                    <WrapPanel DockPanel.Dock="Top" Margin="8,6" ItemHeight="26">
+                                        <TextBlock Text="Pick:" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                        <RadioButton x:Name="PickNoneRadio" Content="None" GroupName="ShellPick"
+                                                     VerticalAlignment="Center" Checked="OnPickModeChanged" />
+                                        <RadioButton x:Name="PickPartRadio" Content="Part" GroupName="ShellPick" IsChecked="True"
+                                                     VerticalAlignment="Center" Margin="12,0,0,0" Checked="OnPickModeChanged" />
+                                        <RadioButton x:Name="PickFaceRadio" Content="Face" GroupName="ShellPick"
+                                                     VerticalAlignment="Center" Margin="12,0,0,0" Checked="OnPickModeChanged" />
+                                        <RadioButton x:Name="PickNodeRadio" Content="Node" GroupName="ShellPick"
+                                                     VerticalAlignment="Center" Margin="12,0,0,0" Checked="OnPickModeChanged" />
+                                        <RadioButton x:Name="PickProbeRadio" Content="Probe" GroupName="ShellPick"
+                                                     VerticalAlignment="Center" Margin="12,0,0,0" Checked="OnPickModeChanged" />
+                                        <Button Content="Clear Selection" Click="OnClearSelection" Margin="16,0,0,0" />
+                                        <Button Content="Fit" Click="OnFitStatic" MinWidth="52" Margin="8,0,0,0" />
+                                    </WrapPanel>
+                                    <wb:WorkbenchViewport x:Name="ViewportStatic" PickMode="Part" />
+                                </DockPanel>
+                            </adl:LayoutDocument>
+                            <adl:LayoutDocument Title="Transient: Cantilever Beam" ContentId="Shell.Doc.Case2">
+                                <DockPanel x:Name="TransientDoc" Background="{DynamicResource Wb.Brush.Surface.Window}">
+                                    <WrapPanel DockPanel.Dock="Top" Margin="8,6" ItemHeight="26">
+                                        <wb:ToggleSwitch x:Name="AnimToggle" Content="Animate Vibration" />
+                                        <TextBlock Text="Deformation Scale:" VerticalAlignment="Center" Margin="20,0,8,0" />
+                                        <Slider x:Name="ScaleSlider" Width="140" VerticalAlignment="Center"
+                                                Minimum="0" Maximum="30" Value="10" />
+                                        <TextBlock VerticalAlignment="Center" Margin="8,0,0,0"
+                                                   Text="{Binding Value, ElementName=ScaleSlider, StringFormat=×{0:0.0}}" />
+                                        <Button Content="Fit" Click="OnFitTransient" MinWidth="52" Margin="16,0,0,0" />
+                                    </WrapPanel>
+                                    <!-- Frame sequence playback is application-driven: swap Displacements on CurrentFrameChanged -->
+                                    <wb:PlaybackBar x:Name="Playback" DockPanel.Dock="Bottom" Margin="8,4"
+                                                    AutomationProperties.AutomationId="ShellPlaybackBar"
+                                                    FramesPerSecond="30"
+                                                    CurrentFrameChanged="OnPlaybackFrameChanged" />
+                                    <wb:WorkbenchViewport x:Name="ViewportTransient" PickMode="Part"
+                                                    DeformationScale="{Binding Value, ElementName=ScaleSlider}"
+                                                    IsDeformationAnimated="{Binding IsChecked, ElementName=AnimToggle}" />
+                                </DockPanel>
+                            </adl:LayoutDocument>
+                        </adl:LayoutDocumentPane>
+
+                        <adl:LayoutAnchorablePane DockHeight="200">
+                            <adl:LayoutAnchorable Title="Log" ContentId="Shell.Log">
+                                <wb:LogConsole x:Name="Console" />
+                            </adl:LayoutAnchorable>
+                        </adl:LayoutAnchorablePane>
+                    </adl:LayoutPanel>
+
+                    <!-- Right: Properties + Legend (shares and edits the active document's ColorScale) -->
+                    <adl:LayoutAnchorablePane DockWidth="300">
+                        <adl:LayoutAnchorable Title="Properties" ContentId="Shell.Properties">
+                            <wb:PropertyGrid x:Name="Props" />
+                        </adl:LayoutAnchorable>
+                        <adl:LayoutAnchorable Title="Legend" ContentId="Shell.Legend">
+                            <ScrollViewer x:Name="LegendHost" VerticalScrollBarVisibility="Auto"
+                                          Background="{DynamicResource Wb.Brush.Surface.Window}">
+                                <StackPanel Margin="12">
+                                    <wb:ColorMapLegend x:Name="Legend"
+                                                       Height="220"
+                                                       HorizontalAlignment="Left" />
+                                    <wb:ColorScaleEditor x:Name="ScaleEditor" Margin="0,12,0,0" />
+                                </StackPanel>
+                            </ScrollViewer>
+                        </adl:LayoutAnchorable>
+                    </adl:LayoutAnchorablePane>
+
+                </adl:LayoutPanel>
+            </adl:LayoutRoot>
+        </ad:DockingManager>
+    </DockPanel>
+</wb:WorkbenchWindow>

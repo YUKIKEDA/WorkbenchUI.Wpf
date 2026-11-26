@@ -1,0 +1,204 @@
+<!--
+    Button styles (4 hierarchy tiers).
+    - Wb.Button          : Standard (default). Border + subtle background for normal actions.
+    - Wb.Button.Accent   : Primary action (Run, OK, etc.). Generally one per view.
+    - Wb.Button.Subtle   : Ghost button. No background; highlights on hover for secondary actions.
+    - Wb.Button.Danger   : Destructive actions (Delete, etc.).
+    - Wb.Button.Icon     : Square icon button (toolbar-style ghost button).
+    State colors are changed via Style.Triggers rather than inside the template so variants
+    only need to replace triggers.
+    Setting wb:ButtonAssist.Icon (Geometry) displays an icon to the left of the content.
+-->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:wb="clr-namespace:WorkbenchUI.Wpf.Controls">
+
+    <Style x:Key="Wb.Button" TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="{DynamicResource Wb.Brush.Control.Background}" />
+        <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Primary}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Border.Default}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="12,2" />
+        <Setter Property="MinHeight" Value="{DynamicResource Wb.ControlHeight}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource Wb.FocusVisual}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{DynamicResource Wb.CornerRadius}">
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="{TemplateBinding Padding}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                            <wb:WorkbenchIcon x:Name="ButtonIcon"
+                                         Icon="{TemplateBinding wb:ButtonAssist.Icon}"
+                                         Size="{TemplateBinding wb:ButtonAssist.IconSize}"
+                                         Foreground="{TemplateBinding Foreground}"
+                                         VerticalAlignment="Center"
+                                         Margin="0,0,6,0" />
+                            <ContentPresenter VerticalAlignment="Center"
+                                              RecognizesAccessKey="True" />
+                        </StackPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="wb:ButtonAssist.Icon" Value="{x:Null}">
+                            <Setter TargetName="ButtonIcon" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="ButtonIcon" Property="Margin" Value="0" />
+                        </Trigger>
+                        <!-- Omit spacing when icon-only (no Content) -->
+                        <Trigger Property="Content" Value="{x:Null}">
+                            <Setter TargetName="ButtonIcon" Property="Margin" Value="0" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Wb.Brush.Control.Hover}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Border.Strong}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Wb.Brush.Control.Pressed}" />
+            </Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Border.Focus}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Disabled}" />
+                <Setter Property="Opacity" Value="0.6" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Accent button for primary actions (Run, OK, etc.) -->
+    <Style x:Key="Wb.Button.Accent" TargetType="{x:Type Button}" BasedOn="{StaticResource Wb.Button}">
+        <Setter Property="Background" Value="{DynamicResource Wb.Brush.Accent.Default}" />
+        <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.OnAccent}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Accent.Default}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Wb.Brush.Accent.Hover}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Accent.Hover}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Wb.Brush.Accent.Pressed}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Accent.Pressed}" />
+            </Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Text.OnAccent}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Disabled}" />
+                <Setter Property="Background" Value="{DynamicResource Wb.Brush.Control.Background}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Border.Default}" />
+                <Setter Property="Opacity" Value="0.6" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Ghost button for secondary actions (no background; highlights on hover) -->
+    <Style x:Key="Wb.Button.Subtle" TargetType="{x:Type Button}" BasedOn="{StaticResource Wb.Button}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Wb.Brush.Control.Hover}" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Wb.Brush.Control.Pressed}" />
+            </Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Border.Focus}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Disabled}" />
+                <Setter Property="Opacity" Value="0.6" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- For destructive actions (Delete, etc.) -->
+    <Style x:Key="Wb.Button.Danger" TargetType="{x:Type Button}" BasedOn="{StaticResource Wb.Button}">
+        <Setter Property="Background" Value="{DynamicResource Wb.Brush.Danger.Default}" />
+        <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.OnAccent}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Danger.Default}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Wb.Brush.Danger.Hover}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Danger.Hover}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Wb.Brush.Danger.Pressed}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Danger.Pressed}" />
+            </Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Text.OnAccent}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Disabled}" />
+                <Setter Property="Background" Value="{DynamicResource Wb.Brush.Control.Background}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Border.Default}" />
+                <Setter Property="Opacity" Value="0.6" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Icon button (ghost button usable outside toolbars as well) -->
+    <Style x:Key="Wb.Button.Icon" TargetType="{x:Type Button}">
+        <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Primary}" />
+        <Setter Property="Padding" Value="4" />
+        <Setter Property="MinWidth" Value="{DynamicResource Wb.ControlHeight}" />
+        <Setter Property="MinHeight" Value="{DynamicResource Wb.ControlHeight}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource Wb.FocusVisual}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="Root"
+                            Background="Transparent"
+                            CornerRadius="{DynamicResource Wb.CornerRadius}"
+                            Padding="{TemplateBinding Padding}">
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <wb:WorkbenchIcon x:Name="ButtonIcon"
+                                         Icon="{TemplateBinding wb:ButtonAssist.Icon}"
+                                         Size="{TemplateBinding wb:ButtonAssist.IconSize}"
+                                         Foreground="{TemplateBinding Foreground}" />
+                            <!-- Suppress Content when ButtonAssist.Icon is set (prevents duplicate rendering);
+                                 switch to Content via trigger only when Icon is unset -->
+                            <ContentPresenter x:Name="ContentHost"
+                                              Visibility="Collapsed"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="wb:ButtonAssist.Icon" Value="{x:Null}">
+                            <Setter TargetName="ButtonIcon" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="ContentHost" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource Wb.Brush.Control.Hover}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource Wb.Brush.Control.Pressed}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource Wb.Button}" />
+
+</ResourceDictionary>

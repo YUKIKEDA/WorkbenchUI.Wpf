@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>WorkbenchUI.Wpf.Viewport3D</PackageId>
+    <AssemblyName>WorkbenchUI.Wpf.Viewport3D</AssemblyName>
+    <RootNamespace>WorkbenchUI.Wpf.Viewport3D</RootNamespace>
+    <Description>Direct3D 11 based 3D viewport (mesh, voxel, contour, deformation, section, and probing rendering) for WorkbenchUI.Wpf.</Description>
+    <IsPackable>true</IsPackable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <!-- Required for Direct3D 11 / D3D9Ex / DXGI COM pointer interop. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="WorkbenchUI.Wpf.Viewport3D.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WorkbenchUI.Wpf\WorkbenchUI.Wpf.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <PackageReference Include="Silk.NET.Direct3D.Compilers" />
+    <PackageReference Include="Silk.NET.Direct3D11" />
+    <PackageReference Include="Silk.NET.Direct3D9" />
+    <PackageReference Include="Silk.NET.DXGI" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>WorkbenchUI.Wpf.Docking</PackageId>
+    <AssemblyName>WorkbenchUI.Wpf.Docking</AssemblyName>
+    <RootNamespace>WorkbenchUI.Wpf.Docking</RootNamespace>
+    <Description>AvalonDock-based docking integration (theme and layout persistence helpers) for WorkbenchUI.Wpf.</Description>
+    <IsPackable>true</IsPackable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="WorkbenchUI.Wpf.Docking.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WorkbenchUI.Wpf\WorkbenchUI.Wpf.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <PackageReference Include="Dirkster.AvalonDock" />
+    <PackageReference Include="Dirkster.AvalonDock.Themes.VS2013" />
+  </ItemGroup>
+
+</Project>

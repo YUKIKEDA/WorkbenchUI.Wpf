@@ -1,0 +1,100 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.PostProcessingPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="SectionHeader" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="{StaticResource Wb.FontSize.L}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,16,0,8" />
+        </Style>
+        <Style x:Key="Hint" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Secondary}" />
+            <Setter Property="FontSize" Value="{StaticResource Wb.FontSize.S}" />
+            <Setter Property="Margin" Value="0,2,0,0" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel MaxWidth="760" HorizontalAlignment="Left">
+
+            <TextBlock Text="Post-processing" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4" />
+
+            <TextBlock Text="PlaybackBar (Result Animation Playback)" Style="{StaticResource SectionHeader}" />
+            <Border Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                    BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                    BorderThickness="1" CornerRadius="2" Padding="10"
+                    HorizontalAlignment="Left">
+                <StackPanel Width="560">
+                    <!-- Mode shape preview (renders the 1st beam mode driven by CurrentFrame) -->
+                    <Canvas x:Name="ModeCanvas" Height="110" ClipToBounds="True">
+                        <Polyline x:Name="ModeShape"
+                                  Stroke="{DynamicResource Wb.Brush.Accent.Default}"
+                                  StrokeThickness="2" />
+                        <Line x:Name="BaseLine"
+                              Stroke="{DynamicResource Wb.Brush.Border.Default}"
+                              StrokeDashArray="3,3" StrokeThickness="1" />
+                    </Canvas>
+                    <wb:PlaybackBar x:Name="ModePlayback"
+                                    Margin="0,8,0,0"
+                                    FrameCount="60"
+                                    FramesPerSecond="30"
+                                    CurrentFrameChanged="ModePlayback_CurrentFrameChanged" />
+                </StackPanel>
+            </Border>
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Example playing Mode 1 (45.2 Hz) of a beam. 3D rendering stays in the application layer while PlaybackBar exposes CurrentFrame and playback controls. Space = Play/Pause, ←/→ = Step, Home/End = First/Last. Stops at the end when loop is OFF." />
+
+            <TextBlock Text="External Speed Control (FramesPerSecond)" Style="{StaticResource SectionHeader}" />
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Playback Speed" VerticalAlignment="Center" Margin="0,0,8,0" />
+                <ComboBox x:Name="SpeedCombo" Width="90" SelectedIndex="1"
+                          SelectionChanged="SpeedCombo_SelectionChanged">
+                    <ComboBoxItem Content="15 fps" />
+                    <ComboBoxItem Content="30 fps" />
+                    <ComboBoxItem Content="60 fps" />
+                </ComboBox>
+                <wb:PlaybackBar x:Name="EmptyPlayback" Width="280" Margin="24,0,0,0"
+                                FrameCount="0" VerticalAlignment="Center" />
+                <TextBlock Text="← FrameCount=0 (no results loaded) renders disabled"
+                           VerticalAlignment="Center" Margin="8,0,0,0"
+                           Style="{StaticResource Hint}" />
+            </StackPanel>
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="PlaybackBar does not embed a speed selector (since apps differ between FPS and multipliers); feed FramesPerSecond externally via DP." />
+
+            <TextBlock Text="ColorScaleEditor + ColorMapLegend (Paired Editor &amp; Legend)" Style="{StaticResource SectionHeader}" />
+            <StackPanel Orientation="Horizontal">
+                <Border Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                        BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                        BorderThickness="1" CornerRadius="2" Padding="10"
+                        VerticalAlignment="Top">
+                    <!-- Labels can be localized or customized via dependency properties -->
+                    <wb:ColorScaleEditor x:Name="ScaleEditor"
+                                         Width="300"
+                                         ColorMapLabel="Color Map"
+                                         MinimumLabel="Minimum"
+                                         MaximumLabel="Maximum"
+                                         DiscreteLevelsLabel="Discrete Levels"
+                                         LogarithmicLabel="Logarithmic Scale"
+                                         LogDisabledHint="Logarithmic scale requires both Minimum and Maximum to be positive"
+                                         AdvancedLabel="Advanced"
+                                         BelowRangeLabel="Below Min"
+                                         AboveRangeLabel="Above Max"
+                                         NaNColorLabel="NaN Color"
+                                         ClampLabel="Clamp" />
+                </Border>
+                <wb:ColorMapLegend x:Name="EditorLegend"
+                                   Height="240" Margin="24,0,0,0"
+                                   Title="Stress [MPa]" />
+            </StackPanel>
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Editor and legend share the same ColorScale instance for live updates across colormap, range, discrete levels, and log scale. For Apply/Cancel dialogs, edit a Clone() copy and write back via CopyFrom() on OK." />
+
+            <Border Height="24" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

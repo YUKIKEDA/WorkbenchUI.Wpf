@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>WorkbenchUI.Wpf.Gallery</RootNamespace>
+    <AssemblyName>WorkbenchUI.Wpf.Gallery</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\WorkbenchUI.Wpf\WorkbenchUI.Wpf.csproj" />
+    <ProjectReference Include="..\..\src\WorkbenchUI.Wpf.Charts\WorkbenchUI.Wpf.Charts.csproj" />
+    <ProjectReference Include="..\..\src\WorkbenchUI.Wpf.Docking\WorkbenchUI.Wpf.Docking.csproj" />
+    <ProjectReference Include="..\..\src\WorkbenchUI.Wpf.Viewport3D\WorkbenchUI.Wpf.Viewport3D.csproj" />
+  </ItemGroup>
+
+</Project>
