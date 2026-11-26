@@ -1,6 +1,6 @@
 ---
 title: はじめに
-description: WorkbenchUI.Wpf の概要、前提環境、パッケージ構成、ドキュメント構成 (Diátaxis) の案内。
+description: WorkbenchUI.Wpf の概要、前提環境、パッケージ構成の案内。
 sidebar_position: 1
 ---
 
@@ -30,11 +30,9 @@ sidebar_position: 1
 xmlns:wb="https://schemas.workbenchui.dev/wpf"
 ```
 
-## ドキュメント構成 (Diátaxis)
+## ドキュメント
 
-本ドキュメントは [Diátaxis](https://diataxis.fr/) フレームワークに沿って構成されています:
-
-- **チュートリアル (Tutorials)** *（学習指向）* — [最初の Workbench アプリを作る](tutorials/first-workbench-app.md) では、空の WPF プロジェクトからテーマ付きワークベンチ画面をステップバイステップで構築します。
-- **ハウツーガイド (How-to Guides)** *（課題解決指向）* — [テーマとアクセントの変更](how-to/theming-and-accent.md)、[単位換算と数値入力](how-to/units-and-numeric-input.md)、[PropertyGrid の活用](how-to/property-grid.md)、[ModelTree の実装](how-to/model-tree.md)、[Docking と Charts の統合](how-to/docking-and-charts.md)、[3D ビューポートの描画](how-to/viewport-3d.md)。
-- **リファレンス (Reference)** *（情報参照指向）* — [デザイントークン一覧](reference/design-tokens.md)、[コントロールカタログ](reference/controls-catalog.md)、[内蔵アイコン一覧](reference/icons.md)、[拡張パッケージ API](reference/extension-packages.md)。
-- **解説 (Explanation)** *（理解指向）* — [テーマアーキテクチャ](explanation/theme-architecture.md)、[パッケージ・API 設計](explanation/package-architecture.md)。
+- **チュートリアル** — [最初の Workbench アプリを作る](tutorials/first-workbench-app.md) では、空の WPF プロジェクトからテーマ付きワークベンチ画面をステップバイステップで構築します。
+- **ハウツーガイド** — [テーマとアクセントの変更](how-to/theming-and-accent.md)、[単位換算と数値入力](how-to/units-and-numeric-input.md)、[PropertyGrid の活用](how-to/property-grid.md)、[ModelTree の実装](how-to/model-tree.md)、[Docking と Charts の統合](how-to/docking-and-charts.md)、[3D ビューポートの描画](how-to/viewport-3d.md)。
+- **リファレンス** — [デザイントークン一覧](reference/design-tokens.md)、[コントロールカタログ](reference/controls-catalog.md)、[内蔵アイコン一覧](reference/icons.md)、[拡張パッケージ API](reference/extension-packages.md)。
+- **解説** — [テーマアーキテクチャ](explanation/theme-architecture.md)、[パッケージ・API 設計](explanation/package-architecture.md)。

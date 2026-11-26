@@ -11,29 +11,29 @@
   "homepage.cta.docs": {
     "message": "ドキュメントを読む"
   },
-  "homepage.diataxis.title": {
-    "message": "ドキュメント構成 (Diátaxis)"
+  "homepage.docs.title": {
+    "message": "ドキュメント"
   },
   "homepage.q.tutorials.title": {
-    "message": "チュートリアル (Tutorials)"
+    "message": "チュートリアル"
   },
   "homepage.q.tutorials.desc": {
     "message": "最初のエンジニアリング Workbench ウィンドウをステップバイステップで構築するハンズオンガイド。"
   },
   "homepage.q.howto.title": {
-    "message": "ハウツーガイド (How-to Guides)"
+    "message": "ハウツーガイド"
   },
   "homepage.q.howto.desc": {
     "message": "テーマ・アクセント変更、単位プロバイダー、PropertyGrid、ModelTree、チャート、ドッキング、3D ビューポートの実践レシピ。"
   },
   "homepage.q.ref.title": {
-    "message": "リファレンス (Reference)"
+    "message": "リファレンス"
   },
   "homepage.q.ref.desc": {
     "message": "デザイントークン、コントロールカタログ、内蔵アイコン一覧、拡張パッケージ API の網羅的リファレンス。"
   },
   "homepage.q.exp.title": {
-    "message": "解説 (Explanation)"
+    "message": "解説"
   },
   "homepage.q.exp.desc": {
     "message": "無彩色・高密度テーマシステムとゼロ依存モジュラーパッケージ構成の背景解説。"

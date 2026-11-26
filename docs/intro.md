@@ -30,11 +30,9 @@ All four packages share a single unified XAML namespace URI:
 xmlns:wb="https://schemas.workbenchui.dev/wpf"
 ```
 
-## Documentation Map (Diátaxis)
+## Documentation
 
-This documentation follows the [Diátaxis](https://diataxis.fr/) framework:
-
-- **Tutorials** *(learning-oriented)* — [Build Your First Workbench App](tutorials/first-workbench-app.md) walks you step by step from an empty WPF project to a themed workbench window.
-- **How-to Guides** *(task-oriented)* — Practical recipes for [Theming & Accent Colors](how-to/theming-and-accent.md), [Units & Numeric Input](how-to/units-and-numeric-input.md), [PropertyGrid](how-to/property-grid.md), [ModelTree](how-to/model-tree.md), [Docking & Charts](how-to/docking-and-charts.md), and [3D Viewport](how-to/viewport-3d.md).
-- **Reference** *(information-oriented)* — Complete tables for [Design Tokens](reference/design-tokens.md), [Controls Catalog](reference/controls-catalog.md), [Built-in Icons](reference/icons.md), and [Extension Packages](reference/extension-packages.md).
-- **Explanation** *(understanding-oriented)* — Deep dives into the [Theme Architecture](explanation/theme-architecture.md) and [Package Architecture](explanation/package-architecture.md).
+- **Tutorials** — [Build Your First Workbench App](tutorials/first-workbench-app.md) walks you step by step from an empty WPF project to a themed workbench window.
+- **How-to Guides** — Practical recipes for [Theming & Accent Colors](how-to/theming-and-accent.md), [Units & Numeric Input](how-to/units-and-numeric-input.md), [PropertyGrid](how-to/property-grid.md), [ModelTree](how-to/model-tree.md), [Docking & Charts](how-to/docking-and-charts.md), and [3D Viewport](how-to/viewport-3d.md).
+- **Reference** — Complete tables for [Design Tokens](reference/design-tokens.md), [Controls Catalog](reference/controls-catalog.md), [Built-in Icons](reference/icons.md), and [Extension Packages](reference/extension-packages.md).
+- **Explanation** — Deep dives into the [Theme Architecture](explanation/theme-architecture.md) and [Package Architecture](explanation/package-architecture.md).

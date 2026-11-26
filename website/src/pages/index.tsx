@@ -41,7 +41,7 @@ export default function Home(): ReactNode {
         <section className={styles.section}>
           <div className="container">
             <Heading as="h2">
-              <Translate id="homepage.diataxis.title">Documentation Guide (Diátaxis)</Translate>
+              <Translate id="homepage.docs.title">Documentation</Translate>
             </Heading>
             <div className={styles.grid}>
               <Link className={styles.card} to="/docs/tutorials/first-workbench-app">
@@ -50,7 +50,7 @@ export default function Home(): ReactNode {
               </Link>
               <Link className={styles.card} to="/docs/how-to/theming-and-accent">
                 <h3><Translate id="homepage.q.howto.title">How-to Guides</Translate></h3>
-                <p><Translate id="homepage.q.howto.desc">Task-oriented recipes for theming, unit providers, PropertyGrid, ModelTree, charts, docking, and 3D viewports.</Translate></p>
+                <p><Translate id="homepage.q.howto.desc">Practical recipes for theming, unit providers, PropertyGrid, ModelTree, charts, docking, and 3D viewports.</Translate></p>
               </Link>
               <Link className={styles.card} to="/docs/reference/controls-catalog">
                 <h3><Translate id="homepage.q.ref.title">Reference</Translate></h3>
