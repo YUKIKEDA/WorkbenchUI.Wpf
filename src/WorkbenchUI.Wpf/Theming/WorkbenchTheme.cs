@@ -67,26 +67,34 @@ public class WorkbenchTheme : ResourceDictionary
             return;
         }
 
+        var isInitialApply = !_applied;
         _theme = variant;
         _applied = true;
 
-        // Accent overrides live directly on this dictionary, so clearing MergedDictionaries preserves them.
-        MergedDictionaries.Clear();
-        MergedDictionaries.Add(Load("Tokens.Core.xaml"));
-        MergedDictionaries.Add(Load($"Tokens.{variant}.xaml"));
-
-        // Built-in vector icons (Wb.Icon.* keys, theme-independent frozen Geometries).
-        MergedDictionaries.Add(WorkbenchIcons.CreateResourceDictionary());
-
-        // Control styles reference tokens via DynamicResource and stay constant across variants.
-        foreach (var dictionary in ControlDictionaries)
+        if (isInitialApply)
         {
-            MergedDictionaries.Add(Load(dictionary));
+            // Accent overrides live directly on this dictionary, so clearing MergedDictionaries preserves them.
+            MergedDictionaries.Clear();
+            MergedDictionaries.Add(Load("Tokens.Core.xaml"));
+            MergedDictionaries.Add(Load($"Tokens.{variant}.xaml"));
+
+            // Built-in vector icons (Wb.Icon.* keys, theme-independent frozen Geometries).
+            MergedDictionaries.Add(WorkbenchIcons.CreateResourceDictionary());
+
+            // Control styles reference tokens via DynamicResource and stay constant across variants.
+            foreach (var dictionary in ControlDictionaries)
+            {
+                MergedDictionaries.Add(Load(dictionary));
+            }
+        }
+        else if (MergedDictionaries.Count > 1)
+        {
+            MergedDictionaries[1] = Load($"Tokens.{variant}.xaml");
         }
 
         if (notifyManager)
         {
-            ThemeManager.SyncFromTheme(this, variant);
+            ThemeManager.SyncFromTheme(this, variant, raiseThemeChanged: !isInitialApply);
         }
     }
 

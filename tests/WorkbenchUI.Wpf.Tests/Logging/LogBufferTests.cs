@@ -81,6 +81,22 @@ public class LogBufferTests
     }
 
     [Fact]
+    public void Clear_ThenAppend_RetainsOnlyPostClearEntries()
+    {
+        var buffer = new LogBuffer();
+        buffer.Append(LogLevel.Info, "before-flush");
+        buffer.Flush();
+        buffer.Append(LogLevel.Info, "pending-before-clear");
+
+        buffer.Clear();
+        buffer.Append(LogLevel.Info, "after-clear");
+        var changed = buffer.Flush();
+
+        Assert.True(changed);
+        Assert.Equal(["after-clear"], buffer.Entries.Select(e => e.Message));
+    }
+
+    [Fact]
     public async Task Append_FromMultipleThreads_LosesNothing()
     {
         const int threads = 4;

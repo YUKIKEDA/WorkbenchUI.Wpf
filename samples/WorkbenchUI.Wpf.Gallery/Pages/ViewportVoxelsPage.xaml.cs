@@ -55,17 +55,21 @@ public partial class ViewportVoxelsPage : UserControl
             Viewport.FitToView();
             ApplyGlyphScale();
             UpdateStatsAfterBuild();
+            UpdateRendererInfo();
         };
 
         LoadMediumInternal();
 
         Loaded += (_, _) =>
         {
-            RendererInfo.Text = Viewport.IsSoftwareRendering
-                ? "Rendering path: WARP (software) + WriteableBitmap fallback"
-                : "Rendering path: Hardware D3D11 + D3DImage (shared surface)";
+            UpdateRendererInfo();
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, UpdateRendererInfo);
         };
     }
+
+    private void UpdateRendererInfo() => RendererInfo.Text = Viewport.IsSoftwareRendering
+        ? "Rendering path: WARP (software) + WriteableBitmap fallback"
+        : "Rendering path: Hardware D3D11 + D3DImage (shared surface)";
 
     private void OnVoxelProbePicked(object? sender, VoxelProbePickedEventArgs e)
     {

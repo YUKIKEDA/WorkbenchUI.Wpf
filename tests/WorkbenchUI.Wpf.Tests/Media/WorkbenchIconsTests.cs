@@ -68,11 +68,14 @@ public class WorkbenchIconsTests
     public void CreateResourceDictionary_ContainsAllIconsWithPrefixedKeys()
     {
         var dictionary = WorkbenchIcons.CreateResourceDictionary();
+        var secondDictionary = WorkbenchIcons.CreateResourceDictionary();
+        Assert.NotSame(dictionary, secondDictionary);
         Assert.Equal(WorkbenchIcons.Names.Count, dictionary.Count);
         foreach (var name in WorkbenchIcons.Names)
         {
             Assert.True(dictionary.Contains($"Wb.Icon.{name}"), $"Wb.Icon.{name} was not found");
             Assert.IsAssignableFrom<Geometry>(dictionary[$"Wb.Icon.{name}"]);
+            Assert.Same(dictionary[$"Wb.Icon.{name}"], secondDictionary[$"Wb.Icon.{name}"]);
         }
     }
 }

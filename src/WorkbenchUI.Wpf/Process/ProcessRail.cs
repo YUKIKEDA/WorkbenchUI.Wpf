@@ -117,7 +117,7 @@ public class ProcessRail : Selector
             return;
         }
 
-        SelectedIndex = index;
+        SetCurrentValue(SelectedIndexProperty, index);
     }
 
     private ProcessChapterState ResolveVisualState(object item, int index)
@@ -143,6 +143,8 @@ public class ProcessRail : Selector
             ? ProcessChapterState.Available
             : baseState;
     }
+
+    internal void OnSelectionOrStateRefreshRequested() => RefreshContainers();
 
     private void RefreshContainers()
     {
@@ -179,13 +181,33 @@ public class ProcessRailItem : ContentControl
     /// <summary>Identifies the <see cref="State"/> dependency property.</summary>
     public static readonly DependencyProperty StateProperty = DependencyProperty.Register(
         nameof(State), typeof(ProcessChapterState), typeof(ProcessRailItem),
-        new PropertyMetadata(ProcessChapterState.Available));
+        new PropertyMetadata(ProcessChapterState.Available, OnStateChanged));
 
-    /// <summary>Gets or sets the displayed chapter state (the rail overrides the selected item to <see cref="ProcessChapterState.Current"/>).</summary>
+    /// <summary>Gets or sets the chapter state.</summary>
     public ProcessChapterState State
     {
         get => (ProcessChapterState)GetValue(StateProperty);
         set => SetValue(StateProperty, value);
+    }
+
+    private static readonly DependencyPropertyKey VisualStatePropertyKey = DependencyProperty.RegisterReadOnly(
+        nameof(VisualState), typeof(ProcessChapterState), typeof(ProcessRailItem),
+        new PropertyMetadata(ProcessChapterState.Available));
+
+    /// <summary>Identifies the <see cref="VisualState"/> dependency property.</summary>
+    public static readonly DependencyProperty VisualStateProperty = VisualStatePropertyKey.DependencyProperty;
+
+    /// <summary>Gets the effective visual chapter state rendered by the control template (read-only).</summary>
+    public ProcessChapterState VisualState => (ProcessChapterState)GetValue(VisualStateProperty);
+
+    private static void OnStateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        var item = (ProcessRailItem)d;
+        item.SetValue(VisualStatePropertyKey, (ProcessChapterState)e.NewValue);
+        if (ItemsControl.ItemsControlFromItemContainer(item) is ProcessRail rail)
+        {
+            rail.OnSelectionOrStateRefreshRequested();
+        }
     }
 
     private static readonly DependencyPropertyKey StepNumberPropertyKey = DependencyProperty.RegisterReadOnly(
@@ -212,14 +234,14 @@ public class ProcessRailItem : ContentControl
     {
         SetValue(StepNumberPropertyKey, index + 1);
         SetValue(IsFirstPropertyKey, isFirst);
-        SetValue(StateProperty, visualState);
+        SetValue(VisualStatePropertyKey, visualState);
     }
 
     /// <inheritdoc />
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonUp(e);
-        if (State is ProcessChapterState.Locked)
+        if (VisualState is ProcessChapterState.Locked || State is ProcessChapterState.Locked)
         {
             return;
         }

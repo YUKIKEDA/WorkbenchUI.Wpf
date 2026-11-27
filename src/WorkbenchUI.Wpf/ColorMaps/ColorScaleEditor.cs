@@ -24,6 +24,32 @@ public class ColorScaleEditor : Control
             typeof(ColorScaleEditor), new FrameworkPropertyMetadata(typeof(ColorScaleEditor)));
     }
 
+    /// <summary>Initializes a new instance of the <see cref="ColorScaleEditor"/> class.</summary>
+    public ColorScaleEditor()
+    {
+        Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
+    }
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        if (Scale is { } scale)
+        {
+            scale.PropertyChanged -= OnScalePropertyChanged;
+            scale.PropertyChanged += OnScalePropertyChanged;
+        }
+
+        SyncFromScale();
+    }
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        if (Scale is { } scale)
+        {
+            scale.PropertyChanged -= OnScalePropertyChanged;
+        }
+    }
+
     #region Scale / ColorMaps / Units
 
     /// <summary>Identifies the <see cref="Scale"/> dependency property.</summary>

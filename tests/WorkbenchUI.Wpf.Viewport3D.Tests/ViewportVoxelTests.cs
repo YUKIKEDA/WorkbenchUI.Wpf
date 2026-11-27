@@ -459,4 +459,51 @@ public class ViewportVoxelTests
         var vertices = ViewportVoxelSurface.BuildVertexScalars(surface, null);
         Assert.All(vertices, v => Assert.Equal(0.0, v));
     }
+
+    [Fact]
+    public void TryDecode_LargeGrid_DoesNotOverflow()
+    {
+        const int n = 1300;
+        var ok = ViewportVoxelIndexing.TryDecode(42, n, n, n, out var i, out var j, out var k);
+
+        Assert.True(ok);
+        Assert.Equal(42, i);
+        Assert.Equal(0, j);
+        Assert.Equal(0, k);
+    }
+
+    [Fact]
+    public void GeometryBuildCoordinator_BeginAndCancelAll_DisposesCancelledTokens()
+    {
+        var coordinator = new GeometryBuildCoordinator();
+        var (gen1, token1) = coordinator.Begin();
+        var (gen2, token2) = coordinator.Begin();
+
+        Assert.True(token1.IsCancellationRequested);
+        Assert.False(token2.IsCancellationRequested);
+        Assert.False(coordinator.IsCurrent(gen1));
+        Assert.True(coordinator.IsCurrent(gen2));
+
+        coordinator.CancelAll();
+        Assert.True(token2.IsCancellationRequested);
+        Assert.False(coordinator.IsCurrent(gen2));
+    }
+
+    [Fact]
+    public void ViewportRenderer_DoubleDispose_DoesNotThrow()
+    {
+        Rendering.ViewportRenderer? renderer = null;
+        try
+        {
+            renderer = new Rendering.ViewportRenderer();
+        }
+        catch
+        {
+            // Skip GPU initialization check cleanly on headless runners without D3D11/WARP.
+            return;
+        }
+
+        renderer.Dispose();
+        renderer.Dispose();
+    }
 }

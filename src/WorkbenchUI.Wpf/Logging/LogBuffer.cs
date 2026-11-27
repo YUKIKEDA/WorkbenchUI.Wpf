@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 
 namespace WorkbenchUI.Wpf.Controls;
@@ -13,8 +12,9 @@ namespace WorkbenchUI.Wpf.Controls;
 /// </summary>
 public sealed class LogBuffer
 {
-    private readonly ConcurrentQueue<LogEntry> _pending = new();
-    private int _clearRequested;
+    private readonly Lock _sync = new();
+    private readonly Queue<LogEntry> _pending = new();
+    private bool _clearRequested;
 
     /// <summary>Initializes a new instance of the <see cref="LogBuffer"/> class.</summary>
     /// <param name="capacity">Maximum number of retained entries; older entries beyond this limit are discarded.</param>
@@ -31,7 +31,13 @@ public sealed class LogBuffer
     public ObservableCollection<LogEntry> Entries { get; } = [];
 
     /// <summary>Enqueues a log entry. Safe to call from any thread.</summary>
-    public void Append(LogEntry entry) => _pending.Enqueue(entry);
+    public void Append(LogEntry entry)
+    {
+        lock (_sync)
+        {
+            _pending.Enqueue(entry);
+        }
+    }
 
     /// <summary>Enqueues a log entry stamped with the current local time. Safe to call from any thread.</summary>
     public void Append(LogLevel level, string message) =>
@@ -40,9 +46,10 @@ public sealed class LogBuffer
     /// <summary>Requests clearing all log entries. The collection is cleared on the next <see cref="Flush"/> call.</summary>
     public void Clear()
     {
-        Interlocked.Exchange(ref _clearRequested, 1);
-        while (_pending.TryDequeue(out _))
+        lock (_sync)
         {
+            _clearRequested = true;
+            _pending.Clear();
         }
     }
 
@@ -52,22 +59,34 @@ public sealed class LogBuffer
     /// <returns><see langword="true"/> if <see cref="Entries"/> changed (useful for auto-scroll decisions); otherwise, <see langword="false"/>.</returns>
     public bool Flush()
     {
+        bool clearRequested;
+        List<LogEntry>? incoming = null;
+
+        lock (_sync)
+        {
+            clearRequested = _clearRequested;
+            _clearRequested = false;
+
+            if (_pending.Count > 0)
+            {
+                incoming = new List<LogEntry>(_pending.Count);
+                while (_pending.Count > 0)
+                {
+                    incoming.Add(_pending.Dequeue());
+                }
+            }
+        }
+
         var changed = false;
-        if (Interlocked.Exchange(ref _clearRequested, 0) == 1 && Entries.Count > 0)
+        if (clearRequested && Entries.Count > 0)
         {
             Entries.Clear();
             changed = true;
         }
 
-        if (_pending.IsEmpty)
+        if (incoming is null || incoming.Count == 0)
         {
             return changed;
-        }
-
-        var incoming = new List<LogEntry>();
-        while (_pending.TryDequeue(out var entry))
-        {
-            incoming.Add(entry);
         }
 
         if (incoming.Count >= Capacity)

@@ -26,6 +26,32 @@ public class ColorMapLegend : Control
             typeof(ColorMapLegend), new FrameworkPropertyMetadata(typeof(ColorMapLegend)));
     }
 
+    /// <summary>Initializes a new instance of the <see cref="ColorMapLegend"/> class.</summary>
+    public ColorMapLegend()
+    {
+        Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
+    }
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        if (Scale is { } scale)
+        {
+            scale.PropertyChanged -= OnScalePropertyChanged;
+            scale.PropertyChanged += OnScalePropertyChanged;
+        }
+
+        Refresh();
+    }
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        if (Scale is { } scale)
+        {
+            scale.PropertyChanged -= OnScalePropertyChanged;
+        }
+    }
+
     /// <summary>Identifies the <see cref="Scale"/> dependency property.</summary>
     public static readonly DependencyProperty ScaleProperty = DependencyProperty.Register(
         nameof(Scale), typeof(ColorScale), typeof(ColorMapLegend),
@@ -192,7 +218,7 @@ public class ColorMapLegend : Control
             var tickLine = new Rectangle { Width = 5, Height = 1 };
             tickLine.SetResourceReference(Shape.FillProperty, "Wb.Brush.Border.Strong");
             Canvas.SetLeft(tickLine, 0);
-            Canvas.SetTop(tickLine, Math.Clamp(y - 0.5, 0, height - 1));
+            Canvas.SetTop(tickLine, Math.Clamp(y - 0.5, 0, Math.Max(0, height - 1)));
             _tickHost.Children.Add(tickLine);
 
             var label = new TextBlock

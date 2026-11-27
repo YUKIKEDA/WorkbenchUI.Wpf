@@ -16,6 +16,8 @@ namespace WorkbenchUI.Wpf.Gallery.Pages
         ];
 
         private readonly ICollectionView _partsView;
+        private readonly EventHandler _searchChangedHandler;
+        private bool _searchHooked;
 
         public ShellPage()
         {
@@ -23,11 +25,32 @@ namespace WorkbenchUI.Wpf.Gallery.Pages
 
             PartsList.ItemsSource = Parts;
             _partsView = CollectionViewSource.GetDefaultView(PartsList.ItemsSource);
+            _searchChangedHandler = (_, _) => ApplyFilter();
 
-            // Filter only on SearchText after debounce commits
-            DependencyPropertyDescriptor
-                .FromProperty(SearchBox.SearchTextProperty, typeof(SearchBox))
-                .AddValueChanged(PartsSearch, (_, _) => ApplyFilter());
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (!_searchHooked)
+            {
+                DependencyPropertyDescriptor
+                    .FromProperty(SearchBox.SearchTextProperty, typeof(SearchBox))
+                    .AddValueChanged(PartsSearch, _searchChangedHandler);
+                _searchHooked = true;
+            }
+        }
+
+        private void OnUnloaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (_searchHooked)
+            {
+                DependencyPropertyDescriptor
+                    .FromProperty(SearchBox.SearchTextProperty, typeof(SearchBox))
+                    .RemoveValueChanged(PartsSearch, _searchChangedHandler);
+                _searchHooked = false;
+            }
         }
 
         private void ApplyFilter()

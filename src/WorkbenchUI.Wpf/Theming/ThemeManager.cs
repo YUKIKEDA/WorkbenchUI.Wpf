@@ -113,12 +113,17 @@ public static class ThemeManager
         ThemeChanged?.Invoke(null, EventArgs.Empty);
     }
 
-    internal static void SyncFromTheme(WorkbenchTheme theme, WorkbenchThemeVariant variant)
+    internal static void SyncFromTheme(WorkbenchTheme theme, WorkbenchThemeVariant variant, bool raiseThemeChanged = true)
     {
         CurrentTheme = variant;
         if (_accentOverride is { } accent)
         {
             ApplyAccentTo(theme, AccentPalette.FromBase(accent, variant));
+        }
+
+        if (raiseThemeChanged)
+        {
+            ThemeChanged?.Invoke(null, EventArgs.Empty);
         }
     }
 

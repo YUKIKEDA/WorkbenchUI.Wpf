@@ -63,7 +63,10 @@
                         <Trigger Property="IsFirst" Value="True">
                             <Setter TargetName="Connector" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-                        <Trigger Property="State" Value="Current">
+                        <DataTrigger Binding="{Binding ShowConnectors, RelativeSource={RelativeSource AncestorType={x:Type wb:ProcessRail}}}" Value="False">
+                            <Setter TargetName="Connector" Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                        <Trigger Property="VisualState" Value="Current">
                             <Setter TargetName="Pill" Property="Background"
                                     Value="{DynamicResource Wb.Brush.Surface.Alternate}" />
                             <Setter TargetName="Pill" Property="BorderBrush"
@@ -76,7 +79,7 @@
                             <Setter TargetName="Number" Property="FontWeight" Value="SemiBold" />
                             <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Primary}" />
                         </Trigger>
-                        <Trigger Property="State" Value="Completed">
+                        <Trigger Property="VisualState" Value="Completed">
                             <Setter TargetName="Circle" Property="Background"
                                     Value="{DynamicResource Wb.Brush.Accent.Default}" />
                             <Setter TargetName="Circle" Property="BorderBrush"
@@ -87,14 +90,14 @@
                                     Value="{DynamicResource Wb.Brush.Accent.Default}" />
                             <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Primary}" />
                         </Trigger>
-                        <Trigger Property="State" Value="Stale">
+                        <Trigger Property="VisualState" Value="Stale">
                             <Setter TargetName="Circle" Property="BorderBrush"
                                     Value="{DynamicResource Wb.Brush.Warning}" />
                             <Setter TargetName="Number" Property="Foreground"
                                     Value="{DynamicResource Wb.Brush.Warning}" />
                             <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Warning}" />
                         </Trigger>
-                        <Trigger Property="State" Value="Locked">
+                        <Trigger Property="VisualState" Value="Locked">
                             <Setter Property="Cursor" Value="Arrow" />
                             <Setter Property="Opacity" Value="0.45" />
                             <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Disabled}" />
@@ -105,7 +108,7 @@
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
-                                <Condition Property="State" Value="Locked" />
+                                <Condition Property="VisualState" Value="Locked" />
                                 <Condition Property="IsMouseOver" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="Pill" Property="Background" Value="Transparent" />

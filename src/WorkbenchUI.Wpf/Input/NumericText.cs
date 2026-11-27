@@ -46,7 +46,7 @@ internal static class NumericText
             return false;
         }
 
-        if (!double.TryParse(numericPart, NumberStyles.Float, culture, out number))
+        if (!double.TryParse(numericPart, NumberStyles.Float, culture, out number) || !double.IsFinite(number))
         {
             return false;
         }

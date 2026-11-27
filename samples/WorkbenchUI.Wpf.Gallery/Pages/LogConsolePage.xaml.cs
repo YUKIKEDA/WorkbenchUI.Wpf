@@ -15,6 +15,7 @@ namespace WorkbenchUI.Wpf.Gallery.Pages
             Console.Source = _buffer;
             Progress.CancelCommand = new RelayCommand(() => _cts?.Cancel());
             _buffer.Append(LogLevel.Info, "LogConsole initialized.");
+            Unloaded += (_, _) => _cts?.Cancel();
         }
 
         private async void OnStart(object sender, RoutedEventArgs e)

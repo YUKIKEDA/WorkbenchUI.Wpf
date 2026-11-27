@@ -53,11 +53,12 @@ internal static class ViewportVoxelSurface
             }
         }
 
-        var positions = new List<double>(activeSet.Count * 6 * 4 * 3);
-        var triangles = new List<int>(activeSet.Count * 6 * 2 * 3);
-        var triSlot = new List<int>(activeSet.Count * 6 * 2);
-        var triLinear = new List<int>(activeSet.Count * 6 * 2);
-        List<double>? scalarOut = scalars is null ? null : new List<double>(activeSet.Count * 6 * 4);
+        var estimatedFaces = Math.Min(activeSet.Count, 100_000) * 2;
+        var positions = new List<double>(estimatedFaces * 4 * 3);
+        var triangles = new List<int>(estimatedFaces * 2 * 3);
+        var triSlot = new List<int>(estimatedFaces * 2);
+        var triLinear = new List<int>(estimatedFaces * 2);
+        List<double>? scalarOut = scalars is null ? null : new List<double>(estimatedFaces * 4);
 
         foreach (var linear in activeSet)
         {

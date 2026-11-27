@@ -118,6 +118,23 @@ public class ColorScaleTests
         Assert.Equal(Colors.Magenta, scale.GetColor(double.NaN));
     }
 
+    [Theory]
+    [InlineData(0.0)]
+    [InlineData(-5.0)]
+    public void GetColor_LogarithmicNonPositiveValue_ReturnsBelowRangeColor(double value)
+    {
+        var scale = new ColorScale
+        {
+            Minimum = 1.0,
+            Maximum = 100.0,
+            IsLogarithmic = true,
+            LevelCount = 5,
+            BelowRangeColor = Colors.Magenta,
+        };
+
+        Assert.Equal(Colors.Magenta, scale.GetColor(value));
+    }
+
     [Fact]
     public void GetColor_DiscreteLevels_QuantizesWithinBand()
     {

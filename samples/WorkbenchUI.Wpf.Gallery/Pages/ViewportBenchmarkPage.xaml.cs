@@ -43,7 +43,11 @@ public partial class ViewportBenchmarkPage : UserControl
 
         // Async build progress reporting (the previous scene stays visible and interactive while building)
         Viewport.GeometryBuildProgressChanged += OnBuildProgressChanged;
-        Viewport.GeometryBuildCompleted += OnBuildCompleted;
+        Viewport.GeometryBuildCompleted += (_, _) =>
+        {
+            OnBuildCompleted(this, EventArgs.Empty);
+            UpdateRendererInfo();
+        };
 
         // Geometry builds run lazily on the next render frame, so poll stats on a timer.
         // Because CompositionTarget.Rendering fires every frame during orbit animation and would
@@ -62,9 +66,8 @@ public partial class ViewportBenchmarkPage : UserControl
             }
 
             _statsTimer.Start();
-            RendererInfo.Text = Viewport.IsSoftwareRendering
-                ? "Rendering path: WARP (software) + WriteableBitmap fallback"
-                : "Rendering path: Hardware D3D11 + D3DImage (shared surface)";
+            UpdateRendererInfo();
+            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, UpdateRendererInfo);
         };
         Unloaded += (_, _) =>
         {
@@ -72,6 +75,10 @@ public partial class ViewportBenchmarkPage : UserControl
             SetRotating(false);
         };
     }
+
+    private void UpdateRendererInfo() => RendererInfo.Text = Viewport.IsSoftwareRendering
+        ? "Rendering path: WARP (software) + WriteableBitmap fallback"
+        : "Rendering path: Hardware D3D11 + D3DImage (shared surface)";
 
     // ================= Synthetic wave mesh =================
 
