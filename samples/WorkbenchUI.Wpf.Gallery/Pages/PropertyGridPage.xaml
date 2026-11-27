@@ -4,33 +4,49 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
              mc:Ignorable="d">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="400" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
 
-        <DockPanel>
-            <TextBlock DockPanel.Dock="Top" Text="PropertyGrid"
-                       FontSize="20" FontWeight="SemiBold" Margin="0,0,0,8" />
-            <wb:PropertyGrid x:Name="Grid1" />
-        </DockPanel>
+            <controls:GalleryPageHeader
+                Category="Data &amp; Visualization"
+                Title="PropertyGrid"
+                Description="Typed property inspector with live search filter, collapsible categories, description tooltips, inline Path/Color/Vector3 editors, and IUnitProvider integration."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="WorkbenchUI.Wpf.Controls" />
 
-        <StackPanel Grid.Column="1" Margin="24,36,0,0">
-            <TextBlock Text="Demo Notes" FontWeight="SemiBold" Margin="0,0,0,8" />
-            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource Wb.Brush.Text.Secondary}">
-                <Run Text="• Collapse/expand categories by clicking headers" /><LineBreak />
-                <Run Text="• Filter properties using the search box at the top" /><LineBreak />
-                <Run Text="• Hover over a row to see its description tooltip" /><LineBreak />
-                <Run Text="• &quot;Thickness&quot; uses IUnitProvider (displays mm, stores m)" /><LineBreak />
-                <Run Text="• Changing &quot;Analysis Type&quot; dynamically swaps the rows below" /><LineBreak />
-                <Run Text="• &quot;ID&quot; is read-only" />
-            </TextBlock>
-            <TextBlock x:Name="ValueMonitor"
-                       Margin="0,16,0,0"
-                       FontFamily="{StaticResource Wb.FontFamily.Monospace}"
-                       Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
+            <controls:ControlExample x:Name="GridExample"
+                                     HeaderText="Engineering Property Inspector"
+                                     Description="Change Analysis Type between Static and Thermal Conduction to see dynamic property swapping, or edit Thickness in mm while storing base meters."
+                                     OptionsWidth="270">
+                <wb:PropertyGrid x:Name="Grid1" Height="450" />
+
+                <controls:ControlExample.Options>
+                    <StackPanel>
+                        <TextBlock Text="Live Monitor" Style="{StaticResource Gallery.OptionLabel}" Margin="0,0,0,6" />
+                        <Border Background="{DynamicResource Wb.Brush.Surface.Window}"
+                                BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                                BorderThickness="1"
+                                CornerRadius="3"
+                                Padding="10,8"
+                                Margin="0,0,0,14">
+                            <TextBlock x:Name="ValueMonitor"
+                                       FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                                       FontSize="{DynamicResource Wb.FontSize.S}"
+                                       TextWrapping="Wrap" />
+                        </Border>
+
+                        <TextBlock Text="Interactive Features" Style="{StaticResource Gallery.OptionLabel}" Margin="0,0,0,6" />
+                        <TextBlock Text="• Collapse or expand category headers" Style="{StaticResource Gallery.HintText}" Margin="0,2" />
+                        <TextBlock Text="• Filter properties via top search bar" Style="{StaticResource Gallery.HintText}" Margin="0,2" />
+                        <TextBlock Text="• Hover rows to inspect Description tooltips" Style="{StaticResource Gallery.HintText}" Margin="0,2" />
+                        <TextBlock Text="• Thickness stores meters via IUnitProvider" Style="{StaticResource Gallery.HintText}" Margin="0,2" />
+                        <TextBlock Text="• ID row demonstrates IsReadOnly=True" Style="{StaticResource Gallery.HintText}" Margin="0,2" />
+                    </StackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+
         </StackPanel>
-    </Grid>
+    </ScrollViewer>
 </UserControl>

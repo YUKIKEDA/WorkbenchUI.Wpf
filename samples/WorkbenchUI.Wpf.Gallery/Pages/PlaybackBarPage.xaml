@@ -1,0 +1,79 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.PlaybackBarPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
+             mc:Ignorable="d">
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
+
+            <controls:GalleryPageHeader
+                Category="Navigation &amp; Workflow"
+                Title="PlaybackBar"
+                Description="Index-based frame transport bar with built-in playback timer, FrameLabel display, loop mode, and keyboard shortcuts (Space, ←/→, Home/End)."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="WorkbenchUI.Wpf.Controls" />
+
+            <!-- Card 1: Animated Mode Shape -->
+            <controls:ControlExample x:Name="PlaybackExample"
+                                     HeaderText="Transient &amp; Modal Playback"
+                                     Description="Drives Mode 1 (45.2 Hz) beam oscillation via CurrentFrameChanged. Focus the bar and press Space (Play/Pause), Left/Right (Step), or Home/End.">
+                <Border Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                        BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                        BorderThickness="1"
+                        CornerRadius="3"
+                        Padding="12">
+                    <StackPanel>
+                        <Canvas x:Name="ModeCanvas" Height="130" ClipToBounds="True">
+                            <Polyline x:Name="ModeShape"
+                                      Stroke="{DynamicResource Wb.Brush.Accent.Default}"
+                                      StrokeThickness="2" />
+                            <Line x:Name="BaseLine"
+                                  Stroke="{DynamicResource Wb.Brush.Border.Default}"
+                                  StrokeDashArray="3,3"
+                                  StrokeThickness="1" />
+                        </Canvas>
+
+                        <wb:PlaybackBar x:Name="ModePlayback"
+                                        Margin="0,10,0,0"
+                                        FrameCount="60"
+                                        FramesPerSecond="30"
+                                        IsLooping="True"
+                                        CurrentFrameChanged="ModePlayback_CurrentFrameChanged" />
+                    </StackPanel>
+                </Border>
+
+                <controls:ControlExample.Options>
+                    <StackPanel>
+                        <TextBlock Text="FramesPerSecond" Style="{StaticResource Gallery.OptionLabel}" Margin="0,0,0,4" />
+                        <ComboBox x:Name="SpeedCombo" SelectedIndex="1" SelectionChanged="SpeedCombo_SelectionChanged">
+                            <ComboBoxItem Content="15 fps" Tag="15" />
+                            <ComboBoxItem Content="30 fps" Tag="30" />
+                            <ComboBoxItem Content="60 fps" Tag="60" />
+                        </ComboBox>
+
+                        <wb:ToggleSwitch Content="IsLooping"
+                                         Margin="0,12,0,0"
+                                         IsChecked="{Binding ElementName=ModePlayback, Path=IsLooping, Mode=TwoWay}" />
+
+                        <wb:ToggleSwitch Content="IsPlaying"
+                                         Margin="0,10,0,0"
+                                         IsChecked="{Binding ElementName=ModePlayback, Path=IsPlaying, Mode=TwoWay}" />
+                    </StackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+
+            <!-- Card 2: Empty / Disabled State -->
+            <controls:ControlExample x:Name="EmptyExample"
+                                     HeaderText="Unloaded State (FrameCount = 0)"
+                                     Description="When FrameCount is 0 (no transient results loaded), PlaybackBar automatically disables transport buttons and slider.">
+                <wb:PlaybackBar Width="340"
+                                HorizontalAlignment="Left"
+                                FrameCount="0" />
+            </controls:ControlExample>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

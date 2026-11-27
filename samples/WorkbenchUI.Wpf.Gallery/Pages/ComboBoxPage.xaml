@@ -1,0 +1,75 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.ComboBoxPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
+             mc:Ignorable="d">
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
+
+            <controls:GalleryPageHeader
+                Category="Basic Inputs"
+                Title="ComboBox &amp; CheckComboBox"
+                Description="Single-selection ComboBox (standard and editable) paired with multi-selection CheckComboBox supporting Select All and summary formatting."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="WorkbenchUI.Wpf.Controls" />
+
+            <!-- Card 1: Standard & Editable ComboBox -->
+            <controls:ControlExample x:Name="ComboBoxExample"
+                                     HeaderText="ComboBox (Standard, Editable, Disabled)"
+                                     Description="Standard WPF ComboBox styled with crisp 24 px height and theme-aware dropdown popups.">
+                <WrapPanel>
+                    <ComboBox Width="190" SelectedIndex="0" Margin="0,0,10,6">
+                        <ComboBoxItem Content="Structural (Static)" />
+                        <ComboBoxItem Content="Modal Analysis" />
+                        <ComboBoxItem Content="Thermal Conduction" />
+                        <ComboBoxItem Content="Thermal Stress" />
+                    </ComboBox>
+
+                    <ComboBox Width="190" IsEditable="True" Text="Aluminum A5052" Margin="0,0,10,6">
+                        <ComboBoxItem Content="Aluminum A5052" />
+                        <ComboBoxItem Content="Steel SS400" />
+                        <ComboBoxItem Content="Titanium Ti-6Al-4V" />
+                    </ComboBox>
+
+                    <ComboBox Width="130" SelectedIndex="0" IsEnabled="False" Margin="0,0,0,6">
+                        <ComboBoxItem Content="Disabled" />
+                    </ComboBox>
+                </WrapPanel>
+            </controls:ControlExample>
+
+            <!-- Card 2: CheckComboBox (Multi-Select) -->
+            <controls:ControlExample x:Name="CheckComboExample"
+                                     HeaderText="CheckComboBox (Multi-select Dropdown)"
+                                     Description="Bind an ObservableCollection to SelectedItems (TwoWay sync). Supports SummaryFormat count templates, a Select All row, and DisplayMemberPath.">
+                <StackPanel>
+                    <WrapPanel>
+                        <StackPanel Width="240" Margin="0,0,20,8">
+                            <TextBlock Text="Result Components (Select All + Count)" Margin="0,0,0,4" />
+                            <wb:CheckComboBox x:Name="ComponentCombo"
+                                              SummaryFormat="{}{0} component(s) selected"
+                                              SelectAllContent="(Select All)"
+                                              PlaceholderText="Select components..." />
+                        </StackPanel>
+
+                        <StackPanel Width="240" Margin="0,0,0,8">
+                            <TextBlock Text="Load Cases (Joined Names)" Margin="0,0,0,4" />
+                            <wb:CheckComboBox x:Name="CaseCombo"
+                                              DisplayMemberPath="Name"
+                                              PlaceholderText="Select load cases..." />
+                        </StackPanel>
+                    </WrapPanel>
+
+                    <TextBlock x:Name="ComboInfo"
+                               Margin="0,8,0,0"
+                               FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                               FontSize="{DynamicResource Wb.FontSize.S}"
+                               Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
+                </StackPanel>
+            </controls:ControlExample>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

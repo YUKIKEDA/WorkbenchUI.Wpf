@@ -1,0 +1,96 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.SlidersPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
+             mc:Ignorable="d">
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
+
+            <controls:GalleryPageHeader
+                Category="Basic Inputs"
+                Title="Slider &amp; RangeSlider"
+                Description="Single-value Slider with tick snapping alongside dual-thumb RangeSlider with two-way ColorScale binding and center-bar range panning."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="WorkbenchUI.Wpf.Controls" />
+
+            <!-- Card 1: Slider -->
+            <controls:ControlExample x:Name="SliderExample"
+                                     HeaderText="Interactive Slider Playground"
+                                     Description="Adjust continuous or tick-snapped values and test disabled appearance.">
+                <StackPanel MaxWidth="420" HorizontalAlignment="Left">
+                    <Slider x:Name="DemoSlider"
+                            Minimum="0"
+                            Maximum="100"
+                            Value="40"
+                            TickFrequency="10" />
+                    <TextBlock Margin="0,8,0,12"
+                               FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                               FontSize="{DynamicResource Wb.FontSize.S}"
+                               Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                               Text="{Binding ElementName=DemoSlider, Path=Value, StringFormat='Value = {0:F1}'}" />
+
+                    <Slider Minimum="0" Maximum="100" Value="65" IsEnabled="False" />
+                    <TextBlock Text="Disabled Slider" Style="{StaticResource Gallery.HintText}" Margin="0,4,0,0" />
+                </StackPanel>
+
+                <controls:ControlExample.Options>
+                    <StackPanel>
+                        <wb:ToggleSwitch Content="IsSnapToTickEnabled"
+                                         IsChecked="{Binding ElementName=DemoSlider, Path=IsSnapToTickEnabled, Mode=TwoWay}" />
+                        <wb:ToggleSwitch Content="IsEnabled"
+                                         Margin="0,10,0,0"
+                                         IsChecked="{Binding ElementName=DemoSlider, Path=IsEnabled, Mode=TwoWay}" />
+                        <TextBlock Text="Maximum" Style="{StaticResource Gallery.OptionLabel}" />
+                        <ComboBox x:Name="MaxCombo" SelectedIndex="0" SelectionChanged="MaxCombo_SelectionChanged">
+                            <ComboBoxItem Content="100" Tag="100" />
+                            <ComboBoxItem Content="200" Tag="200" />
+                            <ComboBoxItem Content="500" Tag="500" />
+                        </ComboBox>
+                    </StackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+
+            <!-- Card 2: RangeSlider -->
+            <controls:ControlExample x:Name="RangeSliderExample"
+                                     HeaderText="RangeSlider (Two-way ColorScale Binding)"
+                                     Description="Drag either thumb to resize bounds independently, or drag the center track to pan the interval while preserving span width.">
+                <WrapPanel>
+                    <wb:ColorMapLegend x:Name="RangeLegend" Height="180" Title="Stress [MPa]" Margin="0,0,24,0" />
+
+                    <StackPanel Width="290" VerticalAlignment="Center" Margin="0,0,28,0">
+                        <wb:RangeSlider x:Name="ContourRange"
+                                        Minimum="0"
+                                        Maximum="500"
+                                        LowerValue="100"
+                                        UpperValue="350" />
+                        <TextBlock Margin="0,8,0,16"
+                                   FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                                   FontSize="{DynamicResource Wb.FontSize.S}">
+                            <Run Text="{Binding ElementName=ContourRange, Path=LowerValue, StringFormat='Min = {0:F0}'}" />
+                            <Run Text=" / " />
+                            <Run Text="{Binding ElementName=ContourRange, Path=UpperValue, StringFormat='Max = {0:F0}'}" />
+                        </TextBlock>
+
+                        <wb:RangeSlider Minimum="0" Maximum="100" LowerValue="20" UpperValue="60" IsEnabled="False" />
+                        <TextBlock Text="Disabled state" Style="{StaticResource Gallery.HintText}" Margin="0,4,0,0" />
+                    </StackPanel>
+
+                    <StackPanel HorizontalAlignment="Center">
+                        <wb:RangeSlider Orientation="Vertical"
+                                        Height="160"
+                                        Minimum="0"
+                                        Maximum="1"
+                                        LowerValue="0.25"
+                                        UpperValue="0.75"
+                                        HorizontalAlignment="Center" />
+                        <TextBlock Text="Vertical" Style="{StaticResource Gallery.HintText}" Margin="0,4,0,0" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </WrapPanel>
+            </controls:ControlExample>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

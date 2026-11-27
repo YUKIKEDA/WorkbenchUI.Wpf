@@ -1,0 +1,76 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.MatrixBoxPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
+             mc:Ignorable="d">
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
+
+            <controls:GalleryPageHeader
+                Category="Engineering Inputs"
+                Title="MatrixBox"
+                Description="Structured multi-cell numeric grid for anisotropic stiffness matrices, inertia tensors, and coordinate transforms with optional symmetry mirroring."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="WorkbenchUI.Wpf.Controls" />
+
+            <!-- Card 1: Symmetric Orthotropic Matrix -->
+            <controls:ControlExample x:Name="SymmetricExample"
+                                     HeaderText="Symmetric Elasticity Matrix (3×3)"
+                                     Description="Each committed cell edit assigns a fresh double[,] instance to Values. With IsSymmetric=True, editing (i, j) mirrors to (j, i).">
+                <WrapPanel>
+                    <StackPanel Margin="0,0,28,6">
+                        <TextBlock Text="Orthotropic Elasticity [GPa]" Margin="0,0,0,6" />
+                        <wb:MatrixBox x:Name="StiffnessMatrix"
+                                      Width="250"
+                                      IsSymmetric="True"
+                                      Format="G4" />
+                    </StackPanel>
+
+                    <Border Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                            BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                            BorderThickness="1"
+                            CornerRadius="3"
+                            Padding="12,10"
+                            VerticalAlignment="Center">
+                        <TextBlock x:Name="MatrixInfo"
+                                   FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                                   FontSize="{DynamicResource Wb.FontSize.S}"
+                                   Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
+                    </Border>
+                </WrapPanel>
+
+                <controls:ControlExample.Options>
+                    <StackPanel>
+                        <wb:ToggleSwitch Content="IsSymmetric"
+                                         IsChecked="{Binding ElementName=StiffnessMatrix, Path=IsSymmetric, Mode=TwoWay}" />
+
+                        <TextBlock Text="Format" Style="{StaticResource Gallery.OptionLabel}" />
+                        <ComboBox x:Name="FormatCombo" SelectedIndex="0" SelectionChanged="FormatCombo_SelectionChanged">
+                            <ComboBoxItem Content="G4" />
+                            <ComboBoxItem Content="F1" />
+                            <ComboBoxItem Content="E2" />
+                        </ComboBox>
+
+                        <wb:ToggleSwitch Content="IsEnabled"
+                                         Margin="0,12,0,0"
+                                         IsChecked="{Binding ElementName=StiffnessMatrix, Path=IsEnabled, Mode=TwoWay}" />
+                    </StackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+
+            <!-- Card 2: Coordinate Transform (No Headers) -->
+            <controls:ControlExample x:Name="TransformExample"
+                                     HeaderText="Coordinate Transform (No Row/Column Headers)"
+                                     Description="Omit RowHeaders and ColumnHeaders for compact direction-cosine or rotation matrices.">
+                <wb:MatrixBox x:Name="TransformMatrix"
+                              Width="220"
+                              HorizontalAlignment="Left"
+                              Format="F2" />
+            </controls:ControlExample>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

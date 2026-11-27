@@ -4,112 +4,85 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
              mc:Ignorable="d">
-    <UserControl.Resources>
-        <Geometry x:Key="Icon.Open">M1.5,3 H6 L7.5,4.5 H14.5 V6 H3.8 L2,12.5 H1.5 Z M4.5,7 H15.5 L13.5,13 H2.7 Z</Geometry>
-        <Geometry x:Key="Icon.Save">M2,2 H11.5 L14,4.5 V14 H2 Z M4,3.5 V6.5 H10 V3.5 Z M4,9 H12 V12.5 H4 Z</Geometry>
-        <Geometry x:Key="Icon.Undo">M4.5,7 L8.5,3 V5.7 C11.8,5.7 13.8,7.8 13.8,11.2 C12.8,9.4 11,8.7 8.5,8.7 V11 Z</Geometry>
-        <Geometry x:Key="Icon.Mesh">M3,3 H7 V7 H3 Z M9,3 H13 V7 H9 Z M3,9 H7 V13 H3 Z M9,9 H13 V13 H9 Z</Geometry>
-        <Geometry x:Key="Icon.Run">M4,2.5 L13,8 L4,13.5 Z</Geometry>
-    </UserControl.Resources>
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
 
-    <DockPanel>
-        <TextBlock DockPanel.Dock="Top" Text="Shell (ToolBar / StatusBar / GridSplitter / SearchBox)"
-                   FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12" />
+            <controls:GalleryPageHeader
+                Category="Feedback &amp; Windows"
+                Title="Shell &amp; ToolBars"
+                Description="Composite workspace chrome demonstrating ToolBarTray overflow handling, StatusBar telemetry indicators, GridSplitter panes, and GroupBox panels."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="WorkbenchUI.Wpf.Controls" />
 
-        <Border DockPanel.Dock="Top"
-                BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
-                BorderThickness="1">
-            <DockPanel>
-                <!-- ToolBar (buttons move to the overflow menu when the window narrows) -->
-                <ToolBarTray DockPanel.Dock="Top">
-                    <ToolBar>
-                        <Button ToolTip="Open">
-                            <Path Data="{StaticResource Icon.Open}" Fill="{DynamicResource Wb.Brush.Text.Primary}"
-                                  Width="16" Height="16" Stretch="Uniform" />
-                        </Button>
-                        <Button ToolTip="Save">
-                            <Path Data="{StaticResource Icon.Save}" Fill="{DynamicResource Wb.Brush.Text.Primary}"
-                                  Width="16" Height="16" Stretch="Uniform" />
-                        </Button>
-                        <Separator />
-                        <Button ToolTip="Undo">
-                            <Path Data="{StaticResource Icon.Undo}" Fill="{DynamicResource Wb.Brush.Text.Primary}"
-                                  Width="16" Height="16" Stretch="Uniform" />
-                        </Button>
-                        <ToggleButton ToolTip="Show Mesh" IsChecked="True">
-                            <Path Data="{StaticResource Icon.Mesh}" Fill="{DynamicResource Wb.Brush.Text.Primary}"
-                                  Width="16" Height="16" Stretch="Uniform" />
-                        </ToggleButton>
-                    </ToolBar>
-                    <ToolBar>
-                        <Button ToolTip="Run Analysis">
-                            <StackPanel Orientation="Horizontal">
-                                <Path Data="{StaticResource Icon.Run}" Fill="{DynamicResource Wb.Brush.Success}"
-                                      Width="14" Height="14" Stretch="Uniform" />
-                                <TextBlock Text="Run" Margin="4,0,0,0" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-                    </ToolBar>
-                </ToolBarTray>
+            <controls:ControlExample x:Name="ShellExample"
+                                     HeaderText="ToolBarTray, StatusBar &amp; GridSplitter"
+                                     Description="Resize the window to inspect ToolBarTray overflow behavior, or drag the center GridSplitter between workspace panes.">
+                <Border BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                        BorderThickness="1"
+                        CornerRadius="3">
+                    <DockPanel>
+                        <ToolBarTray DockPanel.Dock="Top">
+                            <ToolBar>
+                                <Button ToolTip="Open" wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.FolderOpen}" />
+                                <Button ToolTip="Save" wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Save}" />
+                                <Separator />
+                                <Button ToolTip="Undo" wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Undo}" />
+                                <ToggleButton ToolTip="Show Mesh" IsChecked="True">
+                                    <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Grid}" Size="16" />
+                                </ToggleButton>
+                            </ToolBar>
+                            <ToolBar>
+                                <Button ToolTip="Run Analysis">
+                                    <StackPanel Orientation="Horizontal">
+                                        <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Play}"
+                                                          Size="14"
+                                                          Foreground="{DynamicResource Wb.Brush.Success}" />
+                                        <TextBlock Text="Run" Margin="5,0,0,0" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                            </ToolBar>
+                        </ToolBarTray>
 
-                <!-- Status bar -->
-                <StatusBar DockPanel.Dock="Bottom">
-                    <StatusBarItem Content="Ready" />
-                    <Separator />
-                    <StatusBarItem Content="Nodes: 45,230 / Elements: 38,911" />
-                    <Separator />
-                    <StatusBarItem Content="Units: SI (m, kg, s)" />
-                    <StatusBarItem DockPanel.Dock="Right" Content="X: 12.5  Y: -3.2  Z: 0.0" />
-                </StatusBar>
+                        <StatusBar DockPanel.Dock="Bottom">
+                            <StatusBarItem Content="Ready" />
+                            <Separator />
+                            <StatusBarItem Content="Nodes: 45,230 / Elements: 38,911" />
+                            <Separator />
+                            <StatusBarItem Content="Units: SI (m, kg, s)" />
+                            <StatusBarItem DockPanel.Dock="Right" Content="X: 12.5  Y: -3.2  Z: 0.0" />
+                        </StatusBar>
 
-                <!-- Pane split with GridSplitter -->
-                <Grid Margin="8" Height="300">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="220" MinWidth="120" />
-                        <ColumnDefinition Width="6" />
-                        <ColumnDefinition Width="*" MinWidth="120" />
-                    </Grid.ColumnDefinitions>
+                        <Grid Margin="10" Height="280">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="220" MinWidth="120" />
+                                <ColumnDefinition Width="6" />
+                                <ColumnDefinition Width="*" MinWidth="120" />
+                            </Grid.ColumnDefinitions>
 
-                    <GroupBox Header="Parts List (SearchBox Demo)">
-                        <DockPanel>
-                            <wb:SearchBox x:Name="PartsSearch"
-                                          DockPanel.Dock="Top"
-                                          Placeholder="Filter parts..."
-                                          Margin="0,0,0,6" />
-                            <TextBlock DockPanel.Dock="Bottom"
-                                       Margin="0,6,0,0"
-                                       Foreground="{DynamicResource Wb.Brush.Text.Secondary}">
-                                <Run Text="Committed (200 ms debounce): " /><Run x:Name="SearchEcho" Text="(none)" />
-                            </TextBlock>
-                            <ListBox x:Name="PartsList" />
-                        </DockPanel>
-                    </GroupBox>
+                            <GroupBox Grid.Column="0" Header="Model Parts">
+                                <ListBox x:Name="PartsList" BorderThickness="0" />
+                            </GroupBox>
 
-                    <GridSplitter Grid.Column="1"
-                                  HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Stretch"
-                                  ResizeBehavior="PreviousAndNext" />
+                            <GridSplitter Grid.Column="1"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Stretch"
+                                          ResizeBehavior="PreviousAndNext" />
 
-                    <GroupBox Grid.Column="2" Header="Viewport (Placeholder)">
-                        <Border Background="{DynamicResource Wb.Brush.Surface.Window}">
-                            <TextBlock Text="3D Viewport"
-                                       Foreground="{DynamicResource Wb.Brush.Text.Disabled}"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center" />
-                        </Border>
-                    </GroupBox>
-                </Grid>
-            </DockPanel>
-        </Border>
+                            <GroupBox Grid.Column="2" Header="Viewport (Placeholder)">
+                                <Border Background="{DynamicResource Wb.Brush.Surface.Window}" CornerRadius="2">
+                                    <TextBlock Text="3D Viewport Area"
+                                               Foreground="{DynamicResource Wb.Brush.Text.Disabled}"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" />
+                                </Border>
+                            </GroupBox>
+                        </Grid>
+                    </DockPanel>
+                </Border>
+            </controls:ControlExample>
 
-        <TextBlock DockPanel.Dock="Top" Margin="0,12,0,0" TextWrapping="Wrap"
-                   Foreground="{DynamicResource Wb.Brush.Text.Secondary}">
-            <Run Text="• Narrowing the window collapses toolbar buttons into the overflow menu" /><LineBreak />
-            <Run Text="• Drag the center splitter to resize panes (highlights on hover and drag)" /><LineBreak />
-            <Run Text="• SearchBox commits 200 ms after typing stops (Enter commits immediately, Esc clears)" /><LineBreak />
-            <Run Text="• PropertyGrid uses the same SearchBox for its filter input" />
-        </TextBlock>
-        <Border />
-    </DockPanel>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

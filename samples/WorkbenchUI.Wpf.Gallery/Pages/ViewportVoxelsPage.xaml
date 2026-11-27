@@ -1,77 +1,78 @@
 <UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.ViewportVoxelsPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:wb="https://schemas.workbenchui.dev/wpf">
-    <UserControl.Resources>
-        <Style x:Key="Hint" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Secondary}" />
-            <Setter Property="FontSize" Value="{StaticResource Wb.FontSize.S}" />
-            <Setter Property="Margin" Value="0,2,0,0" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-        </Style>
-    </UserControl.Resources>
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel MaxWidth="920" HorizontalAlignment="Left">
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls">
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="1040" HorizontalAlignment="Left">
 
-            <TextBlock Text="3D Voxels (Voxel Core, Playback &amp; Glyphs)" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4" />
-            <TextBlock Style="{StaticResource Hint}"
-                       Text="Demonstrates exterior-face voxel meshing, cell probing, PlaybackBar scalar field swapping, cell-centered velocity glyphs, and brick LOD when active cells exceed the threshold. The 1000³ preset uses a sparse logical domain (sampled across outer faces) and auto-fits outside the hollow shell after model swap." />
+            <controls:GalleryPageHeader
+                Category="3D Viewport"
+                Title="Sparse Voxels"
+                Description="Exterior-face voxel meshing, cell probing, PlaybackBar field swapping, cell-centered velocity glyphs, brick LOD, and 1000³ sparse logical domain stress testing."
+                PackageName="WorkbenchUI.Wpf.Viewport3D"
+                NamespaceName="WorkbenchUI.Wpf.Viewport3D" />
 
-            <WrapPanel Margin="0,12,0,4" ItemHeight="28">
-                <wb:ToggleSwitch x:Name="ContourToggle" Content="Contours" IsChecked="True"
-                                 AutomationProperties.AutomationId="VoxelContourToggle"
-                                 Checked="OnContourChanged" Unchecked="OnContourChanged" />
-                <wb:ToggleSwitch x:Name="ClipToggle" Content="Section Cut" Margin="12,0,0,0"
-                                 AutomationProperties.AutomationId="VoxelClipToggle"
-                                 Checked="OnClipChanged" Unchecked="OnClipChanged" />
-                <wb:ToggleSwitch x:Name="CellProbeToggle" Content="Cell Probe" IsChecked="True" Margin="12,0,0,0"
-                                 AutomationProperties.AutomationId="VoxelCellProbeToggle"
-                                 Checked="OnProbeModeChanged" Unchecked="OnProbeModeChanged" />
-                <wb:ToggleSwitch x:Name="GlyphToggle" Content="Velocity Glyphs" Margin="12,0,0,0"
-                                 AutomationProperties.AutomationId="VoxelGlyphToggle"
-                                 Checked="OnGlyphChanged" Unchecked="OnGlyphChanged" />
-                <Button Content="Fit" Click="OnFitClick" MinWidth="56" Margin="12,0,0,0"
-                        AutomationProperties.AutomationId="VoxelFitButton" />
-                <Button Content="Clear Annotations" Click="OnClearAnnotations" MinWidth="112" Margin="6,0,0,0" />
-            </WrapPanel>
+            <Border Style="{StaticResource Gallery.CardSurface}" Padding="16">
+                <StackPanel>
+                    <WrapPanel Margin="0,0,0,6" ItemHeight="28">
+                        <wb:ToggleSwitch x:Name="ContourToggle" Content="Contours" IsChecked="True"
+                                         AutomationProperties.AutomationId="VoxelContourToggle"
+                                         Checked="OnContourChanged" Unchecked="OnContourChanged" />
+                        <wb:ToggleSwitch x:Name="ClipToggle" Content="Section Cut" Margin="12,0,0,0"
+                                         AutomationProperties.AutomationId="VoxelClipToggle"
+                                         Checked="OnClipChanged" Unchecked="OnClipChanged" />
+                        <wb:ToggleSwitch x:Name="CellProbeToggle" Content="Cell Probe" IsChecked="True" Margin="12,0,0,0"
+                                         AutomationProperties.AutomationId="VoxelCellProbeToggle"
+                                         Checked="OnProbeModeChanged" Unchecked="OnProbeModeChanged" />
+                        <wb:ToggleSwitch x:Name="GlyphToggle" Content="Velocity Glyphs" Margin="12,0,0,0"
+                                         AutomationProperties.AutomationId="VoxelGlyphToggle"
+                                         Checked="OnGlyphChanged" Unchecked="OnGlyphChanged" />
+                        <Button Content="Fit" Click="OnFitClick" MinWidth="56" Margin="12,0,0,0"
+                                AutomationProperties.AutomationId="VoxelFitButton" />
+                        <Button Content="Clear Annotations" Click="OnClearAnnotations" MinWidth="112" Margin="6,0,0,0" />
+                    </WrapPanel>
 
-            <WrapPanel Margin="0,0,0,8" ItemHeight="28">
-                <Button Content="Medium Demo" Click="OnLoadMedium" MinWidth="96"
-                        AutomationProperties.AutomationId="VoxelLoadMedium" />
-                <Button Content="1000³ Sparse Stress Test" Click="OnLoadStress" MinWidth="160" Margin="8,0,0,0"
-                        AutomationProperties.AutomationId="VoxelLoadStress" />
-                <TextBlock x:Name="StatsText" VerticalAlignment="Center" Margin="16,0,0,0"
-                           Style="{StaticResource Hint}"
-                           AutomationProperties.AutomationId="VoxelStats" />
-            </WrapPanel>
+                    <WrapPanel Margin="0,0,0,10" ItemHeight="28">
+                        <Button Content="Medium Demo" Click="OnLoadMedium" MinWidth="96"
+                                AutomationProperties.AutomationId="VoxelLoadMedium" />
+                        <Button Content="1000³ Sparse Stress Test" Click="OnLoadStress" MinWidth="160" Margin="8,0,0,0"
+                                AutomationProperties.AutomationId="VoxelLoadStress" />
+                        <TextBlock x:Name="StatsText" VerticalAlignment="Center" Margin="16,0,0,0"
+                                   Style="{StaticResource Gallery.HintText}"
+                                   AutomationProperties.AutomationId="VoxelStats" />
+                    </WrapPanel>
 
-            <Grid Height="400" Margin="0,0,0,8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Border Grid.Column="0" BorderBrush="{DynamicResource Wb.Brush.Border.Default}" BorderThickness="1">
-                    <wb:WorkbenchViewport x:Name="Viewport"
-                                    AutomationProperties.AutomationId="VoxelViewport"
-                                    ShowContours="True"
-                                    ShowEdges="False"
-                                    ShowGlyphs="True"
-                                    GlyphStride="2"
-                                    InteractiveLodThreshold="20000"
-                                    PickMode="Cell" />
-                </Border>
-                <wb:ColorMapLegend x:Name="Legend" Grid.Column="1" Width="56" Margin="8,0,0,0" />
-            </Grid>
+                    <Grid Height="410" Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" BorderBrush="{DynamicResource Wb.Brush.Border.Default}" BorderThickness="1">
+                            <wb:WorkbenchViewport x:Name="Viewport"
+                                                  AutomationProperties.AutomationId="VoxelViewport"
+                                                  ShowContours="True"
+                                                  ShowEdges="False"
+                                                  ShowGlyphs="True"
+                                                  GlyphStride="2"
+                                                  InteractiveLodThreshold="20000"
+                                                  PickMode="Cell" />
+                        </Border>
+                        <wb:ColorMapLegend x:Name="Legend" Grid.Column="1" Width="56" Margin="12,0,0,0" />
+                    </Grid>
 
-            <wb:PlaybackBar x:Name="Playback"
-                            AutomationProperties.AutomationId="VoxelPlayback"
-                            Margin="0,0,0,4"
-                            CurrentFrameChanged="OnPlaybackFrameChanged" />
+                    <wb:PlaybackBar x:Name="Playback"
+                                    AutomationProperties.AutomationId="VoxelPlayback"
+                                    Margin="0,0,0,8"
+                                    CurrentFrameChanged="OnPlaybackFrameChanged" />
 
-            <TextBlock x:Name="ProbeInfo" Style="{StaticResource Hint}"
-                       Text="Click a cell to inspect its indices, region ID, and scalar value."
-                       AutomationProperties.AutomationId="VoxelProbeInfo" />
-            <TextBlock x:Name="RendererInfo" Style="{StaticResource Hint}" Margin="0,4,0,0" />
+                    <TextBlock x:Name="ProbeInfo" Style="{StaticResource Gallery.HintText}"
+                               Text="Click a cell to inspect its indices, region ID, and scalar value."
+                               AutomationProperties.AutomationId="VoxelProbeInfo" />
+                    <TextBlock x:Name="RendererInfo" Style="{StaticResource Gallery.HintText}" Margin="0,4,0,0" />
+                </StackPanel>
+            </Border>
+
         </StackPanel>
     </ScrollViewer>
 </UserControl>

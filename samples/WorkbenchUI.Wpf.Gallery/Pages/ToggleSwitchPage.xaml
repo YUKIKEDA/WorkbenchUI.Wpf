@@ -1,0 +1,66 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.ToggleSwitchPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
+             mc:Ignorable="d">
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
+
+            <controls:GalleryPageHeader
+                Category="Basic Inputs"
+                Title="ToggleSwitch"
+                Description="Immediate ON/OFF toggle control deriving from ToggleButton, designed for live settings and workspace overlays."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="WorkbenchUI.Wpf.Controls" />
+
+            <!-- Card 1: Interactive Playground -->
+            <controls:ControlExample x:Name="PlaygroundExample"
+                                     HeaderText="Interactive ToggleSwitch Playground"
+                                     Description="Derives from ToggleButton so IsChecked and Command bind identically to CheckBox.">
+                <StackPanel HorizontalAlignment="Left">
+                    <wb:ToggleSwitch x:Name="LiveSwitch"
+                                     Content="Auto-save project"
+                                     IsChecked="True" />
+                    <TextBlock Margin="0,10,0,0"
+                               FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                               FontSize="{DynamicResource Wb.FontSize.S}"
+                               Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                               Text="{Binding ElementName=LiveSwitch, Path=IsChecked, StringFormat='IsChecked = {0}'}" />
+                </StackPanel>
+
+                <controls:ControlExample.Options>
+                    <StackPanel>
+                        <TextBlock Text="Content Label" Style="{StaticResource Gallery.OptionLabel}" Margin="0,0,0,4" />
+                        <TextBox x:Name="LabelBox"
+                                 Text="Auto-save project"
+                                 TextChanged="LabelBox_TextChanged" />
+
+                        <wb:ToggleSwitch Content="IsChecked"
+                                         Margin="0,12,0,0"
+                                         IsChecked="{Binding ElementName=LiveSwitch, Path=IsChecked, Mode=TwoWay}" />
+
+                        <wb:ToggleSwitch Content="IsEnabled"
+                                         Margin="0,10,0,0"
+                                         IsChecked="{Binding ElementName=LiveSwitch, Path=IsEnabled, Mode=TwoWay}" />
+                    </StackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+
+            <!-- Card 2: Settings List States -->
+            <controls:ControlExample x:Name="StatesExample"
+                                     HeaderText="Settings Group &amp; Disabled States"
+                                     Description="Use ToggleSwitch for immediate preference changes and CheckBox for multi-select form options.">
+                <StackPanel>
+                    <wb:ToggleSwitch Content="Live-update results during solve" IsChecked="True" Margin="0,0,0,8" />
+                    <wb:ToggleSwitch Content="Snap camera to active section plane" Margin="0,0,0,8" />
+                    <wb:ToggleSwitch Content="Disabled (On)" IsChecked="True" IsEnabled="False" Margin="0,0,0,8" />
+                    <wb:ToggleSwitch Content="Disabled (Off)" IsChecked="False" IsEnabled="False" />
+                </StackPanel>
+            </controls:ControlExample>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

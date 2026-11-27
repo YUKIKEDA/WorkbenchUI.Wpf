@@ -1,0 +1,101 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.ColorPickerPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
+             mc:Ignorable="d">
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
+
+            <controls:GalleryPageHeader
+                Category="Engineering Inputs"
+                Title="ColorPicker &amp; ColorEditor"
+                Description="Dropdown color swatch picker and embeddable HSV/RGB/Hex color editor with palette swatches and optional alpha channel editing."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="WorkbenchUI.Wpf.Controls" />
+
+            <!-- Card 1: Dropdown ColorPicker -->
+            <controls:ControlExample x:Name="PickerExample"
+                                     HeaderText="Drop-down ColorPicker"
+                                     Description="Click a swatch to open ColorEditor in a popup (also F4 / Alt+Down). Palette swatches preserve the current alpha value.">
+                <WrapPanel>
+                    <StackPanel Width="240" Margin="0,0,24,6">
+                        <TextBlock Text="Interactive Picker" Style="{StaticResource Gallery.OptionLabel}" Margin="0,0,0,6" />
+                        <wb:ColorPicker x:Name="PartColorPicker"
+                                        Width="80"
+                                        HorizontalAlignment="Left"
+                                        SelectedColor="#CC0078D7" />
+                        <TextBlock Margin="0,8,0,0"
+                                   FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                                   FontSize="{DynamicResource Wb.FontSize.S}"
+                                   Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                                   Text="{Binding ElementName=PartColorPicker, Path=SelectedColor, StringFormat='SelectedColor = {0}'}" />
+                    </StackPanel>
+
+                    <StackPanel Width="220" Margin="0,0,0,6">
+                        <TextBlock Text="Opaque Only (IsAlphaEnabled=False)" Style="{StaticResource Gallery.OptionLabel}" Margin="0,0,0,6" />
+                        <wb:ColorPicker x:Name="OpaqueColorPicker"
+                                        Width="80"
+                                        HorizontalAlignment="Left"
+                                        SelectedColor="#E81123"
+                                        IsAlphaEnabled="False" />
+                        <TextBlock Margin="0,8,0,0"
+                                   FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                                   FontSize="{DynamicResource Wb.FontSize.S}"
+                                   Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                                   Text="{Binding ElementName=OpaqueColorPicker, Path=SelectedColor, StringFormat='SelectedColor = {0}'}" />
+                    </StackPanel>
+                </WrapPanel>
+
+                <controls:ControlExample.Options>
+                    <StackPanel>
+                        <wb:ToggleSwitch Content="IsAlphaEnabled"
+                                         IsChecked="{Binding ElementName=PartColorPicker, Path=IsAlphaEnabled, Mode=TwoWay}" />
+                        <wb:ToggleSwitch Content="IsEnabled"
+                                         Margin="0,10,0,0"
+                                         IsChecked="{Binding ElementName=PartColorPicker, Path=IsEnabled, Mode=TwoWay}" />
+                    </StackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+
+            <!-- Card 2: Inline ColorEditor -->
+            <controls:ControlExample x:Name="EditorExample"
+                                     HeaderText="Embedded ColorEditor"
+                                     Description="Embed ColorEditor directly inside inspector panes or settings dialogs.">
+                <WrapPanel>
+                    <Border Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                            BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="12"
+                            Margin="0,0,24,6">
+                        <wb:ColorEditor x:Name="InlineEditor"
+                                        Width="300"
+                                        SelectedColor="#FF16C60C" />
+                    </Border>
+
+                    <StackPanel VerticalAlignment="Top">
+                        <TextBlock Text="Live Swatch Preview" Style="{StaticResource Gallery.OptionLabel}" Margin="0,0,0,6" />
+                        <Border Width="96"
+                                Height="56"
+                                CornerRadius="4"
+                                BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                                BorderThickness="1">
+                            <Border.Background>
+                                <SolidColorBrush Color="{Binding ElementName=InlineEditor, Path=SelectedColor}" />
+                            </Border.Background>
+                        </Border>
+                        <TextBlock Margin="0,8,0,0"
+                                   FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                                   FontSize="{DynamicResource Wb.FontSize.S}"
+                                   Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                                   Text="{Binding ElementName=InlineEditor, Path=SelectedColor}" />
+                    </StackPanel>
+                </WrapPanel>
+            </controls:ControlExample>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

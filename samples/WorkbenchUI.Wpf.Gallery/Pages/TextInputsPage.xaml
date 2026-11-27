@@ -1,0 +1,123 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.TextInputsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
+             mc:Ignorable="d">
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
+
+            <controls:GalleryPageHeader
+                Category="Basic Inputs"
+                Title="TextBox &amp; SearchBox"
+                Description="Text entry controls with exception-based red validation borders, debounced SearchBox filtering, PasswordBox, RichTextBox, Label access keys, and Hyperlink."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="WorkbenchUI.Wpf.Controls" />
+
+            <!-- Card 1: TextBox & Validation -->
+            <controls:ControlExample x:Name="TextBoxExample"
+                                     HeaderText="TextBox States &amp; Validation"
+                                     Description="Includes Editable, ReadOnly, Disabled, and ValidatesOnExceptions red border + tooltip (valid plate thickness: 0–100 mm).">
+                <StackPanel MaxWidth="360" HorizontalAlignment="Left">
+                    <TextBox Text="Editable text" Margin="0,0,0,6" />
+                    <TextBox Text="Read-only" IsReadOnly="True" Margin="0,0,0,6" />
+                    <TextBox Text="Disabled" IsEnabled="False" Margin="0,0,0,6" />
+                    <TextBlock Text="Plate thickness [mm] (0–100)"
+                               Style="{StaticResource Gallery.OptionLabel}"
+                               Margin="0,6,0,4" />
+                    <TextBox ToolTipService.InitialShowDelay="200"
+                             Text="{Binding Thickness, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Text="Try entering -5 or 120 to inspect the red error border and validation tooltip."
+                               Style="{StaticResource Gallery.HintText}"
+                               Margin="0,4,0,0" />
+                </StackPanel>
+            </controls:ControlExample>
+
+            <!-- Card 2: Debounced SearchBox -->
+            <controls:ControlExample x:Name="SearchBoxExample"
+                                     HeaderText="SearchBox (200 ms Debounce)"
+                                     Description="Updates SearchText 200 ms after typing stops so list filtering avoids redundant work per keystroke. Enter commits immediately; Esc clears.">
+                <Grid MaxWidth="420" HorizontalAlignment="Left">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <wb:SearchBox x:Name="PartsSearch"
+                                  Width="320"
+                                  HorizontalAlignment="Left"
+                                  Placeholder="Filter parts..."
+                                  Margin="0,0,0,8" />
+
+                    <ListBox x:Name="PartsList"
+                             Grid.Row="1"
+                             Width="320"
+                             Height="140"
+                             HorizontalAlignment="Left" />
+
+                    <TextBlock Grid.Row="2"
+                               Margin="0,8,0,0"
+                               FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                               FontSize="{DynamicResource Wb.FontSize.S}"
+                               Foreground="{DynamicResource Wb.Brush.Text.Secondary}">
+                        <Run Text="Committed SearchText: " /><Run x:Name="SearchEcho" Text="(none)" />
+                    </TextBlock>
+                </Grid>
+            </controls:ControlExample>
+
+            <!-- Card 3: PasswordBox, RichTextBox, Label & Hyperlink -->
+            <controls:ControlExample x:Name="RichTextExample"
+                                     HeaderText="PasswordBox, RichTextBox, Label &amp; Hyperlink"
+                                     Description="Shares TextBox chrome and focus borders. Label removes default 5 px padding and forwards access keys (Alt+S) to Target.">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="130" />
+                        <ColumnDefinition Width="380" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="License Key" VerticalAlignment="Center" Margin="0,0,0,8" />
+                    <PasswordBox Grid.Row="0" Grid.Column="1" Password="secret123" Margin="0,0,0,8" />
+
+                    <TextBlock Grid.Row="1" Text="Analysis Notes" VerticalAlignment="Top" Margin="0,4,0,8" />
+                    <RichTextBox Grid.Row="1" Grid.Column="1" Height="88" Margin="0,0,0,10">
+                        <FlowDocument>
+                            <Paragraph>
+                                Re-ran with <Bold>Rev.3</Bold> mesh. Refined element size at the stress concentration zone to
+                                <Italic>0.5 mm</Italic>.
+                            </Paragraph>
+                            <Paragraph>Next: add a contact stiffness study.</Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+
+                    <Label Grid.Row="2" Grid.Column="0" Content="_Solver:" Target="{Binding ElementName=SolverCombo}"
+                           VerticalAlignment="Center" Margin="0,0,0,8" />
+                    <ComboBox x:Name="SolverCombo" Grid.Row="2" Grid.Column="1" Width="180" SelectedIndex="0"
+                              HorizontalAlignment="Left" Margin="0,0,0,8">
+                        <ComboBoxItem Content="Direct (MUMPS)" />
+                        <ComboBoxItem Content="Iterative (PCG)" />
+                    </ComboBox>
+
+                    <StackPanel Grid.Row="3" Grid.Column="1">
+                        <TextBlock>
+                            See <Hyperlink Click="HelpLink_Click">Solver Configuration Help</Hyperlink>
+                            or a <Hyperlink IsEnabled="False">disabled link</Hyperlink>.
+                        </TextBlock>
+                        <TextBlock x:Name="LinkStatus"
+                                   Style="{StaticResource Gallery.HintText}"
+                                   Margin="0,4,0,0" />
+                    </StackPanel>
+                </Grid>
+            </controls:ControlExample>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

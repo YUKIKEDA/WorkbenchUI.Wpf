@@ -1,0 +1,106 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.ProcessRailPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
+             mc:Ignorable="d">
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
+
+            <controls:GalleryPageHeader
+                Category="Navigation &amp; Workflow"
+                Title="ProcessRail &amp; ChapterHost"
+                Badge="New"
+                Description="Guided sequential workflow stepper (Locked, Available, Current, Completed, Stale) paired with ChapterHost for stage-by-stage CAE workspace panes."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="WorkbenchUI.Wpf.Controls" />
+
+            <controls:ControlExample x:Name="WorkflowExample"
+                                     HeaderText="Interactive Engineering Workflow"
+                                     Description="Click any unlocked chapter in ProcessRail to switch ChapterHost view. Locked stages stay disabled until unlocked by upstream completion.">
+                <Border BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                        BorderThickness="1"
+                        CornerRadius="3"
+                        Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                        Padding="14">
+                    <StackPanel>
+                        <wb:ProcessRail x:Name="WorkflowRail"
+                                        SelectedIndex="2"
+                                        Margin="0,0,0,14">
+                            <wb:ProcessRailItem x:Name="ChapterGeo" Content="Geometry" State="Completed" />
+                            <wb:ProcessRailItem x:Name="ChapterMat" Content="Materials" State="Completed" />
+                            <wb:ProcessRailItem x:Name="ChapterMesh" Content="Meshing" State="Current" />
+                            <wb:ProcessRailItem x:Name="ChapterSolve" Content="Solve" State="Available" />
+                            <wb:ProcessRailItem x:Name="ChapterPost" Content="Post-Process" State="Locked" />
+                        </wb:ProcessRail>
+
+                        <Border Background="{DynamicResource Wb.Brush.Surface.Window}"
+                                BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                                BorderThickness="1"
+                                CornerRadius="3"
+                                Padding="16"
+                                MinHeight="150">
+                            <wb:ChapterHost SelectedIndex="{Binding ElementName=WorkflowRail, Path=SelectedIndex, Mode=TwoWay}">
+                                <wb:ChapterHostItem Header="1. Geometry Preparation">
+                                    <StackPanel>
+                                        <TextBlock Text="CAD model imported (bracket_rev3.step, 3 bodies). Cleanup completed." Margin="0,4,0,0" />
+                                        <TextBlock Text="Tip: Marking Meshing Stale simulates modifying geometry after meshing."
+                                                   Style="{StaticResource Gallery.HintText}" Margin="0,8,0,0" />
+                                    </StackPanel>
+                                </wb:ChapterHostItem>
+                                <wb:ChapterHostItem Header="2. Material Assignment">
+                                    <TextBlock Text="Assigned Steel SS400 (E = 205 GPa, ν = 0.29) to all bodies." Margin="0,4,0,0" />
+                                </wb:ChapterHostItem>
+                                <wb:ChapterHostItem Header="3. Finite Element Meshing">
+                                    <StackPanel>
+                                        <TextBlock Text="Target element size: 2.5 mm · Expected elements: ~38,900 C3D10 tetrahedra." Margin="0,4,0,10" />
+                                        <Button Content="Complete Meshing &amp; Advance to Solve"
+                                                Style="{DynamicResource Wb.Button.Accent}"
+                                                HorizontalAlignment="Left"
+                                                Click="CompleteMeshing_Click" />
+                                    </StackPanel>
+                                </wb:ChapterHostItem>
+                                <wb:ChapterHostItem Header="4. Solver Configuration">
+                                    <StackPanel>
+                                        <TextBlock Text="Direct Sparse Solver ready. Fixed boundary conditions applied on Face 3." Margin="0,4,0,10" />
+                                        <Button Content="Finish Solve &amp; Unlock Post-Process"
+                                                Style="{DynamicResource Wb.Button.Accent}"
+                                                HorizontalAlignment="Left"
+                                                Click="CompleteSolve_Click" />
+                                    </StackPanel>
+                                </wb:ChapterHostItem>
+                                <wb:ChapterHostItem Header="5. Post-Processing Results">
+                                    <TextBlock Text="Peak von Mises Stress = 248.4 MPa (Safety Factor = 1.41)." Margin="0,4,0,0" />
+                                </wb:ChapterHostItem>
+                            </wb:ChapterHost>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <controls:ControlExample.Options>
+                    <StackPanel>
+                        <wb:ToggleSwitch Content="ShowConnectors"
+                                         IsChecked="{Binding ElementName=WorkflowRail, Path=ShowConnectors, Mode=TwoWay}" />
+
+                        <TextBlock Text="Workflow State Actions" Style="{StaticResource Gallery.OptionLabel}" />
+                        <Button Content="Mark Meshing Stale"
+                                HorizontalAlignment="Left"
+                                Margin="0,2,0,6"
+                                Click="MarkMeshStale_Click" />
+                        <Button Content="Unlock Post-Process"
+                                HorizontalAlignment="Left"
+                                Margin="0,0,0,6"
+                                Click="UnlockPost_Click" />
+                        <Button Content="Reset Workflow"
+                                Style="{DynamicResource Wb.Button.Subtle}"
+                                HorizontalAlignment="Left"
+                                Click="ResetWorkflow_Click" />
+                    </StackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,64 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.ToastHostPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
+             mc:Ignorable="d">
+    <Grid>
+        <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+            <StackPanel MaxWidth="980" HorizontalAlignment="Left">
+
+                <controls:GalleryPageHeader
+                    Category="Feedback &amp; Windows"
+                    Title="ToastHost"
+                    Description="Transient bottom-right notification queue supporting Info, Success, Warning, and Error levels with configurable auto-dismiss timers."
+                    PackageName="WorkbenchUI.Wpf"
+                    NamespaceName="WorkbenchUI.Wpf.Controls" />
+
+                <controls:ControlExample x:Name="ToastExample"
+                                         HeaderText="Enqueue Toast Notifications"
+                                         Description="Trigger transient notifications rendered inside the ToastHost overlay at the bottom-right corner of the page.">
+                    <StackPanel>
+                        <WrapPanel>
+                            <Button Content="Info Toast" Click="InfoToast_Click" Margin="0,0,8,6" />
+                            <Button Content="Success Toast" Style="{DynamicResource Wb.Button.Accent}" Click="SuccessToast_Click" Margin="0,0,8,6" />
+                            <Button Content="Warning Toast" Click="WarningToast_Click" Margin="0,0,8,6" />
+                            <Button Content="Error Toast (8s)" Style="{DynamicResource Wb.Button.Danger}" Click="ErrorToast_Click" Margin="0,0,0,6" />
+                        </WrapPanel>
+                        <TextBlock Text="Toasts appear in the bottom-right corner and dismiss automatically or when × is clicked."
+                                   Style="{StaticResource Gallery.HintText}"
+                                   Margin="0,8,0,0" />
+                    </StackPanel>
+
+                    <controls:ControlExample.Options>
+                        <StackPanel>
+                            <TextBlock Text="Custom Message" Style="{StaticResource Gallery.OptionLabel}" Margin="0,0,0,4" />
+                            <TextBox x:Name="CustomMessageBox" Text="Mesh export finished (bracket.vtk)." />
+
+                            <TextBlock Text="Level" Style="{StaticResource Gallery.OptionLabel}" />
+                            <ComboBox x:Name="LevelCombo" />
+
+                            <TextBlock Text="Duration" Style="{StaticResource Gallery.OptionLabel}" />
+                            <ComboBox x:Name="DurationCombo" SelectedIndex="1">
+                                <ComboBoxItem Content="2 seconds" Tag="2" />
+                                <ComboBoxItem Content="4 seconds" Tag="4" />
+                                <ComboBoxItem Content="8 seconds" Tag="8" />
+                            </ComboBox>
+
+                            <Button Content="Show Custom Toast"
+                                    Style="{DynamicResource Wb.Button.Accent}"
+                                    Margin="0,14,0,0"
+                                    HorizontalAlignment="Left"
+                                    Click="ShowCustomToast_Click" />
+                        </StackPanel>
+                    </controls:ControlExample.Options>
+                </controls:ControlExample>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <wb:ToastHost x:Name="Toasts" />
+    </Grid>
+</UserControl>

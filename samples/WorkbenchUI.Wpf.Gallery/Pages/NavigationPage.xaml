@@ -3,84 +3,96 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
              mc:Ignorable="d">
-    <UserControl.Resources>
-        <Style x:Key="SectionHeader" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="{StaticResource Wb.FontSize.L}" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Margin" Value="0,16,0,8" />
-        </Style>
-    </UserControl.Resources>
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel MaxWidth="700" HorizontalAlignment="Left">
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
 
-            <TextBlock Text="Navigation &amp; Menus"
-                       FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4" />
+            <controls:GalleryPageHeader
+                Category="Navigation &amp; Workflow"
+                Title="TabControl &amp; Menus"
+                Description="Themed WPF Menu, ContextMenu, TabControl, ListBox, ScrollBar, and ToolTip styling."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="System.Windows.Controls" />
 
-            <TextBlock Text="Menu" Style="{StaticResource SectionHeader}" />
-            <Menu>
-                <MenuItem Header="_File">
-                    <MenuItem Header="_New Project" InputGestureText="Ctrl+N" />
-                    <MenuItem Header="_Open..." InputGestureText="Ctrl+O" />
-                    <Separator />
-                    <MenuItem Header="Recent Files">
-                        <MenuItem Header="bracket_static.wb" />
-                        <MenuItem Header="housing_thermal.wb" />
-                    </MenuItem>
-                    <Separator />
-                    <MenuItem Header="E_xit" InputGestureText="Alt+F4" />
-                </MenuItem>
-                <MenuItem Header="_View">
-                    <MenuItem Header="Model Tree" IsCheckable="True" IsChecked="True" />
-                    <MenuItem Header="Log Console" IsCheckable="True" />
-                    <MenuItem Header="Disabled Item" IsEnabled="False" />
-                </MenuItem>
-                <MenuItem Header="About" />
-            </Menu>
-
-            <TextBlock Text="ContextMenu" Style="{StaticResource SectionHeader}" />
-            <Border Background="{DynamicResource Wb.Brush.Surface.Panel}"
-                    BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
-                    BorderThickness="1"
-                    CornerRadius="{StaticResource Wb.CornerRadius}"
-                    Padding="16"
-                    HorizontalAlignment="Left">
-                <TextBlock Text="Right-click this area" Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
-                <Border.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Show" IsCheckable="True" IsChecked="True" />
-                        <MenuItem Header="Hide" />
-                        <Separator />
-                        <MenuItem Header="Assign Material">
-                            <MenuItem Header="Aluminum A5052" />
-                            <MenuItem Header="Steel SS400" />
+            <!-- Card 1: Menu & ContextMenu -->
+            <controls:ControlExample x:Name="MenuExample"
+                                     HeaderText="Menu &amp; ContextMenu"
+                                     Description="Checkable items, nested submenus, gesture text alignment, and disabled states.">
+                <StackPanel>
+                    <Menu Margin="0,0,0,14">
+                        <MenuItem Header="_File">
+                            <MenuItem Header="_New Project" InputGestureText="Ctrl+N" />
+                            <MenuItem Header="_Open..." InputGestureText="Ctrl+O" />
+                            <Separator />
+                            <MenuItem Header="Recent Files">
+                                <MenuItem Header="bracket_static.wb" />
+                                <MenuItem Header="housing_thermal.wb" />
+                            </MenuItem>
+                            <Separator />
+                            <MenuItem Header="E_xit" InputGestureText="Alt+F4" />
                         </MenuItem>
-                        <MenuItem Header="Delete" InputGestureText="Del" />
-                    </ContextMenu>
-                </Border.ContextMenu>
-            </Border>
+                        <MenuItem Header="_View">
+                            <MenuItem Header="Model Tree" IsCheckable="True" IsChecked="True" />
+                            <MenuItem Header="Log Console" IsCheckable="True" />
+                            <MenuItem Header="Disabled Item" IsEnabled="False" />
+                        </MenuItem>
+                        <MenuItem Header="About" />
+                    </Menu>
 
-            <TextBlock Text="TabControl" Style="{StaticResource SectionHeader}" />
-            <TabControl>
-                <TabItem Header="Geometry">
-                    <TextBlock Text="Geometry settings content" Margin="0,8" />
-                </TabItem>
-                <TabItem Header="Mesh">
-                    <TextBlock Text="Mesh settings content" Margin="0,8" />
-                </TabItem>
-                <TabItem Header="Boundary Conditions">
-                    <TextBlock Text="Boundary conditions content" Margin="0,8" />
-                </TabItem>
-                <TabItem Header="Disabled" IsEnabled="False" />
-            </TabControl>
+                    <Border Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                            BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                            BorderThickness="1"
+                            CornerRadius="3"
+                            Padding="18,12"
+                            HorizontalAlignment="Left">
+                        <TextBlock Text="Right-click here to open ContextMenu"
+                                   Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
+                        <Border.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Show" IsCheckable="True" IsChecked="True" />
+                                <MenuItem Header="Hide" />
+                                <Separator />
+                                <MenuItem Header="Assign Material">
+                                    <MenuItem Header="Aluminum A5052" />
+                                    <MenuItem Header="Steel SS400" />
+                                </MenuItem>
+                                <MenuItem Header="Delete" InputGestureText="Del" />
+                            </ContextMenu>
+                        </Border.ContextMenu>
+                    </Border>
+                </StackPanel>
+            </controls:ControlExample>
 
-            <TextBlock Text="ListBox + ScrollBar" Style="{StaticResource SectionHeader}" />
-            <ListBox x:Name="PartsList" Height="160" Width="280" HorizontalAlignment="Left" />
+            <!-- Card 2: TabControl -->
+            <controls:ControlExample x:Name="TabExample"
+                                     HeaderText="TabControl"
+                                     Description="Compact tabs with accent active indicator and disabled tab state.">
+                <TabControl>
+                    <TabItem Header="Geometry">
+                        <TextBlock Text="Geometry settings and cleanup options" Margin="4,10" />
+                    </TabItem>
+                    <TabItem Header="Mesh">
+                        <TextBlock Text="Mesh density and element sizing settings" Margin="4,10" />
+                    </TabItem>
+                    <TabItem Header="Boundary Conditions">
+                        <TextBlock Text="Fixed supports, pressures, and thermal constraints" Margin="4,10" />
+                    </TabItem>
+                    <TabItem Header="Disabled" IsEnabled="False" />
+                </TabControl>
+            </controls:ControlExample>
 
-            <TextBlock Text="ToolTip" Style="{StaticResource SectionHeader}" />
-            <Button Content="Hover to show ToolTip"
-                    HorizontalAlignment="Left"
-                    ToolTip="Young's Modulus E = 205 GPa (SS400)" />
+            <!-- Card 3: ListBox, ScrollBar & ToolTip -->
+            <controls:ControlExample x:Name="ListExample"
+                                     HeaderText="ListBox, ScrollBar &amp; ToolTip"
+                                     Description="Slim overlay-style scrollbars paired with ListBox selection styling and themed tooltips.">
+                <WrapPanel>
+                    <ListBox x:Name="PartsList" Height="160" Width="280" Margin="0,0,24,6" />
+                    <Button Content="Hover to show ToolTip"
+                            VerticalAlignment="Top"
+                            ToolTip="Young's Modulus E = 205 GPa (SS400)" />
+                </WrapPanel>
+            </controls:ControlExample>
 
         </StackPanel>
     </ScrollViewer>
