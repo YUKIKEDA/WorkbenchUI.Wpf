@@ -1,0 +1,142 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.NumericBoxPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
+             mc:Ignorable="d">
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
+
+            <controls:GalleryPageHeader
+                Category="Engineering Inputs"
+                Title="NumericBox"
+                Badge="Updated"
+                Description="Precision engineering numeric editor supporting unit labels, IUnitProvider unit conversion, spin buttons, mouse wheel stepping, scientific notation, and bounded validation."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="WorkbenchUI.Wpf.Controls" />
+
+            <!-- Card 1: Interactive NumericBox Playground -->
+            <controls:ControlExample x:Name="PlaygroundExample"
+                                     HeaderText="Interactive NumericBox Playground"
+                                     Description="Commit edits with Enter or focus loss, revert with Esc, or step using spin buttons, ↑/↓ keys, and the mouse wheel.">
+                <StackPanel HorizontalAlignment="Left">
+                    <WrapPanel>
+                        <wb:NumericBox x:Name="PlaygroundBox"
+                                       Width="200"
+                                       Margin="0,0,10,6"
+                                       Value="25"
+                                       Minimum="0"
+                                       Maximum="100"
+                                       Increment="5"
+                                       Format="G6"
+                                       Unit="mm" />
+                        <wb:NumericBox Width="150"
+                                       Margin="0,0,10,6"
+                                       Value="3.2"
+                                       Unit="mm"
+                                       IsReadOnly="True"
+                                       ToolTip="Read-only state" />
+                        <wb:NumericBox Width="150"
+                                       Margin="0,0,0,6"
+                                       Value="1.5"
+                                       Unit="mm"
+                                       IsEnabled="False"
+                                       ToolTip="Disabled state" />
+                    </WrapPanel>
+
+                    <Border Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                            BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                            BorderThickness="1"
+                            CornerRadius="3"
+                            Padding="10,6"
+                            Margin="0,10,0,0"
+                            HorizontalAlignment="Left">
+                        <TextBlock FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                                   FontSize="{DynamicResource Wb.FontSize.S}"
+                                   Text="{Binding ElementName=PlaygroundBox, Path=Value, StringFormat='Value = {0}'}" />
+                    </Border>
+                </StackPanel>
+
+                <controls:ControlExample.Options>
+                    <StackPanel>
+                        <TextBlock Text="Unit" Style="{StaticResource Gallery.OptionLabel}" Margin="0,0,0,4" />
+                        <ComboBox x:Name="UnitCombo" SelectedIndex="0" SelectionChanged="UnitCombo_SelectionChanged">
+                            <ComboBoxItem Content="mm" />
+                            <ComboBoxItem Content="MPa" />
+                            <ComboBoxItem Content="GPa" />
+                            <ComboBoxItem Content="kg/m³" />
+                            <ComboBoxItem Content="(none)" Tag="" />
+                        </ComboBox>
+
+                        <TextBlock Text="Format" Style="{StaticResource Gallery.OptionLabel}" />
+                        <ComboBox x:Name="FormatCombo" SelectedIndex="0" SelectionChanged="FormatCombo_SelectionChanged">
+                            <ComboBoxItem Content="G6" />
+                            <ComboBoxItem Content="F2" />
+                            <ComboBoxItem Content="F4" />
+                            <ComboBoxItem Content="E2" />
+                        </ComboBox>
+
+                        <TextBlock Text="Increment" Style="{StaticResource Gallery.OptionLabel}" />
+                        <ComboBox x:Name="IncrementCombo" SelectedIndex="1" SelectionChanged="IncrementCombo_SelectionChanged">
+                            <ComboBoxItem Content="1" Tag="1" />
+                            <ComboBoxItem Content="5" Tag="5" />
+                            <ComboBoxItem Content="0.25" Tag="0.25" />
+                        </ComboBox>
+
+                        <wb:ToggleSwitch Content="IsReadOnly"
+                                         Margin="0,12,0,0"
+                                         IsChecked="{Binding ElementName=PlaygroundBox, Path=IsReadOnly, Mode=TwoWay}" />
+
+                        <wb:ToggleSwitch Content="IsEnabled"
+                                         Margin="0,10,0,0"
+                                         IsChecked="{Binding ElementName=PlaygroundBox, Path=IsEnabled, Mode=TwoWay}" />
+                    </StackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+
+            <!-- Card 2: Unit Conversion (IUnitProvider) -->
+            <controls:ControlExample x:Name="UnitConversionExample"
+                                     HeaderText="Unit Conversion (IUnitProvider: Base m ↔ Display mm)"
+                                     Description="Displays millimeters while storing base SI meters in Value. Accepts unit-suffixed inputs such as &quot;500 mm&quot;, &quot;50 cm&quot;, or &quot;0.5 m&quot; (all store 0.5). Range is 0–1 m.">
+                <StackPanel HorizontalAlignment="Left">
+                    <wb:NumericBox x:Name="LengthBox"
+                                   Width="200"
+                                   HorizontalAlignment="Left"
+                                   Value="0.05"
+                                   Minimum="0"
+                                   Maximum="1"
+                                   Increment="10" />
+                    <TextBlock Margin="0,8,0,0"
+                               FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                               FontSize="{DynamicResource Wb.FontSize.S}"
+                               Text="{Binding ElementName=LengthBox, Path=Value, StringFormat='Base Value = {0} m'}" />
+                    <TextBlock Style="{StaticResource Gallery.HintText}"
+                               Margin="0,4,0,0"
+                               Text="Try typing &quot;25 cm&quot; or &quot;1500&quot; (out of 0–1 m range) and press Enter." />
+                </StackPanel>
+            </controls:ControlExample>
+
+            <!-- Card 3: Scientific Notation & Range Validation -->
+            <controls:ControlExample x:Name="ValidationExample"
+                                     HeaderText="Scientific Notation &amp; Validation"
+                                     Description="Accepts exponential notation like &quot;1e-3&quot; or &quot;2.5E+6&quot; and highlights out-of-range or non-numeric entries with a red error border and tooltip.">
+                <WrapPanel>
+                    <StackPanel Margin="0,0,28,6">
+                        <TextBlock Text="Scientific Notation (G4)" Style="{StaticResource Gallery.OptionLabel}" Margin="0,0,0,4" />
+                        <wb:NumericBox Width="180" Value="0.00125" Format="G4" Unit="m" />
+                    </StackPanel>
+                    <StackPanel Margin="0,0,0,6">
+                        <TextBlock Text="Bounded (0–1000 MPa)" Style="{StaticResource Gallery.OptionLabel}" Margin="0,0,0,4" />
+                        <wb:NumericBox Width="180" Value="200" Minimum="0" Maximum="1000" Unit="MPa" />
+                        <TextBlock Style="{StaticResource Gallery.HintText}"
+                                   Margin="0,4,0,0"
+                                   Text="Enter &quot;-5&quot; or &quot;abc&quot; + Enter to inspect validation state." />
+                    </StackPanel>
+                </WrapPanel>
+            </controls:ControlExample>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -3,46 +3,96 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
              mc:Ignorable="d">
-    <UserControl.Resources>
-        <Style x:Key="SectionHeader" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="{StaticResource Wb.FontSize.L}" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Margin" Value="0,16,0,8" />
-        </Style>
-    </UserControl.Resources>
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel MaxWidth="900" HorizontalAlignment="Left">
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
 
-            <TextBlock Text="Design Tokens"
-                       FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4" />
-            <TextBlock Text="All library styles reference only the design tokens shown on this page."
-                       Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
+            <controls:GalleryPageHeader
+                Category="Foundation"
+                Title="Design Tokens"
+                Description="All library controls reference semantic brush, typography, and spacing tokens defined in Tokens.Core, Tokens.Dark, and Tokens.Light."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="WorkbenchUI.Wpf.Theming" />
 
-            <!-- Runtime accent color switching demo -->
-            <TextBlock Text="Accent (runtime switch)" Style="{StaticResource SectionHeader}" />
-            <StackPanel x:Name="AccentPanel" Orientation="Horizontal" />
+            <!-- Card 1: Runtime Accent Switching -->
+            <controls:ControlExample x:Name="AccentExample"
+                                     HeaderText="Runtime Accent Switching"
+                                     Description="Calling ThemeManager.SetAccent overrides all Accent.* brushes and updates controls live via DynamicResource.">
+                <StackPanel>
+                    <WrapPanel x:Name="AccentPanel" Margin="0,0,0,14" />
 
-            <!-- Semantic brush swatches (populated in code-behind) -->
-            <TextBlock Text="Semantic Brushes" Style="{StaticResource SectionHeader}" />
-            <WrapPanel x:Name="BrushPanel" />
+                    <Border Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                            BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="14">
+                        <WrapPanel VerticalAlignment="Center">
+                            <Button Content="Primary Action"
+                                    Style="{DynamicResource Wb.Button.Accent}"
+                                    wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Play}"
+                                    Margin="0,0,12,6" />
+                            <wb:ToggleSwitch Content="Live Sync"
+                                             IsChecked="True"
+                                             Margin="0,0,16,6" />
+                            <ProgressBar Width="160"
+                                         Value="68"
+                                         VerticalAlignment="Center"
+                                         Margin="0,0,0,6" />
+                        </WrapPanel>
+                    </Border>
+                </StackPanel>
+            </controls:ControlExample>
 
-            <!-- Typography -->
-            <TextBlock Text="Typography" Style="{StaticResource SectionHeader}" />
-            <StackPanel>
-                <TextBlock Text="Wb.FontSize.S (11px) — Secondary text, unit labels"
-                           FontSize="{StaticResource Wb.FontSize.S}" Margin="0,2" />
-                <TextBlock Text="Wb.FontSize.M (12px) — Standard body text, input values"
-                           FontSize="{StaticResource Wb.FontSize.M}" Margin="0,2" />
-                <TextBlock Text="Wb.FontSize.L (14px) — Section headers"
-                           FontSize="{StaticResource Wb.FontSize.L}" Margin="0,2" />
-                <TextBlock Text="Wb.FontFamily.Monospace — 1.2345e-6 (logs and numeric readouts)"
-                           FontFamily="{StaticResource Wb.FontFamily.Monospace}" Margin="0,2" />
-            </StackPanel>
+            <!-- Card 2: Semantic Brushes (Live Resolved Hex) -->
+            <controls:ControlExample x:Name="BrushesExample"
+                                     HeaderText="Semantic Brushes (Live Resolved Colors)"
+                                     Description="Hex readouts reflect the active Dark/Light theme and accent color. Click any swatch to copy its DynamicResource XAML snippet.">
+                <StackPanel>
+                    <TextBlock x:Name="CopyStatusText"
+                               Text="Click any token card to copy its {DynamicResource ...} markup."
+                               Style="{StaticResource Gallery.HintText}"
+                               Margin="0,0,0,12" />
+                    <StackPanel x:Name="BrushGroupsHost" />
+                </StackPanel>
+            </controls:ControlExample>
 
-            <!-- Spacing scale -->
-            <TextBlock Text="Spacing (4px grid)" Style="{StaticResource SectionHeader}" />
-            <StackPanel x:Name="SpacingPanel" />
+            <!-- Card 3: Typography & Spacing Scale -->
+            <controls:ControlExample x:Name="MetricsExample"
+                                     HeaderText="Typography &amp; 4 px Spacing Scale"
+                                     Description="Compact engineering scale anchored around 24 px control height and 4 px grid spacing.">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="24" />
+                        <ColumnDefinition Width="320" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Typography" FontWeight="SemiBold" Margin="0,0,0,8" />
+                        <TextBlock Text="Wb.FontSize.S (11 px) — Secondary captions &amp; unit labels"
+                                   FontSize="{DynamicResource Wb.FontSize.S}"
+                                   Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                                   Margin="0,3" />
+                        <TextBlock Text="Wb.FontSize.M (12 px) — Standard body &amp; control values"
+                                   FontSize="{DynamicResource Wb.FontSize.M}"
+                                   Margin="0,3" />
+                        <TextBlock Text="Wb.FontSize.L (14 px) — Section headings"
+                                   FontSize="{DynamicResource Wb.FontSize.L}"
+                                   FontWeight="SemiBold"
+                                   Margin="0,3" />
+                        <TextBlock Text="Wb.FontFamily.Monospace — 1.2345e-6 (tabular numbers &amp; code)"
+                                   FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                                   Margin="0,3" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Spacing Scale" FontWeight="SemiBold" Margin="0,0,0,8" />
+                        <StackPanel x:Name="SpacingPanel" />
+                    </StackPanel>
+                </Grid>
+            </controls:ControlExample>
 
         </StackPanel>
     </ScrollViewer>

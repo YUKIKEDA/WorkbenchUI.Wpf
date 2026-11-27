@@ -4,6 +4,11 @@
              xmlns:wb="https://schemas.workbenchui.dev/wpf"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <wb:WorkbenchTheme Theme="Dark" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <wb:WorkbenchTheme Theme="Dark" />
+                <ResourceDictionary Source="Styles/GalleryStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

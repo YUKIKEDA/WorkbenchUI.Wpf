@@ -1,0 +1,430 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:wb="https://schemas.workbenchui.dev/wpf"
+    xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls">
+
+    <!-- ================= Shared Gallery Helper Styles ================= -->
+
+    <Style x:Key="Gallery.PageScrollViewer" TargetType="{x:Type ScrollViewer}">
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="Padding" Value="28,22,28,32" />
+    </Style>
+
+    <Style x:Key="Gallery.OptionLabel" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Secondary}" />
+        <Setter Property="FontSize" Value="{DynamicResource Wb.FontSize.S}" />
+        <Setter Property="Margin" Value="0,10,0,4" />
+    </Style>
+
+    <Style x:Key="Gallery.HintText" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Secondary}" />
+        <Setter Property="FontSize" Value="{DynamicResource Wb.FontSize.S}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <Style x:Key="Gallery.CardSurface" TargetType="{x:Type Border}">
+        <Setter Property="Background" Value="{DynamicResource Wb.Brush.Surface.Panel}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Border.Default}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Padding" Value="18" />
+    </Style>
+
+    <Style x:Key="Gallery.TileCardButton" TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="{DynamicResource Wb.Brush.Surface.Panel}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Border.Default}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Primary}" />
+        <Setter Property="Padding" Value="14,12" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource Wb.FocusVisual}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="CardBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="4"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="CardBorder" Property="Background" Value="{DynamicResource Wb.Brush.Surface.Elevated}" />
+                            <Setter TargetName="CardBorder" Property="BorderBrush" Value="{DynamicResource Wb.Brush.Accent.Default}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="CardBorder" Property="Background" Value="{DynamicResource Wb.Brush.Control.Pressed}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Gallery.CodeTabButton" TargetType="{x:Type Button}" BasedOn="{StaticResource Wb.Button.Subtle}">
+        <Setter Property="MinHeight" Value="22" />
+        <Setter Property="Padding" Value="8,2" />
+        <Setter Property="FontSize" Value="{DynamicResource Wb.FontSize.S}" />
+        <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Secondary}" />
+    </Style>
+
+    <Style x:Key="Gallery.CodeTabButtonActive" TargetType="{x:Type Button}" BasedOn="{StaticResource Gallery.CodeTabButton}">
+        <Setter Property="Background" Value="{DynamicResource Wb.Brush.Accent.Muted}" />
+        <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Primary}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <!-- ================= GalleryPageHeader ================= -->
+
+    <Style TargetType="{x:Type controls:GalleryPageHeader}">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:GalleryPageHeader}">
+                    <StackPanel Margin="0,0,0,20">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel>
+                                <!-- Category kicker + optional highlight badge -->
+                                <StackPanel x:Name="KickerRow" Orientation="Horizontal" Margin="0,0,0,4">
+                                    <TextBlock x:Name="CategoryText"
+                                               Text="{TemplateBinding Category}"
+                                               FontSize="{DynamicResource Wb.FontSize.S}"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource Wb.Brush.Accent.Default}"
+                                               VerticalAlignment="Center" />
+                                    <Border x:Name="BadgePill"
+                                            Margin="8,0,0,0"
+                                            Padding="6,1"
+                                            CornerRadius="3"
+                                            Background="{DynamicResource Wb.Brush.Accent.Muted}"
+                                            BorderBrush="{DynamicResource Wb.Brush.Accent.Default}"
+                                            BorderThickness="1"
+                                            VerticalAlignment="Center">
+                                        <TextBlock Text="{TemplateBinding Badge}"
+                                                   FontSize="{DynamicResource Wb.FontSize.S}"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource Wb.Brush.Text.Primary}" />
+                                    </Border>
+                                </StackPanel>
+
+                                <!-- Title -->
+                                <TextBlock Text="{TemplateBinding Title}"
+                                           FontSize="24"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Wb.Brush.Text.Primary}" />
+                            </StackPanel>
+
+                            <ContentPresenter x:Name="ActionHost"
+                                              Grid.Column="1"
+                                              Content="{TemplateBinding ActionContent}"
+                                              VerticalAlignment="Center"
+                                              Margin="16,0,0,0" />
+                        </Grid>
+
+                        <!-- Description -->
+                        <TextBlock x:Name="DescriptionText"
+                                   Text="{TemplateBinding Description}"
+                                   Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                                   FontSize="{DynamicResource Wb.FontSize.M}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,6,0,0" />
+
+                        <!-- Package / Namespace pills -->
+                        <StackPanel x:Name="MetadataRow" Orientation="Horizontal" Margin="0,12,0,0">
+                            <Border x:Name="PackagePill"
+                                    Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                                    BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                                    BorderThickness="1"
+                                    CornerRadius="3"
+                                    Padding="8,3"
+                                    Margin="0,0,8,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Package: "
+                                               FontSize="{DynamicResource Wb.FontSize.S}"
+                                               Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
+                                    <TextBlock Text="{TemplateBinding PackageName}"
+                                               FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                                               FontSize="{DynamicResource Wb.FontSize.S}"
+                                               Foreground="{DynamicResource Wb.Brush.Text.Primary}" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border x:Name="NamespacePill"
+                                    Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                                    BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                                    BorderThickness="1"
+                                    CornerRadius="3"
+                                    Padding="8,3">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Namespace: "
+                                               FontSize="{DynamicResource Wb.FontSize.S}"
+                                               Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
+                                    <TextBlock Text="{TemplateBinding NamespaceName}"
+                                               FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                                               FontSize="{DynamicResource Wb.FontSize.S}"
+                                               Foreground="{DynamicResource Wb.Brush.Text.Primary}" />
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <Border Height="1"
+                                Background="{DynamicResource Wb.Brush.Border.Default}"
+                                Margin="0,16,0,0" />
+                    </StackPanel>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Category" Value="{x:Null}">
+                            <Setter TargetName="CategoryText" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Category" Value="">
+                            <Setter TargetName="CategoryText" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Badge" Value="{x:Null}">
+                            <Setter TargetName="BadgePill" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Badge" Value="">
+                            <Setter TargetName="BadgePill" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Description" Value="{x:Null}">
+                            <Setter TargetName="DescriptionText" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Description" Value="">
+                            <Setter TargetName="DescriptionText" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="PackageName" Value="{x:Null}">
+                            <Setter TargetName="PackagePill" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="PackageName" Value="">
+                            <Setter TargetName="PackagePill" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="NamespaceName" Value="{x:Null}">
+                            <Setter TargetName="NamespacePill" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="NamespaceName" Value="">
+                            <Setter TargetName="NamespacePill" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="PackageName" Value="{x:Null}" />
+                                <Condition Property="NamespaceName" Value="{x:Null}" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="MetadataRow" Property="Visibility" Value="Collapsed" />
+                        </MultiTrigger>
+                        <Trigger Property="ActionContent" Value="{x:Null}">
+                            <Setter TargetName="ActionHost" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================= ControlExample ================= -->
+
+    <Style TargetType="{x:Type controls:ControlExample}">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Margin" Value="0,0,0,24" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:ControlExample}">
+                    <StackPanel>
+                        <TextBlock x:Name="HeaderBlock"
+                                   Text="{TemplateBinding HeaderText}"
+                                   FontSize="15"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource Wb.Brush.Text.Primary}"
+                                   Margin="0,0,0,4" />
+                        <TextBlock x:Name="DescriptionBlock"
+                                   Text="{TemplateBinding Description}"
+                                   FontSize="{DynamicResource Wb.FontSize.M}"
+                                   Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,10" />
+
+                        <Border Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                                BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                                BorderThickness="1"
+                                CornerRadius="4">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!-- Row 0: Preview Stage + Optional Right Options Column -->
+                                <Grid Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border x:Name="PreviewStage"
+                                            Grid.Column="0"
+                                            Background="{DynamicResource Wb.Brush.Surface.Window}"
+                                            CornerRadius="3,0,0,0"
+                                            Padding="20">
+                                        <ContentPresenter Content="{TemplateBinding ExampleContent}" />
+                                    </Border>
+
+                                    <Border x:Name="OptionsPanel"
+                                            Grid.Column="1"
+                                            Width="{TemplateBinding OptionsWidth}"
+                                            Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                                            BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                                            BorderThickness="1,0,0,0"
+                                            Padding="16,14">
+                                        <StackPanel>
+                                            <TextBlock Text="OPTIONS"
+                                                       FontSize="10"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                                                       Margin="0,0,0,6" />
+                                            <ContentPresenter Content="{TemplateBinding Options}" />
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+
+                                <!-- Row 1: Footer Source Code Strip -->
+                                <Border x:Name="CodeBar"
+                                        Grid.Row="1"
+                                        Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                                        BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                                        BorderThickness="0,1,0,0"
+                                        Padding="12,6">
+                                    <DockPanel LastChildFill="False">
+                                        <Button x:Name="PART_CodeToggleButton"
+                                                DockPanel.Dock="Left"
+                                                Style="{DynamicResource Wb.Button.Subtle}"
+                                                Padding="8,3"
+                                                MinHeight="24">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="&lt;/&gt;"
+                                                           FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                                                           FontSize="{DynamicResource Wb.FontSize.S}"
+                                                           Foreground="{DynamicResource Wb.Brush.Accent.Default}"
+                                                           VerticalAlignment="Center"
+                                                           Margin="0,0,6,0" />
+                                                <TextBlock Text="Source code"
+                                                           FontSize="{DynamicResource Wb.FontSize.S}"
+                                                           VerticalAlignment="Center" />
+                                                <wb:WorkbenchIcon x:Name="CodeChevron"
+                                                                  Icon="{x:Static wb:WorkbenchIcons.ChevronDown}"
+                                                                  Size="12"
+                                                                  Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                                                                  VerticalAlignment="Center"
+                                                                  Margin="6,0,0,0" />
+                                            </StackPanel>
+                                        </Button>
+
+                                        <Button x:Name="PART_CopyButton"
+                                                DockPanel.Dock="Right"
+                                                Style="{DynamicResource Wb.Button.Subtle}"
+                                                Padding="8,3"
+                                                MinHeight="24"
+                                                ToolTip="Copy active snippet">
+                                            <StackPanel Orientation="Horizontal">
+                                                <wb:WorkbenchIcon x:Name="PART_CopyIcon"
+                                                                  Icon="{x:Static wb:WorkbenchIcons.Copy}"
+                                                                  Size="12"
+                                                                  VerticalAlignment="Center"
+                                                                  Margin="0,0,5,0" />
+                                                <TextBlock x:Name="PART_CopyText"
+                                                           Text="Copy"
+                                                           FontSize="{DynamicResource Wb.FontSize.S}"
+                                                           VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Button>
+
+                                        <StackPanel x:Name="LanguageTabs"
+                                                    DockPanel.Dock="Right"
+                                                    Orientation="Horizontal"
+                                                    Margin="0,0,8,0">
+                                            <Button x:Name="PART_XamlTabButton"
+                                                    Content="XAML"
+                                                    Style="{StaticResource Gallery.CodeTabButtonActive}"
+                                                    Margin="0,0,4,0" />
+                                            <Button x:Name="PART_CSharpTabButton"
+                                                    Content="C#"
+                                                    Style="{StaticResource Gallery.CodeTabButton}" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+
+                                <!-- Row 2: Expandable Highlighted Code Body -->
+                                <Border x:Name="CodeBody"
+                                        Grid.Row="2"
+                                        Visibility="Collapsed"
+                                        Background="{DynamicResource Wb.Brush.Surface.Window}"
+                                        BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                                        BorderThickness="0,1,0,0"
+                                        CornerRadius="0,0,3,3"
+                                        Padding="14,10">
+                                    <RichTextBox x:Name="PART_CodeViewer"
+                                                 IsReadOnly="True"
+                                                 IsReadOnlyCaretVisible="False"
+                                                 IsDocumentEnabled="False"
+                                                 Background="Transparent"
+                                                 BorderThickness="0"
+                                                 Padding="0"
+                                                 HorizontalScrollBarVisibility="Auto"
+                                                 VerticalScrollBarVisibility="Disabled"
+                                                 Focusable="True" />
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HeaderText" Value="{x:Null}">
+                            <Setter TargetName="HeaderBlock" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="HeaderText" Value="">
+                            <Setter TargetName="HeaderBlock" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Description" Value="{x:Null}">
+                            <Setter TargetName="DescriptionBlock" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Description" Value="">
+                            <Setter TargetName="DescriptionBlock" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Options" Value="{x:Null}">
+                            <Setter TargetName="OptionsPanel" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PreviewStage" Property="CornerRadius" Value="3,3,0,0" />
+                        </Trigger>
+                        <Trigger Property="HasCode" Value="False">
+                            <Setter TargetName="CodeBar" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsCodeExpanded" Value="True">
+                            <Setter TargetName="CodeBody" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="CodeChevron" Property="Icon" Value="{x:Static wb:WorkbenchIcons.ChevronUp}" />
+                        </Trigger>
+                        <Trigger Property="HasBothLanguages" Value="False">
+                            <Setter TargetName="LanguageTabs" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsCodeExpanded" Value="False">
+                            <Setter TargetName="LanguageTabs" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsCSharpActive" Value="True">
+                            <Setter TargetName="PART_XamlTabButton" Property="Style" Value="{StaticResource Gallery.CodeTabButton}" />
+                            <Setter TargetName="PART_CSharpTabButton" Property="Style" Value="{StaticResource Gallery.CodeTabButtonActive}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
