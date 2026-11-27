@@ -22,6 +22,7 @@ public class NavigationView : ContentControl
     private readonly HashSet<NavigationViewItem> _hookedItems = [];
     private readonly HashSet<INotifyCollectionChanged> _hookedCollections = [];
     private ButtonBase? _paneToggleButton;
+    private bool _hasInitializedAutoCollapse;
     private bool _wasBelowAutoCollapseWidth;
 
     static NavigationView()
@@ -325,7 +326,7 @@ public class NavigationView : ContentControl
     {
         if (ActualWidth > 0)
         {
-            EvaluateAutoCollapse(ActualWidth, forceOnInitial: true);
+            EvaluateAutoCollapse(ActualWidth);
         }
 
         RefreshAll();
@@ -336,13 +337,18 @@ public class NavigationView : ContentControl
     private void OnPaneToggleClick(object sender, RoutedEventArgs e) =>
         SetCurrentValue(IsPaneOpenProperty, !IsPaneOpen);
 
-    private static object CoerceCompactPaneLength(DependencyObject d, object baseValue) =>
-        Math.Max(MinCompactPaneLength, (double)baseValue);
+    private static object CoerceCompactPaneLength(DependencyObject d, object baseValue)
+    {
+        var value = (double)baseValue;
+        return double.IsFinite(value) ? Math.Max(MinCompactPaneLength, value) : 48.0;
+    }
 
     private static object CoerceOpenPaneLength(DependencyObject d, object baseValue)
     {
         var view = (NavigationView)d;
-        return Math.Max(view.CompactPaneLength, (double)baseValue);
+        var value = (double)baseValue;
+        var fallback = Math.Max(view.CompactPaneLength, 240.0);
+        return double.IsFinite(value) ? Math.Max(view.CompactPaneLength, value) : fallback;
     }
 
     private static void OnPaneLengthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -378,9 +384,10 @@ public class NavigationView : ContentControl
                 break;
 
             case NavigationViewPaneDisplayMode.Auto:
+                view._hasInitializedAutoCollapse = false;
                 if (view.ActualWidth > 0)
                 {
-                    view.EvaluateAutoCollapse(view.ActualWidth, forceOnInitial: true);
+                    view.EvaluateAutoCollapse(view.ActualWidth);
                 }
 
                 break;
@@ -390,13 +397,16 @@ public class NavigationView : ContentControl
     private static void OnAutoCollapseWidthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         var view = (NavigationView)d;
-        if (view.ActualWidth > 0)
+        if (view.PaneDisplayMode == NavigationViewPaneDisplayMode.Auto && view.ActualWidth > 0)
         {
-            view.EvaluateAutoCollapse(view.ActualWidth, forceOnInitial: true);
+            var isBelow = view.ActualWidth < view.AutoCollapseWidth;
+            view._hasInitializedAutoCollapse = true;
+            view._wasBelowAutoCollapseWidth = isBelow;
+            view.SetCurrentValue(IsPaneOpenProperty, !isBelow);
         }
     }
 
-    private void EvaluateAutoCollapse(double width, bool forceOnInitial = false)
+    private void EvaluateAutoCollapse(double width)
     {
         if (PaneDisplayMode != NavigationViewPaneDisplayMode.Auto || width <= 0)
         {
@@ -404,7 +414,18 @@ public class NavigationView : ContentControl
         }
 
         var isBelow = width < AutoCollapseWidth;
-        if (forceOnInitial || isBelow != _wasBelowAutoCollapseWidth)
+        if (!_hasInitializedAutoCollapse)
+        {
+            _hasInitializedAutoCollapse = true;
+            _wasBelowAutoCollapseWidth = isBelow;
+
+            // Preserve an explicit initial IsPaneOpen=False on wide windows, and only auto-collapse if narrow.
+            if (isBelow)
+            {
+                SetCurrentValue(IsPaneOpenProperty, false);
+            }
+        }
+        else if (isBelow != _wasBelowAutoCollapseWidth)
         {
             _wasBelowAutoCollapseWidth = isBelow;
             SetCurrentValue(IsPaneOpenProperty, !isBelow);
@@ -445,7 +466,42 @@ public class NavigationView : ContentControl
         AttachTreeHandlers(EffectiveMenuItems);
         AttachTreeHandlers(EffectiveFooterMenuItems);
         UpdateHasFooterMenuItems();
+
+        if (SelectedItem is null)
+        {
+            var initialSelected =
+                FindFirstExplicitlySelected(EffectiveMenuItems)
+                ?? FindFirstExplicitlySelected(EffectiveFooterMenuItems);
+            if (initialSelected is not null)
+            {
+                SetCurrentValue(SelectedItemProperty, initialSelected);
+            }
+        }
+
         SyncAllItems();
+    }
+
+    private static NavigationViewItem? FindFirstExplicitlySelected(IEnumerable items)
+    {
+        foreach (var entry in items)
+        {
+            if (entry is not NavigationViewItem item)
+            {
+                continue;
+            }
+
+            if (item.IsSelected)
+            {
+                return item;
+            }
+
+            if (item.HasMenuItems && FindFirstExplicitlySelected(item.MenuItems) is { } child)
+            {
+                return child;
+            }
+        }
+
+        return null;
     }
 
     private void UpdateHasFooterMenuItems()
@@ -473,6 +529,8 @@ public class NavigationView : ContentControl
         {
             item.Invoked -= OnItemInvoked;
             item.ChildrenStructureChanged -= OnItemChildrenChanged;
+            item.IsSelectedChanged -= OnItemIsSelectedChanged;
+            item.EscapeRequested -= OnItemEscapeRequested;
         }
 
         _hookedItems.Clear();
@@ -498,6 +556,8 @@ public class NavigationView : ContentControl
                 {
                     item.Invoked += OnItemInvoked;
                     item.ChildrenStructureChanged += OnItemChildrenChanged;
+                    item.IsSelectedChanged += OnItemIsSelectedChanged;
+                    item.EscapeRequested += OnItemEscapeRequested;
                 }
 
                 AttachTreeHandlers(item.MenuItems);
@@ -509,23 +569,43 @@ public class NavigationView : ContentControl
 
     private void OnItemChildrenChanged(NavigationViewItem item) => RefreshAll();
 
+    private bool OnItemEscapeRequested(NavigationViewItem item) => CloseAllFlyouts();
+
+    private void OnItemIsSelectedChanged(NavigationViewItem item, bool isSelected)
+    {
+        if (isSelected)
+        {
+            if (!ReferenceEquals(SelectedItem, item))
+            {
+                SetCurrentValue(SelectedItemProperty, item);
+            }
+        }
+        else if (ReferenceEquals(SelectedItem, item))
+        {
+            SetCurrentValue(SelectedItemProperty, null);
+        }
+    }
+
     private void OnItemInvoked(NavigationViewItem item)
     {
         if (item.HasMenuItems)
         {
-            if (IsPaneOpen)
+            // Branch on the item's own IsCompact rather than IsPaneOpen so subgroups nested inside
+            // a compact flyout expand inline without closing the parent flyout.
+            if (!item.IsCompact)
             {
                 item.SetCurrentValue(NavigationViewItem.IsExpandedProperty, !item.IsExpanded);
-                if (item.SelectsOnInvoked == true)
-                {
-                    SetCurrentValue(SelectedItemProperty, item);
-                }
             }
             else
             {
                 var nextOpen = !item.IsFlyoutOpen;
                 CloseAllFlyouts(except: nextOpen ? item : null);
                 item.SetCurrentValue(NavigationViewItem.IsFlyoutOpenProperty, nextOpen);
+            }
+
+            if (item.SelectsOnInvoked == true)
+            {
+                SetCurrentValue(SelectedItemProperty, item);
             }
 
             return;
@@ -538,15 +618,19 @@ public class NavigationView : ContentControl
         }
     }
 
-    private void CloseAllFlyouts(NavigationViewItem? except = null)
+    private bool CloseAllFlyouts(NavigationViewItem? except = null)
     {
+        var closed = false;
         foreach (var item in _hookedItems)
         {
             if (!ReferenceEquals(item, except) && item.IsFlyoutOpen)
             {
                 item.SetCurrentValue(NavigationViewItem.IsFlyoutOpenProperty, false);
+                closed = true;
             }
         }
+
+        return closed;
     }
 
     private void SyncAllItems()
@@ -568,8 +652,9 @@ public class NavigationView : ContentControl
                     break;
 
                 case NavigationViewItem item:
-                    // Nested children inside inline expanded trees or flyout popups always show icon + label.
-                    item.SetLayoutState(depth, isCompact: depth == 0 && topLevelCompact);
+                    // Inside compact flyouts, shift nested depth down by 1 so direct flyout children start at depth 0.
+                    var visualDepth = topLevelCompact && depth > 0 ? depth - 1 : depth;
+                    item.SetLayoutState(visualDepth, isCompact: depth == 0 && topLevelCompact);
                     if (item.HasMenuItems)
                     {
                         SyncItemsCollection(item.MenuItems, depth + 1, topLevelCompact);

@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -29,6 +30,11 @@ public class NavigationViewItem : ContentControl
     private UIElement? _itemButton;
     private ItemsControl? _inlineChildrenHost;
     private ItemsControl? _flyoutChildrenHost;
+    private Popup? _flyout;
+    private UIElement? _flyoutChild;
+    private long _flyoutClosedTick = long.MinValue;
+    private bool _isPressed;
+    private bool _syncingSelection;
 
     static NavigationViewItem()
     {
@@ -84,7 +90,7 @@ public class NavigationViewItem : ContentControl
     /// <summary>Identifies the <see cref="IsSelected"/> dependency property.</summary>
     public static readonly DependencyProperty IsSelectedProperty = DependencyProperty.Register(
         nameof(IsSelected), typeof(bool), typeof(NavigationViewItem),
-        new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnIsSelectedChanged));
 
     /// <summary>Gets or sets a value indicating whether this item is currently selected.</summary>
     public bool IsSelected
@@ -166,10 +172,33 @@ public class NavigationViewItem : ContentControl
     /// <summary>Gets the zero-based hierarchy nesting depth within the navigation tree (read-only).</summary>
     public int Depth => (int)GetValue(DepthProperty);
 
+    private static readonly DependencyPropertyKey LabelTextPropertyKey = DependencyProperty.RegisterReadOnly(
+        nameof(LabelText), typeof(string), typeof(NavigationViewItem), new PropertyMetadata(null));
+
+    /// <summary>Identifies the <see cref="LabelText"/> dependency property.</summary>
+    public static readonly DependencyProperty LabelTextProperty = LabelTextPropertyKey.DependencyProperty;
+
+    /// <summary>
+    /// Gets the text label extracted from <see cref="ContentControl.Content"/> for safe use in
+    /// tooltips and compact flyout headers without re-parenting <see cref="UIElement"/> content (read-only).
+    /// </summary>
+    public string? LabelText => (string?)GetValue(LabelTextProperty);
+
+    private static readonly DependencyPropertyKey CompactMonogramPropertyKey = DependencyProperty.RegisterReadOnly(
+        nameof(CompactMonogram), typeof(string), typeof(NavigationViewItem), new PropertyMetadata(null));
+
+    /// <summary>Identifies the <see cref="CompactMonogram"/> dependency property.</summary>
+    public static readonly DependencyProperty CompactMonogramProperty = CompactMonogramPropertyKey.DependencyProperty;
+
+    /// <summary>Gets the single uppercase fallback character displayed in compact rail mode when <see cref="Icon"/> is <see langword="null"/> (read-only).</summary>
+    public string? CompactMonogram => (string?)GetValue(CompactMonogramProperty);
+
     #endregion
 
     internal event Action<NavigationViewItem>? Invoked;
     internal event Action<NavigationViewItem>? ChildrenStructureChanged;
+    internal event Action<NavigationViewItem, bool>? IsSelectedChanged;
+    internal event Func<NavigationViewItem, bool>? EscapeRequested;
 
     internal void SetLayoutState(int depth, bool isCompact)
     {
@@ -179,7 +208,16 @@ public class NavigationViewItem : ContentControl
 
     internal void SetSelectionState(bool isSelected, bool isChildSelected)
     {
-        SetCurrentValue(IsSelectedProperty, isSelected);
+        _syncingSelection = true;
+        try
+        {
+            SetCurrentValue(IsSelectedProperty, isSelected);
+        }
+        finally
+        {
+            _syncingSelection = false;
+        }
+
         SetValue(IsChildSelectedPropertyKey, isChildSelected);
     }
 
@@ -188,7 +226,19 @@ public class NavigationViewItem : ContentControl
     {
         if (_itemButton is not null)
         {
+            _itemButton.MouseLeftButtonDown -= OnItemButtonMouseLeftButtonDown;
             _itemButton.MouseLeftButtonUp -= OnItemButtonMouseLeftButtonUp;
+            _itemButton.MouseLeave -= OnItemButtonMouseLeave;
+        }
+
+        if (_flyoutChild is not null)
+        {
+            _flyoutChild.KeyDown -= OnFlyoutChildKeyDown;
+        }
+
+        if (_flyout is not null)
+        {
+            _flyout.Closed -= OnFlyoutClosed;
         }
 
         // Release active ItemsSource before replacing template parts so UI children detach cleanly.
@@ -207,13 +257,58 @@ public class NavigationViewItem : ContentControl
         _itemButton = GetTemplateChild(PartItemButton) as UIElement;
         _inlineChildrenHost = GetTemplateChild(PartInlineChildrenHost) as ItemsControl;
         _flyoutChildrenHost = GetTemplateChild(PartFlyoutChildrenHost) as ItemsControl;
+        _flyout = GetTemplateChild(PartFlyout) as Popup;
+        _flyoutChild = _flyout?.Child;
 
         if (_itemButton is not null)
         {
+            _itemButton.MouseLeftButtonDown += OnItemButtonMouseLeftButtonDown;
             _itemButton.MouseLeftButtonUp += OnItemButtonMouseLeftButtonUp;
+            _itemButton.MouseLeave += OnItemButtonMouseLeave;
+        }
+
+        if (_flyout is not null)
+        {
+            _flyout.Closed += OnFlyoutClosed;
+        }
+
+        if (_flyoutChild is not null)
+        {
+            // Popup content renders inside a separate PopupRoot visual tree; handle Escape at the child root.
+            _flyoutChild.KeyDown += OnFlyoutChildKeyDown;
         }
 
         SyncChildrenHost();
+    }
+
+    /// <inheritdoc />
+    protected override void OnContentChanged(object oldContent, object newContent)
+    {
+        base.OnContentChanged(oldContent, newContent);
+
+        var label = newContent switch
+        {
+            string s => s,
+            TextBlock tb => tb.Text,
+            DependencyObject dObj => AutomationProperties.GetName(dObj) is { Length: > 0 } name ? name : null,
+            _ => newContent?.ToString(),
+        };
+        SetValue(LabelTextPropertyKey, label);
+
+        string? monogram = null;
+        if (!string.IsNullOrWhiteSpace(label))
+        {
+            foreach (var ch in label)
+            {
+                if (!char.IsWhiteSpace(ch))
+                {
+                    monogram = char.ToUpperInvariant(ch).ToString();
+                    break;
+                }
+            }
+        }
+
+        SetValue(CompactMonogramPropertyKey, monogram);
     }
 
     /// <inheritdoc />
@@ -224,7 +319,29 @@ public class NavigationViewItem : ContentControl
     protected override void OnKeyDown(KeyEventArgs e)
     {
         base.OnKeyDown(e);
-        if (e.Handled || !ReferenceEquals(e.OriginalSource, this))
+        if (e.Handled)
+        {
+            return;
+        }
+
+        // Allow Escape from any descendant focused inside the flyout popup to close it.
+        if (e.Key == Key.Escape)
+        {
+            if (IsFlyoutOpen)
+            {
+                SetCurrentValue(IsFlyoutOpenProperty, false);
+                e.Handled = true;
+                return;
+            }
+
+            if (EscapeRequested?.Invoke(this) == true)
+            {
+                e.Handled = true;
+                return;
+            }
+        }
+
+        if (!ReferenceEquals(e.OriginalSource, this))
         {
             return;
         }
@@ -246,19 +363,69 @@ public class NavigationViewItem : ContentControl
                 SetCurrentValue(IsExpandedProperty, false);
                 e.Handled = true;
                 break;
-
-            case Key.Escape when IsFlyoutOpen:
-                SetCurrentValue(IsFlyoutOpenProperty, false);
-                e.Handled = true;
-                break;
         }
+    }
+
+    private void OnFlyoutClosed(object? sender, EventArgs e) =>
+        _flyoutClosedTick = Environment.TickCount64;
+
+    private void OnFlyoutChildKeyDown(object sender, KeyEventArgs e)
+    {
+        if (!e.Handled && e.Key == Key.Escape && IsFlyoutOpen)
+        {
+            SetCurrentValue(IsFlyoutOpenProperty, false);
+            e.Handled = true;
+        }
+    }
+
+    private bool WasFlyoutJustDismissed() =>
+        _flyoutClosedTick != long.MinValue &&
+        Environment.TickCount64 - _flyoutClosedTick < 200 &&
+        !IsFlyoutOpen;
+
+    private void OnItemButtonMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (WasFlyoutJustDismissed())
+        {
+            // Clicking the parent icon while StaysOpen=False popup was open closes the popup on mouse-down;
+            // suppress the immediately following click so it does not reopen the flyout.
+            _isPressed = false;
+            e.Handled = true;
+            return;
+        }
+
+        _isPressed = true;
+        e.Handled = true;
     }
 
     private void OnItemButtonMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
     {
+        if (!_isPressed)
+        {
+            return;
+        }
+
+        _isPressed = false;
+        if (WasFlyoutJustDismissed())
+        {
+            e.Handled = true;
+            return;
+        }
+
         e.Handled = true;
         Focus();
         Invoked?.Invoke(this);
+    }
+
+    private void OnItemButtonMouseLeave(object sender, MouseEventArgs e) => _isPressed = false;
+
+    private static void OnIsSelectedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        var item = (NavigationViewItem)d;
+        if (!item._syncingSelection)
+        {
+            item.IsSelectedChanged?.Invoke(item, (bool)e.NewValue);
+        }
     }
 
     private void OnMenuItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)

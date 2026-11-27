@@ -51,7 +51,7 @@
     <!-- ================= NavigationViewItem ================= -->
 
     <Style TargetType="{x:Type wb:NavigationViewItem}">
-        <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Muted}" />
+        <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Secondary}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Focusable" Value="True" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource Wb.FocusVisual}" />
@@ -67,7 +67,7 @@
                                 CornerRadius="3"
                                 Background="{TemplateBinding Background}"
                                 Cursor="Hand"
-                                ToolTip="{TemplateBinding Content}"
+                                ToolTip="{TemplateBinding LabelText}"
                                 ToolTipService.IsEnabled="{TemplateBinding IsCompact}"
                                 ToolTipService.InitialShowDelay="250">
                             <Grid>
@@ -79,7 +79,7 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Hierarchy indent spacer (expanded tree only) -->
+                                <!-- Hierarchy indent spacer (expanded tree and 3+ level flyout items) -->
                                 <Border x:Name="IndentSpacer"
                                         Grid.Column="0"
                                         Margin="{Binding Depth, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource Wb.NavView.IndentConverter}}" />
@@ -88,12 +88,22 @@
                                 <Border x:Name="IconSlot"
                                         Grid.Column="1"
                                         Width="38">
-                                    <wb:WorkbenchIcon x:Name="ItemIcon"
-                                                      Icon="{TemplateBinding Icon}"
-                                                      Foreground="{TemplateBinding Foreground}"
-                                                      Size="15"
-                                                      HorizontalAlignment="Center"
-                                                      VerticalAlignment="Center" />
+                                    <Grid>
+                                        <wb:WorkbenchIcon x:Name="ItemIcon"
+                                                          Icon="{TemplateBinding Icon}"
+                                                          Foreground="{TemplateBinding Foreground}"
+                                                          Size="15"
+                                                          HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center" />
+                                        <TextBlock x:Name="FallbackMonogram"
+                                                   Text="{TemplateBinding CompactMonogram}"
+                                                   Foreground="{TemplateBinding Foreground}"
+                                                   FontWeight="SemiBold"
+                                                   FontSize="{DynamicResource Wb.FontSize.M}"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   Visibility="Collapsed" />
+                                    </Grid>
                                 </Border>
 
                                 <!-- Label -->
@@ -166,12 +176,14 @@
                                     BorderBrush="{DynamicResource Wb.Brush.Border.Strong}"
                                     BorderThickness="1">
                                 <StackPanel>
-                                    <ContentPresenter Content="{TemplateBinding Content}"
-                                                      Margin="12,6,12,4"
-                                                      TextElement.FontWeight="SemiBold"
-                                                      TextElement.FontSize="{DynamicResource Wb.FontSize.S}"
-                                                      TextElement.Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
-                                    <Border Height="1"
+                                    <TextBlock x:Name="FlyoutHeaderText"
+                                               Text="{TemplateBinding LabelText}"
+                                               Margin="12,6,12,4"
+                                               FontWeight="SemiBold"
+                                               FontSize="{DynamicResource Wb.FontSize.S}"
+                                               Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
+                                    <Border x:Name="FlyoutHeaderDivider"
+                                            Height="1"
                                             Margin="8,2,8,4"
                                             Background="{DynamicResource Wb.Brush.Border.Default}" />
                                     <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -193,6 +205,23 @@
                             </MultiTrigger.Conditions>
                             <Setter TargetName="IconSlot" Property="Width" Value="10" />
                         </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="Icon" Value="{x:Null}" />
+                                <Condition Property="IsCompact" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="FallbackMonogram" Property="Visibility" Value="Visible" />
+                        </MultiTrigger>
+                        <Trigger Property="LabelText" Value="{x:Null}">
+                            <Setter TargetName="PART_ItemButton" Property="ToolTipService.IsEnabled" Value="False" />
+                            <Setter TargetName="FlyoutHeaderText" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="FlyoutHeaderDivider" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="LabelText" Value="">
+                            <Setter TargetName="PART_ItemButton" Property="ToolTipService.IsEnabled" Value="False" />
+                            <Setter TargetName="FlyoutHeaderText" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="FlyoutHeaderDivider" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
                         <Trigger Property="Badge" Value="{x:Null}">
                             <Setter TargetName="BadgeHost" Property="Visibility" Value="Collapsed" />
                         </Trigger>
@@ -280,9 +309,10 @@
         <Setter Property="Width" Value="38" />
         <Setter Property="Height" Value="32" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Muted}" />
+        <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Secondary}" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource Wb.FocusVisual}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -337,6 +367,7 @@
                                             Grid.Column="0"
                                             Style="{StaticResource Wb.NavigationView.ToggleButton}"
                                             ToolTip="{TemplateBinding PaneToggleToolTip}"
+                                            AutomationProperties.Name="{TemplateBinding PaneToggleToolTip}"
                                             Visibility="{TemplateBinding IsPaneToggleButtonVisible, Converter={StaticResource Wb.NavView.BoolToVisibility}}">
                                         <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Menu}"
                                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"
