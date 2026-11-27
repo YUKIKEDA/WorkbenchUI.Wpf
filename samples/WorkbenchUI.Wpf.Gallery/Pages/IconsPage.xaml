@@ -4,68 +4,187 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
              mc:Ignorable="d">
-    <UserControl.Resources>
-        <Style x:Key="SectionHeader" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="{StaticResource Wb.FontSize.L}" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Margin" Value="0,16,0,8" />
-        </Style>
-    </UserControl.Resources>
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel MaxWidth="860" HorizontalAlignment="Left">
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
 
-            <TextBlock Text="Icons" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4" />
-            <TextBlock Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
-                       TextWrapping="Wrap"
-                       Text="WorkbenchIcon + WorkbenchIcons: built-in zero-dependency stroke line icons on a 16×16 grid. Reference in XAML via {x:Static wb:WorkbenchIcons.Save} or Wb.Icon.* resource keys. Color follows Foreground (theme tokens), and Size scales uniformly inside a Viewbox." />
+            <controls:GalleryPageHeader
+                Category="Foundation"
+                Title="Icons"
+                Description="Built-in zero-dependency stroke line icons drawn on a 16×16 grid. Color follows Foreground automatically and Size scales cleanly inside a Viewbox."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="WorkbenchUI.Wpf.Controls" />
 
-            <TextBlock Text="Sizes (16 / 24 / 32 / 48)" Style="{StaticResource SectionHeader}" />
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Settings}" Size="16" Margin="0,0,12,0" />
-                <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Settings}" Size="24" Margin="0,0,12,0" />
-                <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Settings}" Size="32" Margin="0,0,12,0" />
-                <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Settings}" Size="48" />
-            </StackPanel>
+            <!-- Card 1: Sizes & Semantic Colors -->
+            <controls:ControlExample x:Name="UsageExample"
+                                     HeaderText="Sizing &amp; Semantic Foreground Colors"
+                                     Description="Adjust Size in real time or bind Foreground to semantic status brushes.">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,16">
+                        <wb:WorkbenchIcon x:Name="SizePreviewIcon"
+                                          Icon="{x:Static wb:WorkbenchIcons.Settings}"
+                                          Size="{Binding ElementName=IconSizeSlider, Path=Value}"
+                                          Margin="0,0,16,0" />
+                        <TextBlock VerticalAlignment="Center"
+                                   FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                                   FontSize="{DynamicResource Wb.FontSize.S}"
+                                   Text="{Binding ElementName=IconSizeSlider, Path=Value, StringFormat='Size = {0:F0} px'}" />
+                    </StackPanel>
 
-            <TextBlock Text="Colors (Foreground Tokens)" Style="{StaticResource SectionHeader}" />
-            <StackPanel Orientation="Horizontal">
-                <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Info}" Size="24" Margin="0,0,12,0"
-                             Foreground="{DynamicResource Wb.Brush.Info}" />
-                <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Warning}" Size="24" Margin="0,0,12,0"
-                             Foreground="{DynamicResource Wb.Brush.Warning}" />
-                <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Error}" Size="24" Margin="0,0,12,0"
-                             Foreground="{DynamicResource Wb.Brush.Error}" />
-                <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Success}" Size="24" Margin="0,0,12,0"
-                             Foreground="{DynamicResource Wb.Brush.Success}" />
-                <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Play}" Size="24" Margin="0,0,12,0"
-                             Foreground="{DynamicResource Wb.Brush.Accent.Default}" />
-                <!-- Resource key reference example -->
-                <wb:WorkbenchIcon Icon="{StaticResource Wb.Icon.Save}" Size="24"
-                             Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
-            </StackPanel>
+                    <WrapPanel>
+                        <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Info}" Size="22" Margin="0,0,14,0"
+                                          Foreground="{DynamicResource Wb.Brush.Info}" />
+                        <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Warning}" Size="22" Margin="0,0,14,0"
+                                          Foreground="{DynamicResource Wb.Brush.Warning}" />
+                        <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Error}" Size="22" Margin="0,0,14,0"
+                                          Foreground="{DynamicResource Wb.Brush.Error}" />
+                        <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Success}" Size="22" Margin="0,0,14,0"
+                                          Foreground="{DynamicResource Wb.Brush.Success}" />
+                        <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Play}" Size="22" Margin="0,0,14,0"
+                                          Foreground="{DynamicResource Wb.Brush.Accent.Default}" />
+                        <wb:WorkbenchIcon Icon="{DynamicResource Wb.Icon.Save}" Size="22"
+                                          Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
+                    </WrapPanel>
+                </StackPanel>
 
-            <TextBlock x:Name="IconCountHeader" Style="{StaticResource SectionHeader}" />
-            <ItemsControl x:Name="IconList">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Width="84" Margin="0,0,2,12" ToolTip="{Binding Name}">
-                            <wb:WorkbenchIcon Icon="{Binding Geometry}" Size="20" HorizontalAlignment="Center" />
-                            <TextBlock Text="{Binding Name}"
-                                       FontSize="{StaticResource Wb.FontSize.S}"
+                <controls:ControlExample.Options>
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource Gallery.OptionLabel}"
+                                   Margin="0,0,0,4"
+                                   Text="{Binding ElementName=IconSizeSlider, Path=Value, StringFormat='Icon Size: {0:F0} px'}" />
+                        <Slider x:Name="IconSizeSlider" Minimum="12" Maximum="64" Value="32" />
+                    </StackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+
+            <!-- Card 2: Interactive Icon Browser -->
+            <TextBlock x:Name="IconCountHeader"
+                       Text="Icon Browser"
+                       FontSize="15"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,8" />
+
+            <Border Style="{StaticResource Gallery.CardSurface}" Padding="16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="280" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left: Filter + Tile Grid -->
+                    <StackPanel Grid.Column="0">
+                        <wb:SearchBox x:Name="IconFilterBox"
+                                      Placeholder="Filter icons by name..."
+                                      SearchDelay="0:0:0"
+                                      Margin="0,0,0,12" />
+
+                        <ItemsControl x:Name="IconList">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Width="88"
+                                            Height="68"
+                                            Margin="0,0,6,6"
+                                            Padding="6"
+                                            Style="{StaticResource Gallery.TileCardButton}"
+                                            ToolTip="{Binding Name}"
+                                            Tag="{Binding}"
+                                            Click="IconTile_Click">
+                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <wb:WorkbenchIcon Icon="{Binding Geometry}"
+                                                              Size="20"
+                                                              HorizontalAlignment="Center" />
+                                            <TextBlock Text="{Binding Name}"
+                                                       FontSize="{DynamicResource Wb.FontSize.S}"
+                                                       Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                                                       HorizontalAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Margin="0,6,0,0" />
+                                        </StackPanel>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- Right: Selected Icon Inspector -->
+                    <Border Grid.Column="2"
+                            Background="{DynamicResource Wb.Brush.Surface.Window}"
+                            BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="16"
+                            VerticalAlignment="Top">
+                        <StackPanel>
+                            <TextBlock Text="SELECTED ICON"
+                                       FontSize="10"
+                                       FontWeight="SemiBold"
                                        Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
-                                       HorizontalAlignment="Center"
-                                       TextTrimming="CharacterEllipsis"
-                                       Margin="2,3,2,0" />
+                                       Margin="0,0,0,6" />
+                            <TextBlock x:Name="SelectedIconName"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Margin="0,0,0,12" />
+
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,16">
+                                <Border Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                                        BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                                        BorderThickness="1" CornerRadius="4" Padding="14" Margin="0,0,12,0">
+                                    <wb:WorkbenchIcon x:Name="InspectorIconLarge" Size="40" />
+                                </Border>
+                                <StackPanel VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                        <wb:WorkbenchIcon x:Name="InspectorIcon16" Size="16" Margin="0,0,10,0" />
+                                        <wb:WorkbenchIcon x:Name="InspectorIcon24" Size="24" />
+                                    </StackPanel>
+                                    <TextBlock Text="16 px · 24 px · 40 px" Style="{StaticResource Gallery.HintText}" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <TextBlock Text="x:Static Markup" Style="{StaticResource Gallery.OptionLabel}" Margin="0,0,0,4" />
+                            <Border Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                                    BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                                    BorderThickness="1" CornerRadius="3" Padding="8,6" Margin="0,0,0,6">
+                                <TextBlock x:Name="StaticSnippetText"
+                                           FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                                           FontSize="11"
+                                           TextWrapping="Wrap" />
+                            </Border>
+                            <Button x:Name="CopyStaticButton"
+                                    Content="Copy x:Static"
+                                    wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Copy}"
+                                    HorizontalAlignment="Left"
+                                    Margin="0,0,0,10"
+                                    Click="CopyStaticButton_Click" />
+
+                            <TextBlock Text="DynamicResource Markup" Style="{StaticResource Gallery.OptionLabel}" Margin="0,0,0,4" />
+                            <Border Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                                    BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                                    BorderThickness="1" CornerRadius="3" Padding="8,6" Margin="0,0,0,6">
+                                <TextBlock x:Name="ResourceSnippetText"
+                                           FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                                           FontSize="11"
+                                           TextWrapping="Wrap" />
+                            </Border>
+                            <Button x:Name="CopyResourceButton"
+                                    Content="Copy DynamicResource"
+                                    wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Copy}"
+                                    HorizontalAlignment="Left"
+                                    Click="CopyResourceButton_Click" />
+
+                            <TextBlock x:Name="CopyFeedbackText"
+                                       Style="{StaticResource Gallery.HintText}"
+                                       Margin="0,8,0,0" />
                         </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                    </Border>
+                </Grid>
+            </Border>
 
         </StackPanel>
     </ScrollViewer>

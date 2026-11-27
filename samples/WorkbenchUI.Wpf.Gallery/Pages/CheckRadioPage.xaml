@@ -1,0 +1,102 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.CheckRadioPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
+             mc:Ignorable="d">
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
+
+            <controls:GalleryPageHeader
+                Category="Basic Inputs"
+                Title="CheckBox &amp; RadioButton"
+                Description="Standard two-state and three-state selection controls styled with WorkbenchUI theme tokens and focus visuals."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="System.Windows.Controls" />
+
+            <!-- Card 1: CheckBox -->
+            <controls:ControlExample x:Name="CheckBoxExample"
+                                     HeaderText="CheckBox States &amp; Interactive Playground"
+                                     Description="Supports Checked, Unchecked, Indeterminate (IsThreeState=True), and Disabled visual states.">
+                <StackPanel>
+                    <WrapPanel Margin="0,0,0,14">
+                        <CheckBox Content="Checked" IsChecked="True" Margin="0,4,20,4" />
+                        <CheckBox Content="Unchecked" IsChecked="False" Margin="0,4,20,4" />
+                        <CheckBox Content="Indeterminate" IsChecked="{x:Null}" IsThreeState="True" Margin="0,4,20,4" />
+                        <CheckBox Content="Disabled" IsChecked="True" IsEnabled="False" Margin="0,4,0,4" />
+                    </WrapPanel>
+
+                    <Border Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                            BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                            BorderThickness="1"
+                            CornerRadius="3"
+                            Padding="12">
+                        <StackPanel>
+                            <CheckBox x:Name="LiveCheckBox"
+                                      Content="Include thermal boundary conditions"
+                                      IsChecked="True"
+                                      Checked="LiveCheckBox_StateChanged"
+                                      Unchecked="LiveCheckBox_StateChanged"
+                                      Indeterminate="LiveCheckBox_StateChanged" />
+                            <TextBlock x:Name="CheckStateText"
+                                       Text="IsChecked = True"
+                                       FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                                       FontSize="{DynamicResource Wb.FontSize.S}"
+                                       Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                                       Margin="0,8,0,0" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <controls:ControlExample.Options>
+                    <StackPanel>
+                        <wb:ToggleSwitch Content="IsThreeState"
+                                         IsChecked="{Binding ElementName=LiveCheckBox, Path=IsThreeState, Mode=TwoWay}" />
+                        <wb:ToggleSwitch Content="IsEnabled"
+                                         Margin="0,10,0,0"
+                                         IsChecked="{Binding ElementName=LiveCheckBox, Path=IsEnabled, Mode=TwoWay}" />
+                        <Button Content="Set Indeterminate"
+                                Margin="0,14,0,0"
+                                HorizontalAlignment="Left"
+                                Click="SetIndeterminate_Click" />
+                    </StackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+
+            <!-- Card 2: RadioButton -->
+            <controls:ControlExample x:Name="RadioButtonExample"
+                                     HeaderText="RadioButton Group"
+                                     Description="Mutually exclusive option selection within a shared GroupName.">
+                <StackPanel>
+                    <StackPanel Margin="0,0,0,10">
+                        <RadioButton Content="Structural (Static)"
+                                     GroupName="AnalysisMode"
+                                     IsChecked="True"
+                                     Margin="0,3"
+                                     Checked="AnalysisMode_Checked" />
+                        <RadioButton Content="Modal Analysis"
+                                     GroupName="AnalysisMode"
+                                     Margin="0,3"
+                                     Checked="AnalysisMode_Checked" />
+                        <RadioButton Content="Thermal Conduction"
+                                     GroupName="AnalysisMode"
+                                     Margin="0,3"
+                                     Checked="AnalysisMode_Checked" />
+                        <RadioButton Content="Disabled Option"
+                                     GroupName="AnalysisMode"
+                                     IsEnabled="False"
+                                     Margin="0,3" />
+                    </StackPanel>
+                    <TextBlock x:Name="RadioSelectionText"
+                               Text="Selected mode: Structural (Static)"
+                               FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                               FontSize="{DynamicResource Wb.FontSize.S}"
+                               Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
+                </StackPanel>
+            </controls:ControlExample>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

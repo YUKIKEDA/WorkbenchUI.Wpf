@@ -4,49 +4,104 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
              mc:Ignorable="d">
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel>
-            <TextBlock Text="ColorMap Legend" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12" />
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
 
-            <TextBlock Text="Contour Preview (pixel rendering via ColorScale.GetColor)"
-                       FontWeight="SemiBold" Margin="0,0,0,8" />
-            <StackPanel Orientation="Horizontal">
-                <Border BorderBrush="{DynamicResource Wb.Brush.Border.Default}" BorderThickness="1"
-                        VerticalAlignment="Top">
-                    <Image x:Name="PreviewImage" Width="280" Height="200" Stretch="Fill" />
-                </Border>
-                <wb:ColorMapLegend x:Name="PreviewLegend"
-                                   Height="200"
-                                   Margin="16,0,0,0"
-                                   Title="Stress [MPa]" />
-                <StackPanel Margin="24,0,0,0" VerticalAlignment="Top">
-                    <TextBlock Text="Color Map" Margin="0,0,0,4" />
-                    <ComboBox x:Name="MapSelector" Width="140"
-                              DisplayMemberPath="Name"
-                              SelectionChanged="OnSettingsChanged" />
-                    <CheckBox x:Name="LogCheck" Content="Logarithmic Scale" Margin="0,12,0,0"
-                              Checked="OnSettingsChanged" Unchecked="OnSettingsChanged" />
-                    <TextBlock Text="Discrete Levels (0 = Continuous)" Margin="0,12,0,4" />
-                    <Slider x:Name="LevelSlider" Width="140" Minimum="0" Maximum="16"
-                            IsSnapToTickEnabled="True" TickFrequency="1"
-                            ValueChanged="OnSettingsChanged" />
-                    <TextBlock Margin="0,4,0,0"
-                               Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
-                               Text="{Binding ElementName=LevelSlider, Path=Value, StringFormat='Levels: {0:0}'}" />
-                    <TextBlock Margin="0,16,0,0" TextWrapping="Wrap" Width="180"
-                               Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
-                               Text="Out-of-range values (&lt; Min / &gt; Max) are shown in magenta and white (BelowRangeColor / AboveRangeColor)." />
-                </StackPanel>
-            </StackPanel>
+            <controls:GalleryPageHeader
+                Category="Data &amp; Visualization"
+                Title="ColorMap &amp; Scale"
+                Description="Continuous/discrete LUT color mapping (ColorMap, ColorScale), vertical ColorMapLegend, and interactive ColorScaleEditor for scalar field post-processing."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="WorkbenchUI.Wpf.Controls" />
 
-            <TextBlock Text="Variations" FontWeight="SemiBold" Margin="0,24,0,8" />
-            <StackPanel Orientation="Horizontal">
-                <wb:ColorMapLegend x:Name="LegendContinuous" Height="180" Title="Continuous (Jet)" />
-                <wb:ColorMapLegend x:Name="LegendDiscrete" Height="180" Margin="24,0,0,0" Title="Discrete (10 levels)" />
-                <wb:ColorMapLegend x:Name="LegendLog" Height="180" Margin="24,0,0,0" Title="Log (1e-3 to 1e3)" />
-                <wb:ColorMapLegend x:Name="LegendCoolwarm" Height="180" Margin="24,0,0,0" Title="Coolwarm (±50)" />
-            </StackPanel>
+            <!-- Card 1: Contour Preview -->
+            <controls:ControlExample x:Name="ContourExample"
+                                     HeaderText="Contour Preview (ColorScale.GetColor)"
+                                     Description="Renders a 2D synthetic stress field with configurable LUT, logarithmic mapping, discrete steps, and out-of-range markers (magenta below min, white above max).">
+                <WrapPanel>
+                    <Border BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                            BorderThickness="1"
+                            CornerRadius="3"
+                            Margin="0,0,16,6"
+                            VerticalAlignment="Top">
+                        <Image x:Name="PreviewImage" Width="320" Height="210" Stretch="Fill" />
+                    </Border>
+                    <wb:ColorMapLegend x:Name="PreviewLegend"
+                                       Height="210"
+                                       Title="Stress [MPa]" />
+                </WrapPanel>
+
+                <controls:ControlExample.Options>
+                    <StackPanel>
+                        <TextBlock Text="Color Map" Style="{StaticResource Gallery.OptionLabel}" Margin="0,0,0,4" />
+                        <ComboBox x:Name="MapSelector"
+                                  DisplayMemberPath="Name"
+                                  SelectionChanged="OnSettingsChanged" />
+
+                        <wb:ToggleSwitch x:Name="LogCheck"
+                                         Content="Logarithmic Scale"
+                                         Margin="0,12,0,0"
+                                         Checked="OnSettingsChanged"
+                                         Unchecked="OnSettingsChanged" />
+
+                        <TextBlock Style="{StaticResource Gallery.OptionLabel}"
+                                   Text="{Binding ElementName=LevelSlider, Path=Value, StringFormat='Discrete Levels: {0:0} (0 = Cont.)'}" />
+                        <Slider x:Name="LevelSlider"
+                                Minimum="0"
+                                Maximum="16"
+                                IsSnapToTickEnabled="True"
+                                TickFrequency="1"
+                                ValueChanged="OnSettingsChanged" />
+                    </StackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+
+            <!-- Card 2: ColorScaleEditor + ColorMapLegend Pair -->
+            <controls:ControlExample x:Name="EditorExample"
+                                     HeaderText="ColorScaleEditor + ColorMapLegend Pair"
+                                     Description="Editor and legend share one ColorScale instance for live colormap, range, discrete steps, and log-scale updates. Use Clone()/CopyFrom() for Apply/Cancel dialogs.">
+                <WrapPanel>
+                    <Border Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                            BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                            BorderThickness="1"
+                            CornerRadius="3"
+                            Padding="12"
+                            Margin="0,0,24,6"
+                            VerticalAlignment="Top">
+                        <wb:ColorScaleEditor x:Name="ScaleEditor"
+                                             Width="300"
+                                             ColorMapLabel="Color Map"
+                                             MinimumLabel="Minimum"
+                                             MaximumLabel="Maximum"
+                                             DiscreteLevelsLabel="Discrete Levels"
+                                             LogarithmicLabel="Logarithmic Scale"
+                                             LogDisabledHint="Logarithmic scale requires both Minimum and Maximum to be positive"
+                                             AdvancedLabel="Advanced"
+                                             BelowRangeLabel="Below Min"
+                                             AboveRangeLabel="Above Max"
+                                             NaNColorLabel="NaN Color"
+                                             ClampLabel="Clamp" />
+                    </Border>
+                    <wb:ColorMapLegend x:Name="EditorLegend"
+                                       Height="250"
+                                       Title="Stress [MPa]" />
+                </WrapPanel>
+            </controls:ControlExample>
+
+            <!-- Card 3: Built-in Scale Variations -->
+            <controls:ControlExample x:Name="VariationsExample"
+                                     HeaderText="Legend Scale Variations"
+                                     Description="Built-in ColorMap presets across continuous, discrete, logarithmic, and diverging symmetric ranges.">
+                <WrapPanel>
+                    <wb:ColorMapLegend x:Name="LegendContinuous" Height="180" Margin="0,0,24,6" Title="Continuous (Jet)" />
+                    <wb:ColorMapLegend x:Name="LegendDiscrete" Height="180" Margin="0,0,24,6" Title="Discrete (10 levels)" />
+                    <wb:ColorMapLegend x:Name="LegendLog" Height="180" Margin="0,0,24,6" Title="Log (1e-3 to 1e3)" />
+                    <wb:ColorMapLegend x:Name="LegendCoolwarm" Height="180" Margin="0,0,0,6" Title="Coolwarm (±50)" />
+                </WrapPanel>
+            </controls:ControlExample>
+
         </StackPanel>
     </ScrollViewer>
 </UserControl>

@@ -1,143 +1,291 @@
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using WorkbenchUI.Wpf.Gallery.Infrastructure;
 using WorkbenchUI.Wpf.Theming;
 
-namespace WorkbenchUI.Wpf.Gallery.Pages
+namespace WorkbenchUI.Wpf.Gallery.Pages;
+
+public partial class TokensPage : UserControl
 {
-    public partial class TokensPage : UserControl
-    {
-        private static readonly string[] SemanticBrushKeys =
-        [
+    private static readonly (string Group, string[] Keys)[] BrushGroups =
+    [
+        ("Surfaces", [
             "Wb.Brush.Surface.Window",
             "Wb.Brush.Surface.Panel",
             "Wb.Brush.Surface.Elevated",
             "Wb.Brush.Surface.Input",
+        ]),
+        ("Text", [
             "Wb.Brush.Text.Primary",
             "Wb.Brush.Text.Secondary",
             "Wb.Brush.Text.Disabled",
             "Wb.Brush.Text.OnAccent",
+        ]),
+        ("Controls & Borders", [
+            "Wb.Brush.Control.Background",
+            "Wb.Brush.Control.Hover",
+            "Wb.Brush.Control.Pressed",
             "Wb.Brush.Border.Default",
             "Wb.Brush.Border.Strong",
             "Wb.Brush.Border.Focus",
+        ]),
+        ("Accent & Selection", [
             "Wb.Brush.Accent.Default",
             "Wb.Brush.Accent.Hover",
             "Wb.Brush.Accent.Pressed",
             "Wb.Brush.Accent.Muted",
             "Wb.Brush.State.Hover",
-            "Wb.Brush.State.Pressed",
             "Wb.Brush.State.Selected",
-            "Wb.Brush.State.SelectedInactive",
-            "Wb.Brush.Error",
-            "Wb.Brush.Warning",
-            "Wb.Brush.Success",
+        ]),
+        ("Status & Danger", [
             "Wb.Brush.Info",
-        ];
+            "Wb.Brush.Success",
+            "Wb.Brush.Warning",
+            "Wb.Brush.Error",
+            "Wb.Brush.Danger.Default",
+            "Wb.Brush.Danger.Hover",
+        ]),
+    ];
 
-        private static readonly (string Label, Color? Accent)[] AccentPresets =
-        [
-            ("Blue (default)", null),
-            ("Orange", Color.FromRgb(0xCA, 0x51, 0x00)),
-            ("Green", Color.FromRgb(0x38, 0x8A, 0x34)),
-            ("Purple", Color.FromRgb(0x8E, 0x47, 0xCF)),
-        ];
+    private readonly List<(string Key, TextBlock HexLabel)> _hexLabels = [];
+    private bool _isHooked;
 
-        public TokensPage()
+    public TokensPage()
+    {
+        InitializeComponent();
+        PopulateAccentButtons();
+        PopulateBrushGroups();
+        PopulateSpacingBars();
+
+        AccentExample.CSharp = """
+            // Switch theme variant at runtime
+            ThemeManager.SetTheme(WorkbenchThemeVariant.Light);
+
+            // Override accent color (Hover / Pressed / Muted auto-derived)
+            ThemeManager.SetAccent(Color.FromRgb(0xCA, 0x51, 0x00));
+
+            // Restore default theme accent
+            ThemeManager.ResetAccent();
+            """;
+
+        BrushesExample.Xaml = """
+            <Border Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                    BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                    BorderThickness="1">
+                <TextBlock Text="Token-aware text"
+                           Foreground="{DynamicResource Wb.Brush.Text.Primary}" />
+            </Border>
+            """;
+
+        MetricsExample.Xaml = """
+            <TextBlock FontSize="{DynamicResource Wb.FontSize.L}"
+                       FontFamily="{DynamicResource Wb.FontFamily.Default}"
+                       Margin="0,0,0,8" />
+            """;
+
+        Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
+    }
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        if (!_isHooked)
         {
-            InitializeComponent();
-            PopulateBrushSwatches();
-            PopulateAccentButtons();
-            PopulateSpacingBars();
+            ThemeManager.ThemeChanged += OnThemeChanged;
+            _isHooked = true;
         }
 
-        private void PopulateBrushSwatches()
+        RefreshResolvedHexValues();
+    }
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        if (_isHooked)
         {
-            foreach (var key in SemanticBrushKeys)
+            ThemeManager.ThemeChanged -= OnThemeChanged;
+            _isHooked = false;
+        }
+    }
+
+    private void OnThemeChanged(object? sender, EventArgs e) =>
+        Dispatcher.BeginInvoke(RefreshResolvedHexValues);
+
+    private void PopulateAccentButtons()
+    {
+        AccentPanel.Children.Clear();
+        foreach (var preset in GalleryAccentPresets.Presets)
+        {
+            var swatch = new Border
             {
-                var swatch = new Border
-                {
-                    Width = 48,
-                    Height = 32,
-                    CornerRadius = (CornerRadius)FindResource("Wb.CornerRadius"),
-                    BorderThickness = new Thickness(1),
-                };
-                // Use DynamicResource semantics so accent switches take effect immediately
-                swatch.SetResourceReference(Border.BackgroundProperty, key);
-                swatch.SetResourceReference(Border.BorderBrushProperty, "Wb.Brush.Border.Default");
+                Width = 12,
+                Height = 12,
+                CornerRadius = new CornerRadius(3),
+                Background = new SolidColorBrush(preset.PreviewColor),
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, 0, 8, 0),
+            };
+            swatch.SetResourceReference(Border.BorderBrushProperty, "Wb.Brush.Border.Default");
+            swatch.BorderThickness = new Thickness(1);
 
-                var label = new TextBlock
-                {
-                    Text = key["Wb.Brush.".Length..],
-                    FontSize = (double)FindResource("Wb.FontSize.S"),
-                    TextTrimming = TextTrimming.CharacterEllipsis,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    Margin = new Thickness(0, 2, 0, 0),
-                };
-                label.SetResourceReference(TextBlock.ForegroundProperty, "Wb.Brush.Text.Secondary");
+            var content = new StackPanel { Orientation = Orientation.Horizontal };
+            content.Children.Add(swatch);
+            content.Children.Add(new TextBlock { Text = preset.Name, VerticalAlignment = VerticalAlignment.Center });
 
-                var item = new StackPanel
-                {
-                    Width = 110,
-                    Margin = new Thickness(0, 0, 8, 8),
-                    ToolTip = key,
-                };
-                item.Children.Add(swatch);
-                item.Children.Add(label);
-                BrushPanel.Children.Add(item);
+            var button = new Button
+            {
+                Content = content,
+                Padding = new Thickness(10, 4, 10, 4),
+                Margin = new Thickness(0, 0, 8, 6),
+            };
+            button.Click += (_, _) => GalleryAccentPresets.Apply(preset);
+            AccentPanel.Children.Add(button);
+        }
+    }
+
+    private void PopulateBrushGroups()
+    {
+        BrushGroupsHost.Children.Clear();
+        _hexLabels.Clear();
+
+        foreach (var (groupName, keys) in BrushGroups)
+        {
+            var header = new TextBlock
+            {
+                Text = groupName,
+                FontWeight = FontWeights.SemiBold,
+                Margin = new Thickness(0, 4, 0, 8),
+            };
+            BrushGroupsHost.Children.Add(header);
+
+            var wrap = new WrapPanel { Margin = new Thickness(0, 0, 0, 12) };
+            foreach (var key in keys)
+            {
+                wrap.Children.Add(CreateSwatchCard(key));
             }
+
+            BrushGroupsHost.Children.Add(wrap);
         }
 
-        private void PopulateAccentButtons()
+        RefreshResolvedHexValues();
+    }
+
+    private Button CreateSwatchCard(string key)
+    {
+        var swatch = new Border
         {
-            foreach (var (label, accent) in AccentPresets)
+            Width = 36,
+            Height = 36,
+            CornerRadius = new CornerRadius(3),
+            BorderThickness = new Thickness(1),
+            Margin = new Thickness(0, 0, 10, 0),
+        };
+        swatch.SetResourceReference(Border.BackgroundProperty, key);
+        swatch.SetResourceReference(Border.BorderBrushProperty, "Wb.Brush.Border.Default");
+
+        var nameText = new TextBlock
+        {
+            Text = key["Wb.Brush.".Length..],
+            FontWeight = FontWeights.SemiBold,
+            TextTrimming = TextTrimming.CharacterEllipsis,
+        };
+        nameText.SetResourceReference(TextBlock.FontSizeProperty, "Wb.FontSize.S");
+
+        var hexText = new TextBlock
+        {
+            Text = "#------",
+            Margin = new Thickness(0, 2, 0, 0),
+        };
+        hexText.SetResourceReference(TextBlock.FontFamilyProperty, "Wb.FontFamily.Monospace");
+        hexText.SetResourceReference(TextBlock.FontSizeProperty, "Wb.FontSize.S");
+        hexText.SetResourceReference(TextBlock.ForegroundProperty, "Wb.Brush.Text.Secondary");
+
+        _hexLabels.Add((key, hexText));
+
+        var info = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
+        info.Children.Add(nameText);
+        info.Children.Add(hexText);
+
+        var grid = new Grid();
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        Grid.SetColumn(swatch, 0);
+        Grid.SetColumn(info, 1);
+        grid.Children.Add(swatch);
+        grid.Children.Add(info);
+
+        var button = new Button
+        {
+            Width = 204,
+            Margin = new Thickness(0, 0, 8, 8),
+            Padding = new Thickness(10, 8, 10, 8),
+            ToolTip = $"Click to copy {{DynamicResource {key}}}",
+            Content = grid,
+        };
+        button.SetResourceReference(StyleProperty, "Gallery.TileCardButton");
+        button.Click += (_, _) =>
+        {
+            var markup = $"{{DynamicResource {key}}}";
+            try
             {
-                var button = new Button
-                {
-                    Content = label,
-                    Padding = new Thickness(12, 4, 12, 4),
-                    Margin = new Thickness(0, 0, 8, 0),
-                };
-                button.Click += (_, _) =>
-                {
-                    if (accent is { } color)
-                    {
-                        ThemeManager.SetAccent(color);
-                    }
-                    else
-                    {
-                        ThemeManager.ResetAccent();
-                    }
-                };
-                AccentPanel.Children.Add(button);
+                Clipboard.SetText(markup);
+                CopyStatusText.Text = $"Copied to clipboard: {markup}";
+            }
+            catch (ExternalException)
+            {
+                CopyStatusText.Text = $"Token: {markup}";
+            }
+        };
+
+        return button;
+    }
+
+    private void RefreshResolvedHexValues()
+    {
+        foreach (var (key, hexLabel) in _hexLabels)
+        {
+            if (TryFindResource(key) is SolidColorBrush brush)
+            {
+                var c = brush.Color;
+                hexLabel.Text = c.A == 255
+                    ? $"#{c.R:X2}{c.G:X2}{c.B:X2}"
+                    : $"#{c.A:X2}{c.R:X2}{c.G:X2}{c.B:X2}";
+            }
+            else
+            {
+                hexLabel.Text = "(unresolved)";
             }
         }
+    }
 
-        private void PopulateSpacingBars()
+    private void PopulateSpacingBars()
+    {
+        SpacingPanel.Children.Clear();
+        foreach (var name in new[] { "XS", "S", "M", "L" })
         {
-            foreach (var name in new[] { "XS", "S", "M", "L" })
+            var key = $"Wb.Spacing.{name}";
+            var size = (double)FindResource(key);
+
+            var bar = new Border { Width = size * 10, Height = 12, CornerRadius = new CornerRadius(2) };
+            bar.SetResourceReference(Border.BackgroundProperty, "Wb.Brush.Accent.Default");
+
+            var label = new TextBlock
             {
-                var key = $"Wb.Spacing.{name}";
-                var size = (double)FindResource(key);
+                Text = $"{key} ({size} px)",
+                Width = 148,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            label.SetResourceReference(TextBlock.FontSizeProperty, "Wb.FontSize.S");
 
-                var bar = new Border { Width = size * 10, Height = 12 };
-                bar.SetResourceReference(Border.BackgroundProperty, "Wb.Brush.Accent.Muted");
-
-                var label = new TextBlock
-                {
-                    Text = $"{key} = {size}px",
-                    Width = 160,
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
-
-                var row = new StackPanel
-                {
-                    Orientation = Orientation.Horizontal,
-                    Margin = new Thickness(0, 2, 0, 2),
-                };
-                row.Children.Add(label);
-                row.Children.Add(bar);
-                SpacingPanel.Children.Add(row);
-            }
+            var row = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 3, 0, 3),
+            };
+            row.Children.Add(label);
+            row.Children.Add(bar);
+            SpacingPanel.Children.Add(row);
         }
     }
 }

@@ -1,0 +1,212 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.NavigationViewPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
+             mc:Ignorable="d">
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
+
+            <controls:GalleryPageHeader
+                Category="Navigation &amp; Workflow"
+                Title="NavigationView"
+                Badge="New"
+                Description="Adaptive shell navigation control featuring an expandable hierarchical sidebar, a 48 px compact icon rail with hover tooltips and child flyout popups, footer items, and a main content host."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="WorkbenchUI.Wpf.Controls" />
+
+            <!-- Card 1: Interactive Playground -->
+            <controls:ControlExample x:Name="PlaygroundExample"
+                                     HeaderText="Interactive NavigationView Playground"
+                                     Description="Toggle between expanded sidebar and compact icon rail modes, or adjust OpenPaneLength and CompactPaneLength in real time.">
+                <Border BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                        BorderThickness="1"
+                        Height="320">
+                    <wb:NavigationView x:Name="PlaygroundNav"
+                                       PaneDisplayMode="Left"
+                                       OpenPaneLength="210"
+                                       CompactPaneLength="48"
+                                       SelectionChanged="PlaygroundNav_SelectionChanged">
+                        <wb:NavigationView.MenuItems>
+                            <wb:NavigationViewItem Content="Overview"
+                                                   Icon="{x:Static wb:WorkbenchIcons.Home}"
+                                                   IsSelected="True" />
+                            <wb:NavigationViewItem Content="Geometry"
+                                                   Icon="{x:Static wb:WorkbenchIcons.Cube}"
+                                                   IsExpanded="True">
+                                <wb:NavigationViewItem.MenuItems>
+                                    <wb:NavigationViewItem Content="Parts"
+                                                           Icon="{x:Static wb:WorkbenchIcons.Layers}"
+                                                           Badge="12" />
+                                    <wb:NavigationViewItem Content="Assemblies"
+                                                           Icon="{x:Static wb:WorkbenchIcons.Folder}" />
+                                </wb:NavigationViewItem.MenuItems>
+                            </wb:NavigationViewItem>
+                            <wb:NavigationViewItem Content="Mesh"
+                                                   Icon="{x:Static wb:WorkbenchIcons.Mesh}" />
+                            <wb:NavigationViewItem Content="Results"
+                                                   Icon="{x:Static wb:WorkbenchIcons.Contour}"
+                                                   Badge="Ready" />
+                        </wb:NavigationView.MenuItems>
+
+                        <wb:NavigationView.FooterMenuItems>
+                            <wb:NavigationViewItem Content="Settings"
+                                                   Icon="{x:Static wb:WorkbenchIcons.Settings}" />
+                        </wb:NavigationView.FooterMenuItems>
+
+                        <Border Padding="20" Background="{DynamicResource Wb.Brush.Surface.Window}">
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Active Destination"
+                                           Style="{StaticResource Gallery.HintText}"
+                                           Margin="0,0,0,4" />
+                                <TextBlock x:Name="PlaygroundStatusText"
+                                           Text="Overview"
+                                           FontSize="20"
+                                           FontWeight="SemiBold" />
+                                <TextBlock Text="Click any item in the pane, expand/collapse Geometry, or toggle the top-left menu button."
+                                           Style="{StaticResource Gallery.HintText}"
+                                           Margin="0,8,0,0" />
+                            </StackPanel>
+                        </Border>
+                    </wb:NavigationView>
+                </Border>
+
+                <controls:ControlExample.Options>
+                    <StackPanel>
+                        <TextBlock Text="PaneDisplayMode" Style="{StaticResource Gallery.OptionLabel}" Margin="0,0,0,4" />
+                        <ComboBox x:Name="PlaygroundModeCombo"
+                                  SelectionChanged="PlaygroundModeCombo_SelectionChanged" />
+
+                        <wb:ToggleSwitch Content="IsPaneOpen"
+                                         Margin="0,12,0,0"
+                                         IsChecked="{Binding ElementName=PlaygroundNav, Path=IsPaneOpen, Mode=TwoWay}" />
+
+                        <wb:ToggleSwitch Content="IsPaneToggleButtonVisible"
+                                         Margin="0,10,0,0"
+                                         IsChecked="{Binding ElementName=PlaygroundNav, Path=IsPaneToggleButtonVisible, Mode=TwoWay}" />
+
+                        <TextBlock Style="{StaticResource Gallery.OptionLabel}"
+                                   Text="{Binding ElementName=PlaygroundNav, Path=OpenPaneLength, StringFormat='OpenPaneLength: {0:F0} px'}" />
+                        <Slider Minimum="180"
+                                Maximum="280"
+                                Value="{Binding ElementName=PlaygroundNav, Path=OpenPaneLength, Mode=TwoWay}" />
+
+                        <TextBlock Style="{StaticResource Gallery.OptionLabel}"
+                                   Text="{Binding ElementName=PlaygroundNav, Path=CompactPaneLength, StringFormat='CompactPaneLength: {0:F0} px'}" />
+                        <Slider Minimum="40"
+                                Maximum="64"
+                                Value="{Binding ElementName=PlaygroundNav, Path=CompactPaneLength, Mode=TwoWay}" />
+                    </StackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+
+            <!-- Card 2: Compact Icon Rail with Nested Flyouts -->
+            <controls:ControlExample x:Name="CompactFlyoutExample"
+                                     HeaderText="Compact Icon Rail &amp; 3-Level Nested Flyouts"
+                                     Description="When collapsed (PaneDisplayMode=&quot;LeftCompact&quot;), parent items open a right-side Popup flyout containing recursive subgroups. Press Esc or click outside to dismiss.">
+                <Border BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                        BorderThickness="1"
+                        Height="260">
+                    <wb:NavigationView x:Name="CompactNav"
+                                       PaneDisplayMode="LeftCompact"
+                                       IsPaneOpen="False"
+                                       SelectionChanged="CompactNav_SelectionChanged">
+                        <wb:NavigationView.MenuItems>
+                            <wb:NavigationViewItem Content="Workspace"
+                                                   Icon="{x:Static wb:WorkbenchIcons.Home}"
+                                                   IsSelected="True" />
+                            <wb:NavigationViewItem Content="Analysis"
+                                                   Icon="{x:Static wb:WorkbenchIcons.Play}">
+                                <wb:NavigationViewItem.MenuItems>
+                                    <wb:NavigationViewItem Content="Structural"
+                                                           Icon="{x:Static wb:WorkbenchIcons.Cube}"
+                                                           IsExpanded="True">
+                                        <wb:NavigationViewItem.MenuItems>
+                                            <wb:NavigationViewItem Content="Static Linear"
+                                                                   Icon="{x:Static wb:WorkbenchIcons.Contour}" />
+                                            <wb:NavigationViewItem Content="Modal Frequencies"
+                                                                   Icon="{x:Static wb:WorkbenchIcons.ChartLine}" />
+                                        </wb:NavigationViewItem.MenuItems>
+                                    </wb:NavigationViewItem>
+                                    <wb:NavigationViewItem Content="Thermal"
+                                                           Icon="{x:Static wb:WorkbenchIcons.Sun}" />
+                                </wb:NavigationViewItem.MenuItems>
+                            </wb:NavigationViewItem>
+                            <wb:NavigationViewItem Content="Probing"
+                                                   Icon="{x:Static wb:WorkbenchIcons.Probe}" />
+                        </wb:NavigationView.MenuItems>
+
+                        <Border Padding="20" Background="{DynamicResource Wb.Brush.Surface.Window}">
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Selected Flyout Destination"
+                                           Style="{StaticResource Gallery.HintText}"
+                                           Margin="0,0,0,4" />
+                                <TextBlock x:Name="CompactStatusText"
+                                           Text="Workspace"
+                                           FontSize="18"
+                                           FontWeight="SemiBold" />
+                                <TextBlock Text="Click the Analysis icon in the 48 px rail to open its nested flyout popup."
+                                           Style="{StaticResource Gallery.HintText}"
+                                           Margin="0,8,0,0" />
+                            </StackPanel>
+                        </Border>
+                    </wb:NavigationView>
+                </Border>
+            </controls:ControlExample>
+
+            <!-- Card 3: Headers, Separators & Pane Slots -->
+            <controls:ControlExample x:Name="SlotsExample"
+                                     HeaderText="Section Headers, Separators &amp; Pane Slots"
+                                     Description="Organize large menus with NavigationViewItemHeader and NavigationViewItemSeparator, and supply custom PaneHeader, PaneFooter, and Header content.">
+                <Border BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                        BorderThickness="1"
+                        Height="260">
+                    <wb:NavigationView PaneDisplayMode="Left" OpenPaneLength="210">
+                        <wb:NavigationView.PaneHeader>
+                            <TextBlock Text="CAE Studio v2.4"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource Wb.Brush.Accent.Default}" />
+                        </wb:NavigationView.PaneHeader>
+
+                        <wb:NavigationView.MenuItems>
+                            <wb:NavigationViewItemHeader Content="MODELING" />
+                            <wb:NavigationViewItem Content="CAD Import" Icon="{x:Static wb:WorkbenchIcons.FolderOpen}" IsSelected="True" />
+                            <wb:NavigationViewItem Content="Meshing" Icon="{x:Static wb:WorkbenchIcons.Mesh}" />
+                            <wb:NavigationViewItemSeparator />
+                            <wb:NavigationViewItemHeader Content="SOLVE &amp; JOBS" />
+                            <wb:NavigationViewItem Content="Local Solver" Icon="{x:Static wb:WorkbenchIcons.Play}" />
+                            <wb:NavigationViewItem Content="Cluster Queue" Icon="{x:Static wb:WorkbenchIcons.Server}" Badge="3" />
+                        </wb:NavigationView.MenuItems>
+
+                        <wb:NavigationView.PaneFooter>
+                            <TextBlock Text="License: Floating OK"
+                                       FontSize="{DynamicResource Wb.FontSize.S}"
+                                       Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                                       Margin="10,4,10,8" />
+                        </wb:NavigationView.PaneFooter>
+
+                        <wb:NavigationView.Header>
+                            <Border Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                                    BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                                    BorderThickness="0,0,0,1"
+                                    Padding="16,8">
+                                <TextBlock Text="NavigationView.Header — Contextual Breadcrumb Bar"
+                                           FontSize="{DynamicResource Wb.FontSize.S}"
+                                           Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
+                            </Border>
+                        </wb:NavigationView.Header>
+
+                        <Border Padding="20" Background="{DynamicResource Wb.Brush.Surface.Window}">
+                            <TextBlock Text="Main content fills the remaining area below NavigationView.Header."
+                                       Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                                       VerticalAlignment="Center" />
+                        </Border>
+                    </wb:NavigationView>
+                </Border>
+            </controls:ControlExample>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -4,106 +4,61 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
              mc:Ignorable="d">
-    <!-- Root Grid allows ToastHost to overlay the entire page -->
-    <Grid>
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel>
-                <TextBlock Text="Windows (WorkbenchWindow / Dialogs / Toast / BusyOverlay)"
-                           FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12" />
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
 
-                <!-- WorkbenchMessageBox -->
-                <GroupBox Header="WorkbenchMessageBox" Margin="0,0,0,12">
-                    <StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Button Content="Info (OK)" Click="InfoMessage_Click" />
-                            <Button Content="Confirm (YesNoCancel)" Margin="8,0,0,0" Click="ConfirmMessage_Click" />
-                            <Button Content="Warning (OKCancel)" Margin="8,0,0,0" Click="WarningMessage_Click" />
-                            <Button Content="Error (OK)" Margin="8,0,0,0" Click="ErrorMessage_Click" />
-                        </StackPanel>
-                        <TextBlock Margin="0,8,0,0" Foreground="{DynamicResource Wb.Brush.Text.Secondary}">
-                            <Run Text="Result: " /><Run x:Name="MessageResult" Text="(none)" />
-                        </TextBlock>
-                    </StackPanel>
-                </GroupBox>
+            <controls:GalleryPageHeader
+                Category="Feedback &amp; Windows"
+                Title="Windows &amp; Dialogs"
+                Description="Custom-chrome WorkbenchWindow (preserving native Aero snap/resize), WorkbenchDialogWindow with footer button bar, and themed WorkbenchMessageBox."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="WorkbenchUI.Wpf.Controls" />
 
-                <!-- Windows / Dialogs -->
-                <GroupBox Header="WorkbenchWindow / WorkbenchDialogWindow" Margin="0,0,0,12">
-                    <StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Button Content="Open Tool Window" Click="OpenToolWindow_Click" />
-                            <Button Content="Open Custom Dialog" Margin="8,0,0,0" Click="OpenDialog_Click" />
-                        </StackPanel>
-                        <TextBlock Margin="0,8,0,0" TextWrapping="Wrap"
-                                   Foreground="{DynamicResource Wb.Brush.Text.Secondary}">
-                            <Run Text="• This Gallery itself uses WorkbenchWindow (custom window chrome)" /><LineBreak />
-                            <Run Text="• Tool Window demonstrates embedding a Menu in the title bar via TitleBarContent" /><LineBreak />
-                            <Run Text="• Custom Dialog subclasses WorkbenchDialogWindow with action buttons in Footer" />
-                        </TextBlock>
-                    </StackPanel>
-                </GroupBox>
+            <!-- Card 1: WorkbenchMessageBox -->
+            <controls:ControlExample x:Name="MessageBoxExample"
+                                     HeaderText="WorkbenchMessageBox"
+                                     Description="Modal themed message dialogs supporting OK, OKCancel, YesNo, and YesNoCancel with standard icons.">
+                <StackPanel>
+                    <WrapPanel>
+                        <Button Content="Info (OK)" Click="InfoMessage_Click" Margin="0,0,8,6" />
+                        <Button Content="Confirm (YesNoCancel)" Click="ConfirmMessage_Click" Margin="0,0,8,6" />
+                        <Button Content="Warning (OKCancel)" Click="WarningMessage_Click" Margin="0,0,8,6" />
+                        <Button Content="Error (OK)" Style="{DynamicResource Wb.Button.Danger}" Click="ErrorMessage_Click" Margin="0,0,0,6" />
+                    </WrapPanel>
+                    <TextBlock Margin="0,8,0,0"
+                               FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                               FontSize="{DynamicResource Wb.FontSize.S}"
+                               Foreground="{DynamicResource Wb.Brush.Text.Secondary}">
+                        <Run Text="Result: " /><Run x:Name="MessageResult" Text="(none)" />
+                    </TextBlock>
+                </StackPanel>
+            </controls:ControlExample>
 
-                <!-- Toast -->
-                <GroupBox Header="ToastHost" Margin="0,0,0,12">
-                    <StackPanel Orientation="Horizontal">
-                        <Button Content="Info" Click="InfoToast_Click" />
-                        <Button Content="Success" Margin="8,0,0,0" Click="SuccessToast_Click" />
-                        <Button Content="Warning" Margin="8,0,0,0" Click="WarningToast_Click" />
-                        <Button Content="Error (8s)" Margin="8,0,0,0" Click="ErrorToast_Click" />
-                    </StackPanel>
-                </GroupBox>
+            <!-- Card 2: WorkbenchWindow & WorkbenchDialogWindow -->
+            <controls:ControlExample x:Name="WindowExample"
+                                     HeaderText="WorkbenchWindow &amp; WorkbenchDialogWindow"
+                                     Description="Tool Window hosts an embedded Menu in WorkbenchWindow.TitleBarContent; Custom Dialog uses WorkbenchDialogWindow.Footer for right-aligned action buttons.">
+                <StackPanel>
+                    <WrapPanel>
+                        <Button Content="Open Tool Window"
+                                wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Layout}"
+                                Click="OpenToolWindow_Click"
+                                Margin="0,0,8,6" />
+                        <Button Content="Open Custom Dialog"
+                                Style="{DynamicResource Wb.Button.Accent}"
+                                wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Add}"
+                                Click="OpenDialog_Click"
+                                Margin="0,0,0,6" />
+                    </WrapPanel>
+                    <TextBlock x:Name="DialogResultText"
+                               Text="Open either sample window to verify custom chrome and modal result handling."
+                               Style="{StaticResource Gallery.HintText}"
+                               Margin="0,8,0,0" />
+                </StackPanel>
+            </controls:ControlExample>
 
-                <!-- BusyOverlay -->
-                <GroupBox Header="BusyOverlay">
-                    <StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                            <Button Content="Busy for 3s" Click="StartBusy_Click" />
-                        </StackPanel>
-                        <Grid Height="180">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="12" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-
-                            <!-- Default display (spinner + text) -->
-                            <wb:BusyOverlay x:Name="DefaultBusyOverlay" BusyText="Generating mesh...">
-                                <Border Background="{DynamicResource Wb.Brush.Surface.Panel}"
-                                        BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
-                                        BorderThickness="1" Padding="12">
-                                    <StackPanel>
-                                        <TextBlock Text="Default (Spinner)" FontWeight="SemiBold" Margin="0,0,0,8" />
-                                        <TextBox Text="Input disabled while busy" Margin="0,0,0,8" />
-                                        <Button Content="Dummy Button" HorizontalAlignment="Left" />
-                                    </StackPanel>
-                                </Border>
-                            </wb:BusyOverlay>
-
-                            <!-- Custom content (ProgressDisplay) -->
-                            <wb:BusyOverlay x:Name="ProgressBusyOverlay" Grid.Column="2">
-                                <wb:BusyOverlay.BusyContent>
-                                    <wb:ProgressDisplay x:Name="BusyProgress"
-                                                        Width="260"
-                                                        Text="Running analysis..."
-                                                        IsIndeterminate="True" />
-                                </wb:BusyOverlay.BusyContent>
-                                <Border Background="{DynamicResource Wb.Brush.Surface.Panel}"
-                                        BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
-                                        BorderThickness="1" Padding="12">
-                                    <StackPanel>
-                                        <TextBlock Text="BusyContent = ProgressDisplay" FontWeight="SemiBold" Margin="0,0,0,8" />
-                                        <TextBox Text="Input disabled while busy" Margin="0,0,0,8" />
-                                        <Button Content="Dummy Button" HorizontalAlignment="Left" />
-                                    </StackPanel>
-                                </Border>
-                            </wb:BusyOverlay>
-                        </Grid>
-                    </StackPanel>
-                </GroupBox>
-            </StackPanel>
-        </ScrollViewer>
-
-        <!-- Toast notification host (bottom-right overlay) -->
-        <wb:ToastHost x:Name="Toasts" />
-    </Grid>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

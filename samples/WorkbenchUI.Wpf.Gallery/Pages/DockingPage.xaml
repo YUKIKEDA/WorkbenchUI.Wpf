@@ -4,54 +4,69 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
              mc:Ignorable="d">
-    <UserControl.Resources>
-        <Style x:Key="SectionHeader" TargetType="TextBlock">
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Margin" Value="0,20,0,8" />
-        </Style>
-        <Style x:Key="Hint" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Secondary}" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="Margin" Value="0,4,0,0" />
-        </Style>
-    </UserControl.Resources>
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel MaxWidth="760" HorizontalAlignment="Left">
-            <TextBlock Text="Docking (WorkbenchUI.Wpf.Docking)" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12" />
+            <controls:GalleryPageHeader
+                Category="Docking &amp; Charts"
+                Title="Docking"
+                Description="AvalonDock integration styled with semantic Dark/Light and dynamic Accent tokens, including floating windows, auto-hide tabs, and XML layout persistence."
+                PackageName="WorkbenchUI.Wpf.Docking"
+                NamespaceName="WorkbenchUI.Wpf.Docking">
+                <controls:GalleryPageHeader.ActionContent>
+                    <Button x:Name="LaunchButton"
+                            Content="Open Shell Demo"
+                            Style="{DynamicResource Wb.Button.Accent}"
+                            wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Layout}"
+                            Click="OnLaunchShell" />
+                </controls:GalleryPageHeader.ActionContent>
+            </controls:GalleryPageHeader>
 
             <wb:InfoBar Severity="Info"
                         Title="Separate Assembly"
-                        Message="Because docking depends on Dirkster.AvalonDock (MS-PL), it is shipped in a separate WorkbenchUI.Wpf.Docking assembly so apps that don't need docking keep the core zero-dependency."
-                        IsClosable="False" />
+                        Message="WorkbenchUI.Wpf.Docking builds on Dirkster.AvalonDock (MS-PL) in a separate package so apps without docking keep WorkbenchUI.Wpf zero-dependency."
+                        IsClosable="False"
+                        Margin="0,0,0,20" />
 
-            <TextBlock Text="Full Shell Demo" Style="{StaticResource SectionHeader}" />
-            <TextBlock Style="{StaticResource Hint}"
-                       Text="Opens a typical CAE application layout (Model Tree / Viewports / Properties / Legend / Log) in a separate window. Try tab drag-and-drop, docking compasses, floating windows, auto-hide pinning, and saving/restoring layouts." />
-            <Button x:Name="LaunchButton"
-                    Content="Open Shell Demo"
-                    Style="{DynamicResource Wb.Button.Accent}"
-                    HorizontalAlignment="Left"
-                    Margin="0,10,0,0"
-                    Padding="16,6"
-                    Click="OnLaunchShell" />
+            <!-- Card 1: Full CAE Shell Launch & Features -->
+            <controls:ControlExample x:Name="ThemeExample"
+                                     HeaderText="WorkbenchDockTheme &amp; Multi-Pane CAE Shell"
+                                     Description="Launch the multi-pane CAE shell window (Model Tree / Viewports / Properties / Legend / LogConsole) to test tab drag-and-drop, docking compasses, floating windows, and auto-hide pinning.">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="20" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-            <TextBlock Text="What's Included" Style="{StaticResource SectionHeader}" />
-            <TextBlock Style="{StaticResource Hint}">
-                <Run Text="• WorkbenchDockTheme — An AvalonDock VS2013-based theme populated with WorkbenchUI design tokens. Follows runtime theme and accent changes, including floating windows." /><LineBreak />
-                <Run Text="• DockLayout — Static save/restore helpers (Save / SaveToString / Load / LoadFromString). Delegates content resolution to a ContentId callback and automatically discards obsolete panes." /><LineBreak />
-                <Run Text="• Native AvalonDock types such as DockingManager and LayoutAnchorable remain directly usable (thin-wrapper design)." />
-            </TextBlock>
+                    <Border Grid.Column="0" Style="{StaticResource Gallery.CardSurface}" Padding="14">
+                        <StackPanel>
+                            <TextBlock Text="Included APIs" FontWeight="SemiBold" Margin="0,0,0,6" />
+                            <TextBlock Text="• WorkbenchDockTheme — VS2013 AvalonDock theme wired to DynamicResource tokens and live ThemeManager accent changes."
+                                       Style="{StaticResource Gallery.HintText}" Margin="0,2" />
+                            <TextBlock Text="• DockLayout — SaveToString / LoadFromString helpers resolving panes by ContentId callback."
+                                       Style="{StaticResource Gallery.HintText}" Margin="0,2" />
+                            <TextBlock Text="• Thin wrapper preserving DockingManager &amp; LayoutAnchorable directly."
+                                       Style="{StaticResource Gallery.HintText}" Margin="0,2" />
+                        </StackPanel>
+                    </Border>
 
-            <TextBlock Text="Tips" Style="{StaticResource SectionHeader}" />
-            <TextBlock Style="{StaticResource Hint}">
-                <Run Text="• Drag a tool window's tab or caption to reveal the docking compasses and drop onto top/bottom/left/right or center tab targets." /><LineBreak />
-                <Run Text="• Drop outside the compasses to float a window (supports multi-monitor setups)." /><LineBreak />
-                <Run Text="• Click the pin button on a caption to auto-hide into a side tab, or × to hide it (restore via the View menu)." /><LineBreak />
-                <Run Text="• Use the Layout menu to save, restore, or reset the current pane arrangement." /><LineBreak />
-                <Run Text="• Press Ctrl+Tab to open the document/tool window navigator." />
-            </TextBlock>
+                    <Border Grid.Column="2" Style="{StaticResource Gallery.CardSurface}" Padding="14">
+                        <StackPanel>
+                            <TextBlock Text="Try in Shell Demo" FontWeight="SemiBold" Margin="0,0,0,6" />
+                            <TextBlock Text="• Drag pane tabs onto docking compasses or drop outside to float."
+                                       Style="{StaticResource Gallery.HintText}" Margin="0,2" />
+                            <TextBlock Text="• Click the pin icon to auto-hide panes into side strips."
+                                       Style="{StaticResource Gallery.HintText}" Margin="0,2" />
+                            <TextBlock Text="• Press Ctrl+Tab to switch active documents &amp; tool windows."
+                                       Style="{StaticResource Gallery.HintText}" Margin="0,2" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </controls:ControlExample>
+
         </StackPanel>
     </ScrollViewer>
 </UserControl>

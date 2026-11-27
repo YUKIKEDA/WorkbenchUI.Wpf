@@ -4,90 +4,93 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
              mc:Ignorable="d">
-    <UserControl.Resources>
-        <Style x:Key="Hint" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Secondary}" />
-            <Setter Property="FontSize" Value="{StaticResource Wb.FontSize.S}" />
-            <Setter Property="Margin" Value="0,2,0,0" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-        </Style>
-    </UserControl.Resources>
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel MaxWidth="860" HorizontalAlignment="Left">
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="1040" HorizontalAlignment="Left">
 
-            <TextBlock Text="3D Deformation (Deformed Shape &amp; Animation)" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4" />
-            <TextBlock Style="{StaticResource Hint}"
-                       Text="Applies ViewportMesh.Displacements × DeformationScale in the GPU vertex shader. The demo shows bending eigenmodes of a cantilever plate (Euler-Bernoulli analytical solution). Try adjusting scale, harmonic animation, undeformed wireframe overlay, and transient playback via PlaybackBar (swapping displacement arrays per frame)." />
+            <controls:GalleryPageHeader
+                Category="3D Viewport"
+                Title="Deformation"
+                Description="Vertex-shader displacement amplification (pos + disp × scale) for bending eigenmodes of a cantilever plate, harmonic vibration animation, and transient PlaybackBar playback."
+                PackageName="WorkbenchUI.Wpf.Viewport3D"
+                NamespaceName="WorkbenchUI.Wpf.Viewport3D" />
 
-            <!-- Mode selector + scale -->
-            <WrapPanel Margin="0,12,0,4" ItemHeight="28">
-                <TextBlock Text="Mode:" VerticalAlignment="Center" Margin="0,0,8,0" />
-                <ComboBox x:Name="ModeCombo" MinWidth="130" VerticalAlignment="Center"
-                          AutomationProperties.AutomationId="ModeCombo"
-                          SelectionChanged="OnModeChanged">
-                    <ComboBoxItem Content="1st Bending" IsSelected="True" />
-                    <ComboBoxItem Content="2nd Bending" />
-                    <ComboBoxItem Content="3rd Bending" />
-                </ComboBox>
-                <TextBlock Text="Deformation Scale:" VerticalAlignment="Center" Margin="20,0,8,0" />
-                <Slider x:Name="ScaleSlider" Width="180" VerticalAlignment="Center"
-                        AutomationProperties.AutomationId="DeformScaleSlider"
-                        Minimum="0" Maximum="30" Value="5" />
-                <TextBlock x:Name="ScaleText" VerticalAlignment="Center" Margin="8,0,0,0"
-                           AutomationProperties.AutomationId="ScaleText"
-                           Text="{Binding Value, ElementName=ScaleSlider, StringFormat=×{0:0.0}}" />
-                <Button Content="Auto Scale" Click="OnAutoScaleClick" Margin="16,0,0,0"
-                        AutomationProperties.AutomationId="AutoScaleButton" />
-            </WrapPanel>
+            <Border Style="{StaticResource Gallery.CardSurface}" Padding="16" Margin="0,0,0,16">
+                <StackPanel>
+                    <WrapPanel Margin="0,0,0,6" ItemHeight="28">
+                        <TextBlock Text="Mode:" VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <ComboBox x:Name="ModeCombo" MinWidth="130" VerticalAlignment="Center"
+                                  AutomationProperties.AutomationId="ModeCombo"
+                                  SelectionChanged="OnModeChanged">
+                            <ComboBoxItem Content="1st Bending" IsSelected="True" />
+                            <ComboBoxItem Content="2nd Bending" />
+                            <ComboBoxItem Content="3rd Bending" />
+                        </ComboBox>
+                        <TextBlock Text="Deformation Scale:" VerticalAlignment="Center" Margin="20,0,8,0" />
+                        <Slider x:Name="ScaleSlider" Width="180" VerticalAlignment="Center"
+                                AutomationProperties.AutomationId="DeformScaleSlider"
+                                Minimum="0" Maximum="30" Value="5" />
+                        <TextBlock x:Name="ScaleText" VerticalAlignment="Center" Margin="8,0,0,0"
+                                   AutomationProperties.AutomationId="ScaleText"
+                                   Text="{Binding Value, ElementName=ScaleSlider, StringFormat=×{0:0.0}}" />
+                        <Button Content="Auto Scale" Click="OnAutoScaleClick" Margin="16,0,0,0"
+                                AutomationProperties.AutomationId="AutoScaleButton" />
+                    </WrapPanel>
 
-            <!-- Display options -->
-            <WrapPanel Margin="0,0,0,8" ItemHeight="28">
-                <wb:ToggleSwitch x:Name="AnimToggle" Content="Animate Vibration"
-                                 AutomationProperties.AutomationId="AnimToggle" />
-                <wb:ToggleSwitch x:Name="GhostToggle" Content="Undeformed Wireframe" Margin="20,0,0,0"
-                                 AutomationProperties.AutomationId="UndeformedToggle" />
-                <wb:ToggleSwitch x:Name="ContourToggle" Content="Contours" IsChecked="True" Margin="20,0,0,0" />
-                <Button Content="Fit" Click="OnFitClick" MinWidth="60" Margin="20,0,0,0" />
-            </WrapPanel>
+                    <WrapPanel Margin="0,0,0,10" ItemHeight="28">
+                        <wb:ToggleSwitch x:Name="AnimToggle" Content="Animate Vibration"
+                                         AutomationProperties.AutomationId="AnimToggle" />
+                        <wb:ToggleSwitch x:Name="GhostToggle" Content="Undeformed Wireframe" Margin="20,0,0,0"
+                                         AutomationProperties.AutomationId="UndeformedToggle" />
+                        <wb:ToggleSwitch x:Name="ContourToggle" Content="Contours" IsChecked="True" Margin="20,0,0,0" />
+                        <Button Content="Fit" Click="OnFitClick" MinWidth="60" Margin="20,0,0,0" />
+                    </WrapPanel>
 
-            <!-- Viewport + Legend -->
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
-                <wb:WorkbenchViewport x:Name="Viewport"
-                                Grid.Column="0"
-                                Height="420"
-                                DeformationScale="{Binding Value, ElementName=ScaleSlider}"
-                                IsDeformationAnimated="{Binding IsChecked, ElementName=AnimToggle}"
-                                ShowUndeformedWireframe="{Binding IsChecked, ElementName=GhostToggle}"
-                                ShowContours="{Binding IsChecked, ElementName=ContourToggle}" />
+                        <Border Grid.Column="0" BorderBrush="{DynamicResource Wb.Brush.Border.Default}" BorderThickness="1">
+                            <wb:WorkbenchViewport x:Name="Viewport"
+                                                  Height="420"
+                                                  DeformationScale="{Binding Value, ElementName=ScaleSlider}"
+                                                  IsDeformationAnimated="{Binding IsChecked, ElementName=AnimToggle}"
+                                                  ShowUndeformedWireframe="{Binding IsChecked, ElementName=GhostToggle}"
+                                                  ShowContours="{Binding IsChecked, ElementName=ContourToggle}" />
+                        </Border>
 
-                <wb:ColorMapLegend x:Name="Legend"
-                                   Grid.Column="1"
-                                   Height="280"
-                                   Margin="16,0,0,0"
-                                   VerticalAlignment="Center"
-                                   Title="|u| [mm]" />
-            </Grid>
-            <TextBlock x:Name="RendererInfo" Style="{StaticResource Hint}" />
+                        <wb:ColorMapLegend x:Name="Legend"
+                                           Grid.Column="1"
+                                           Height="280"
+                                           Margin="16,0,0,0"
+                                           VerticalAlignment="Center"
+                                           Title="|u| [mm]" />
+                    </Grid>
 
-            <!-- Transient playback (frame sequence playback is application-driven) -->
-            <TextBlock Text="Transient Playback (Damped Free Vibration from Initial Tip Displacement)" FontWeight="SemiBold" Margin="0,16,0,4" />
-            <wb:PlaybackBar x:Name="Playback"
-                            AutomationProperties.AutomationId="PlaybackBar"
-                            FramesPerSecond="30"
-                            CurrentFrameChanged="OnPlaybackFrameChanged" />
+                    <TextBlock x:Name="RendererInfo" Style="{StaticResource Gallery.HintText}" Margin="0,8,0,0" />
 
-            <TextBlock Style="{StaticResource Hint}" Margin="0,12,0,0"
-                       Text="Deformation is applied in the GPU vertex shader (pos + disp × scale). Displacements live in a separate dynamic vertex buffer (slot 1), so replacing Displacements performs a lightweight partial update suitable for per-frame transient playback. Normals remain undeformed (small-strain assumption), while picking hits the deformed geometry." />
-            <TextBlock Style="{StaticResource Hint}" Margin="0,6,0,0"
-                       Text="Built-in vibration animation oscillates as DeformationScale × sin(2πt/T) (IsDeformationAnimated). Multi-frame playback is application-driven by swapping Displacements / ScalarValues in PlaybackBar.CurrentFrameChanged (as shown here). Auto Scale applies GetSuggestedDeformationScale() so the maximum displacement is ~5% of the model diagonal." />
+                    <TextBlock Text="Transient Playback (Damped Free Vibration from Initial Tip Displacement)"
+                               FontWeight="SemiBold" Margin="0,14,0,6" />
+                    <wb:PlaybackBar x:Name="Playback"
+                                    AutomationProperties.AutomationId="PlaybackBar"
+                                    FramesPerSecond="30"
+                                    CurrentFrameChanged="OnPlaybackFrameChanged" />
+                </StackPanel>
+            </Border>
 
-            <Border Height="24" />
+            <Border Style="{StaticResource Gallery.CardSurface}" Padding="16">
+                <StackPanel>
+                    <TextBlock Text="Technical Notes" FontWeight="SemiBold" Margin="0,0,0,6" />
+                    <TextBlock Style="{StaticResource Gallery.HintText}" Margin="0,0,0,6"
+                               Text="Displacements live in a dynamic vertex buffer (slot 1), enabling lightweight partial GPU updates during per-frame transient playback while picking resolves against deformed geometry." />
+                    <TextBlock Style="{StaticResource Gallery.HintText}"
+                               Text="Auto Scale calls GetSuggestedDeformationScale() so maximum displacement is roughly 5% of the model bounding diagonal." />
+                </StackPanel>
+            </Border>
+
         </StackPanel>
     </ScrollViewer>
 </UserControl>

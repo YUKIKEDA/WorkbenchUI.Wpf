@@ -1,0 +1,100 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.InfoBarPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
+             mc:Ignorable="d">
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
+
+            <controls:GalleryPageHeader
+                Category="Feedback &amp; Windows"
+                Title="InfoBar"
+                Description="Persistent inline notification banner with semantic severity levels, optional ActionContent slot, and TwoWay IsOpen binding."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="WorkbenchUI.Wpf.Controls" />
+
+            <!-- Card 1: Interactive Playground -->
+            <controls:ControlExample x:Name="PlaygroundExample"
+                                     HeaderText="Interactive InfoBar Playground"
+                                     Description="Configure Severity, Title, Message, and IsClosable in real time.">
+                <StackPanel VerticalAlignment="Center">
+                    <wb:InfoBar x:Name="PlaygroundBar"
+                                Severity="Warning"
+                                Title="Mesh Quality Notice"
+                                Message="24 elements exceed an aspect ratio of 10. Consider local refinement." />
+                    <TextBlock Margin="0,10,0,0"
+                               FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                               FontSize="{DynamicResource Wb.FontSize.S}"
+                               Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                               Text="{Binding ElementName=PlaygroundBar, Path=IsOpen, StringFormat='IsOpen = {0}'}" />
+                </StackPanel>
+
+                <controls:ControlExample.Options>
+                    <StackPanel>
+                        <TextBlock Text="Severity" Style="{StaticResource Gallery.OptionLabel}" Margin="0,0,0,4" />
+                        <ComboBox x:Name="SeverityCombo" SelectionChanged="SeverityCombo_SelectionChanged" />
+
+                        <TextBlock Text="Title" Style="{StaticResource Gallery.OptionLabel}" />
+                        <TextBox Text="{Binding ElementName=PlaygroundBar, Path=Title, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Text="Message" Style="{StaticResource Gallery.OptionLabel}" />
+                        <TextBox Text="{Binding ElementName=PlaygroundBar, Path=Message, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <wb:ToggleSwitch Content="IsClosable"
+                                         Margin="0,12,0,0"
+                                         IsChecked="{Binding ElementName=PlaygroundBar, Path=IsClosable, Mode=TwoWay}" />
+
+                        <wb:ToggleSwitch Content="IsOpen"
+                                         Margin="0,10,0,0"
+                                         IsChecked="{Binding ElementName=PlaygroundBar, Path=IsOpen, Mode=TwoWay}" />
+                    </StackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+
+            <!-- Card 2: All Severities & ActionContent -->
+            <controls:ControlExample x:Name="SeveritiesExample"
+                                     HeaderText="Severity Levels &amp; ActionContent"
+                                     Description="Displays Info, Success, Warning (non-closable), and Error with an embedded Retry button.">
+                <StackPanel>
+                    <wb:InfoBar x:Name="InfoBarInfo"
+                                Severity="Info"
+                                Title="Info"
+                                Message="Mesh is up to date."
+                                Margin="0,0,0,8" />
+                    <wb:InfoBar x:Name="InfoBarSuccess"
+                                Severity="Success"
+                                Title="Completed"
+                                Message="Analysis finished successfully (elapsed 00:12:34)."
+                                Margin="0,0,0,8" />
+                    <wb:InfoBar x:Name="InfoBarWarning"
+                                Severity="Warning"
+                                Message="24 elements exceed an aspect ratio of 10 (IsClosable=False)."
+                                IsClosable="False"
+                                Margin="0,0,0,8" />
+                    <wb:InfoBar x:Name="InfoBarError"
+                                Severity="Error"
+                                Title="Error"
+                                Message="Failed to connect to the license server."
+                                Closed="InfoBarError_Closed"
+                                Margin="0,0,0,12">
+                        <wb:InfoBar.ActionContent>
+                            <Button Content="Retry" Click="Retry_Click" />
+                        </wb:InfoBar.ActionContent>
+                    </wb:InfoBar>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Show All Again" Click="Reopen_Click" />
+                        <TextBlock x:Name="InfoBarStatus"
+                                   Margin="12,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Style="{StaticResource Gallery.HintText}" />
+                    </StackPanel>
+                </StackPanel>
+            </controls:ControlExample>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

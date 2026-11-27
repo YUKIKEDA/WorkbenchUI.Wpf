@@ -6,42 +6,200 @@
         xmlns:wb="https://schemas.workbenchui.dev/wpf"
         mc:Ignorable="d"
         Title="WorkbenchUI.Wpf Gallery"
-        Height="720" Width="1080">
-    <DockPanel>
-        <!-- Left navigation -->
-        <Border DockPanel.Dock="Left"
-                Width="200"
-                Background="{DynamicResource Wb.Brush.Surface.Panel}"
-                BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
-                BorderThickness="0,0,1,0">
-            <DockPanel>
-                <TextBlock DockPanel.Dock="Top"
-                           Text="WorkbenchUI.Wpf"
-                           FontSize="{StaticResource Wb.FontSize.L}"
+        Width="1280"
+        Height="820"
+        MinWidth="760"
+        MinHeight="520">
+
+    <wb:WorkbenchWindow.TitleBarContent>
+        <Grid Background="{x:Null}"
+              WindowChrome.IsHitTestVisibleInChrome="False">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Global Control Search (Column 1) -->
+            <Grid Grid.Column="1"
+                  VerticalAlignment="Center"
+                  WindowChrome.IsHitTestVisibleInChrome="True">
+                <wb:SearchBox x:Name="GlobalSearchBox"
+                              Width="320"
+                              Height="24"
+                              Placeholder="Search controls... (Ctrl+K)"
+                              SearchDelay="0:0:0"
+                              PreviewKeyDown="GlobalSearchBox_PreviewKeyDown" />
+
+                <Popup x:Name="SearchResultsPopup"
+                       PlacementTarget="{Binding ElementName=GlobalSearchBox}"
+                       Placement="Bottom"
+                       VerticalOffset="4"
+                       StaysOpen="False"
+                       AllowsTransparency="True">
+                    <Border Width="380"
+                            MaxHeight="360"
+                            Background="{DynamicResource Wb.Brush.Surface.Elevated}"
+                            BorderBrush="{DynamicResource Wb.Brush.Border.Strong}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="4">
+                        <Grid>
+                            <ListBox x:Name="SearchResultsList"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     PreviewMouseLeftButtonUp="SearchResultsList_PreviewMouseLeftButtonUp"
+                                     KeyDown="SearchResultsList_KeyDown">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="4,3">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="22" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <wb:WorkbenchIcon Icon="{Binding Icon}"
+                                                              Size="14"
+                                                              Foreground="{DynamicResource Wb.Brush.Accent.Default}"
+                                                              VerticalAlignment="Center" />
+                                            <StackPanel Grid.Column="1" Margin="6,0,8,0">
+                                                <TextBlock Text="{Binding Title}"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource Wb.Brush.Text.Primary}" />
+                                                <TextBlock Text="{Binding Summary}"
+                                                           FontSize="{DynamicResource Wb.FontSize.S}"
+                                                           Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                                                           TextTrimming="CharacterEllipsis" />
+                                            </StackPanel>
+                                            <Border Grid.Column="2"
+                                                    Background="{DynamicResource Wb.Brush.Surface.Panel}"
+                                                    BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="3"
+                                                    Padding="6,1"
+                                                    VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding PackageName}"
+                                                           FontSize="10"
+                                                           FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                                                           Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
+                                            </Border>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+
+                            <TextBlock x:Name="SearchEmptyText"
+                                       Text="No matching controls found."
+                                       Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                                       Padding="12,10"
+                                       Visibility="Collapsed" />
+                        </Grid>
+                    </Border>
+                </Popup>
+            </Grid>
+
+            <!-- Quick Accent & Theme Switcher (Column 3) -->
+            <StackPanel Grid.Column="3"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        Margin="0,0,6,0"
+                        WindowChrome.IsHitTestVisibleInChrome="True">
+
+                <Button x:Name="AccentPopoverButton"
+                        Style="{DynamicResource Wb.Button.Subtle}"
+                        Height="24"
+                        MinHeight="24"
+                        Padding="6,0"
+                        Margin="0,0,2,0"
+                        ToolTip="Choose accent color"
+                        Click="AccentPopoverButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Border Width="12"
+                                Height="12"
+                                CornerRadius="3"
+                                Background="{DynamicResource Wb.Brush.Accent.Default}"
+                                BorderBrush="{DynamicResource Wb.Brush.Border.Default}"
+                                BorderThickness="1"
+                                VerticalAlignment="Center" />
+                        <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.ChevronDown}"
+                                          Size="10"
+                                          Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                                          VerticalAlignment="Center"
+                                          Margin="4,0,0,0" />
+                    </StackPanel>
+                </Button>
+
+                <Popup x:Name="AccentPopup"
+                       PlacementTarget="{Binding ElementName=AccentPopoverButton}"
+                       Placement="Bottom"
+                       HorizontalOffset="-120"
+                       VerticalOffset="4"
+                       StaysOpen="False"
+                       AllowsTransparency="True">
+                    <Border Width="220"
+                            Background="{DynamicResource Wb.Brush.Surface.Elevated}"
+                            BorderBrush="{DynamicResource Wb.Brush.Border.Strong}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="10">
+                        <StackPanel>
+                            <TextBlock Text="ACCENT COLOR"
+                                       FontSize="10"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                                       Margin="2,0,2,6" />
+                            <StackPanel x:Name="AccentPresetsHost" />
+                            <Border Height="1"
+                                    Background="{DynamicResource Wb.Brush.Border.Default}"
+                                    Margin="0,6" />
+                            <Button Content="Open Custom Color &amp; Settings..."
+                                    Style="{DynamicResource Wb.Button.Subtle}"
+                                    HorizontalContentAlignment="Left"
+                                    Padding="6,4"
+                                    FontSize="{DynamicResource Wb.FontSize.S}"
+                                    Click="OpenAccentSettings_Click" />
+                        </StackPanel>
+                    </Border>
+                </Popup>
+
+                <Button x:Name="ThemeQuickToggleButton"
+                        Style="{DynamicResource Wb.Button.Icon}"
+                        Width="28"
+                        Height="24"
+                        MinHeight="24"
+                        ToolTip="Switch to Light theme"
+                        Click="ThemeQuickToggleButton_Click">
+                    <wb:WorkbenchIcon x:Name="ThemeQuickToggleIcon"
+                                      Icon="{x:Static wb:WorkbenchIcons.Sun}"
+                                      Size="14" />
+                </Button>
+            </StackPanel>
+        </Grid>
+    </wb:WorkbenchWindow.TitleBarContent>
+
+    <wb:NavigationView x:Name="RootNav"
+                       PaneDisplayMode="Auto"
+                       OpenPaneLength="244"
+                       CompactPaneLength="48"
+                       AutoCollapseWidth="920"
+                       SelectionChanged="RootNav_SelectionChanged">
+        <wb:NavigationView.PaneHeader>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="2,0,0,0">
+                <TextBlock Text="WorkbenchUI"
                            FontWeight="SemiBold"
-                           Margin="12,12,12,4" />
-                <TextBlock DockPanel.Dock="Top"
-                           Text="Gallery"
-                           Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
-                           Margin="12,0,12,12" />
+                           FontSize="{DynamicResource Wb.FontSize.M}"
+                           Foreground="{DynamicResource Wb.Brush.Text.Primary}"
+                           VerticalAlignment="Center" />
+                <TextBlock Text=" .Wpf"
+                           FontSize="{DynamicResource Wb.FontSize.M}"
+                           Foreground="{DynamicResource Wb.Brush.Accent.Default}"
+                           FontWeight="SemiBold"
+                           VerticalAlignment="Center" />
+            </StackPanel>
+        </wb:NavigationView.PaneHeader>
 
-                <!-- Theme toggle -->
-                <StackPanel DockPanel.Dock="Bottom" Margin="12,8,12,12">
-                    <Separator Margin="0,0,0,10" />
-                    <wb:ToggleSwitch x:Name="ThemeToggle"
-                                     Content="Light Theme"
-                                     Checked="ThemeToggle_Checked"
-                                     Unchecked="ThemeToggle_Unchecked" />
-                </StackPanel>
-
-                <ListBox x:Name="NavList"
-                         Background="Transparent"
-                         BorderThickness="0"
-                         SelectionChanged="NavList_SelectionChanged" />
-            </DockPanel>
-        </Border>
-
-        <!-- Page host -->
-        <ContentControl x:Name="PageHost" Margin="16" />
-    </DockPanel>
+        <ContentControl x:Name="PageHost" />
+    </wb:NavigationView>
 </wb:WorkbenchWindow>

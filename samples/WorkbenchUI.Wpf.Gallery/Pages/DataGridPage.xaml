@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
              mc:Ignorable="d">
     <UserControl.Resources>
         <DataTemplate x:Key="MaterialDetailsTemplate">
@@ -20,69 +22,103 @@
             </Border>
         </DataTemplate>
     </UserControl.Resources>
-    <DockPanel>
-        <TextBlock DockPanel.Dock="Top" Text="DataGrid (Material Table)"
-                   FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12" />
 
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
-            <CheckBox x:Name="GroupCheck" Content="Group by Type"
-                      Checked="GroupCheck_Changed" Unchecked="GroupCheck_Changed" />
-            <CheckBox x:Name="DetailsCheck" Content="RowDetails (expand/collapse via leading ▶)"
-                      IsChecked="True" Margin="16,0,0,0"
-                      Checked="DetailsCheck_Changed" Unchecked="DetailsCheck_Changed" />
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
+
+            <controls:GalleryPageHeader
+                Category="Data &amp; Visualization"
+                Title="DataGrid &amp; ListView"
+                Description="High-density DataGrid supporting sorting, column reordering, grouping, IDataErrorInfo cell validation, RowDetails expansion, plus read-only ListView GridView columns."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="WorkbenchUI.Wpf.Controls" />
+
+            <!-- Card 1: Material DataGrid -->
+            <controls:ControlExample x:Name="DataGridExample"
+                                     HeaderText="Editable Engineering DataGrid"
+                                     Description="Double-click a cell (or press F2) to edit. Entering Poisson's ratio ≥ 0.5 displays a red validation border and row header error indicator."
+                                     OptionsWidth="220">
+                <DataGrid x:Name="Grid"
+                          Height="340"
+                          AutoGenerateColumns="False"
+                          HeadersVisibility="All"
+                          CanUserAddRows="False"
+                          RowDetailsVisibilityMode="Collapsed"
+                          RowDetailsTemplate="{StaticResource MaterialDetailsTemplate}">
+                    <DataGrid.GroupStyle>
+                        <GroupStyle ContainerStyle="{StaticResource Wb.DataGrid.GroupItemStyle}" />
+                    </DataGrid.GroupStyle>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn x:Name="DetailsColumn" Width="28"
+                                                CanUserResize="False" CanUserReorder="False">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ToggleButton Style="{StaticResource Wb.DataGrid.DetailsToggle}"
+                                                  IsChecked="{Binding DetailsVisibility,
+                                                      RelativeSource={RelativeSource AncestorType=DataGridRow},
+                                                      Converter={StaticResource Wb.DataGrid.VisibilityToBool},
+                                                      Mode=TwoWay}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Name" Width="*"
+                                            Binding="{Binding Name}" />
+                        <DataGridComboBoxColumn x:Name="TypeColumn" Header="Type" Width="105"
+                                                SelectedItemBinding="{Binding Type}" />
+                        <DataGridTextColumn Header="E [GPa]" Width="90"
+                                            Binding="{Binding YoungsModulus, ValidatesOnDataErrors=True}" />
+                        <DataGridTextColumn Header="ν" Width="75"
+                                            Binding="{Binding PoissonRatio, ValidatesOnDataErrors=True}" />
+                        <DataGridTextColumn Header="ρ [kg/m³]" Width="95"
+                                            Binding="{Binding Density, ValidatesOnDataErrors=True}" />
+                        <DataGridCheckBoxColumn Header="Active" Width="60"
+                                                Binding="{Binding IsActive, UpdateSourceTrigger=PropertyChanged}">
+                            <DataGridCheckBoxColumn.ElementStyle>
+                                <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                                    <Setter Property="HorizontalAlignment" Value="Center" />
+                                </Style>
+                            </DataGridCheckBoxColumn.ElementStyle>
+                        </DataGridCheckBoxColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <controls:ControlExample.Options>
+                    <StackPanel>
+                        <wb:ToggleSwitch x:Name="GroupCheck"
+                                         Content="Group by Type"
+                                         Checked="GroupCheck_Changed"
+                                         Unchecked="GroupCheck_Changed" />
+                        <wb:ToggleSwitch x:Name="DetailsCheck"
+                                         Content="RowDetails Toggle"
+                                         IsChecked="True"
+                                         Margin="0,12,0,0"
+                                         Checked="DetailsCheck_Changed"
+                                         Unchecked="DetailsCheck_Changed" />
+
+                        <TextBlock Text="Capabilities" Style="{StaticResource Gallery.OptionLabel}" />
+                        <TextBlock Text="• Click ▶ to expand RowDetails" Style="{StaticResource Gallery.HintText}" Margin="0,2" />
+                        <TextBlock Text="• Click column headers to sort" Style="{StaticResource Gallery.HintText}" Margin="0,2" />
+                        <TextBlock Text="• Drag dividers to resize columns" Style="{StaticResource Gallery.HintText}" Margin="0,2" />
+                    </StackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+
+            <!-- Card 2: ListView + GridView -->
+            <controls:ControlExample x:Name="ListViewExample"
+                                     HeaderText="ListView + GridView (Read-only Columns)"
+                                     Description="Lightweight multi-column display supporting column reordering and resizing without inline editing overhead.">
+                <ListView x:Name="MaterialList" Height="180" Width="580" HorizontalAlignment="Left">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Material" Width="170" DisplayMemberBinding="{Binding Name}" />
+                            <GridViewColumn Header="Young's Modulus [GPa]" Width="150" DisplayMemberBinding="{Binding YoungsModulus}" />
+                            <GridViewColumn Header="Poisson's Ratio" Width="110" DisplayMemberBinding="{Binding PoissonRatio}" />
+                            <GridViewColumn Header="Density [kg/m³]" Width="130" DisplayMemberBinding="{Binding Density}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </controls:ControlExample>
+
         </StackPanel>
-
-        <TextBlock DockPanel.Dock="Bottom" Margin="0,8,0,0" TextWrapping="Wrap"
-                   Foreground="{DynamicResource Wb.Brush.Text.Secondary}">
-            <Run Text="• Double-click a cell (or press F2) to edit. Entering Poisson's ratio ≥ 0.5 displays a red border + validation tooltip (hover cell)." /><LineBreak />
-            <Run Text="• Click ▶ at the start of a row to expand/collapse RowDetails; multiple rows can stay expanded." /><LineBreak />
-            <Run Text="• Click column headers to sort, drag dividers to resize columns, and drag headers to reorder columns." /><LineBreak />
-            <Run Text="• Click the top-left corner to select all. Row headers show an error indicator (!) on invalid rows." />
-        </TextBlock>
-
-        <DataGrid x:Name="Grid"
-                  AutoGenerateColumns="False"
-                  HeadersVisibility="All"
-                  CanUserAddRows="False"
-                  RowDetailsVisibilityMode="Collapsed"
-                  RowDetailsTemplate="{StaticResource MaterialDetailsTemplate}">
-            <DataGrid.GroupStyle>
-                <!-- GroupStyle is not a DependencyObject, so specify it with StaticResource -->
-                <GroupStyle ContainerStyle="{StaticResource Wb.DataGrid.GroupItemStyle}" />
-            </DataGrid.GroupStyle>
-            <DataGrid.Columns>
-                <!-- Explicitly toggle RowDetails with the leading ▶ button (avoid selection-following layout jumps) -->
-                <DataGridTemplateColumn x:Name="DetailsColumn" Width="28"
-                                        CanUserResize="False" CanUserReorder="False">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <ToggleButton Style="{StaticResource Wb.DataGrid.DetailsToggle}"
-                                          IsChecked="{Binding DetailsVisibility,
-                                              RelativeSource={RelativeSource AncestorType=DataGridRow},
-                                              Converter={StaticResource Wb.DataGrid.VisibilityToBool},
-                                              Mode=TwoWay}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Name" Width="*"
-                                    Binding="{Binding Name}" />
-                <DataGridComboBoxColumn x:Name="TypeColumn" Header="Type" Width="110"
-                                        SelectedItemBinding="{Binding Type}" />
-                <DataGridTextColumn Header="Young's Modulus E [GPa]" Width="140"
-                                    Binding="{Binding YoungsModulus, ValidatesOnDataErrors=True}" />
-                <DataGridTextColumn Header="Poisson's Ratio ν" Width="120"
-                                    Binding="{Binding PoissonRatio, ValidatesOnDataErrors=True}" />
-                <DataGridTextColumn Header="Density ρ [kg/m³]" Width="120"
-                                    Binding="{Binding Density, ValidatesOnDataErrors=True}" />
-                <DataGridCheckBoxColumn Header="Active" Width="60"
-                                        Binding="{Binding IsActive, UpdateSourceTrigger=PropertyChanged}">
-                    <DataGridCheckBoxColumn.ElementStyle>
-                        <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
-                            <Setter Property="HorizontalAlignment" Value="Center" />
-                        </Style>
-                    </DataGridCheckBoxColumn.ElementStyle>
-                </DataGridCheckBoxColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-    </DockPanel>
+    </ScrollViewer>
 </UserControl>

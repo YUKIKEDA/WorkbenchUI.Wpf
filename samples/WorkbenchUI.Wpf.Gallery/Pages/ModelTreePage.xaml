@@ -4,49 +4,82 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             xmlns:controls="clr-namespace:WorkbenchUI.Wpf.Gallery.Controls"
              mc:Ignorable="d">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="340" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+    <ScrollViewer Style="{StaticResource Gallery.PageScrollViewer}">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
 
-        <DockPanel>
-            <TextBlock DockPanel.Dock="Top" Text="ModelTree"
-                       FontSize="20" FontWeight="SemiBold" Margin="0,0,0,8" />
-            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
-                <Button Content="Expand All" Click="OnExpandAll" />
-                <Button Content="Collapse All" Click="OnCollapseAll" Margin="8,0,0,0" />
-            </StackPanel>
-            <wb:ModelTree x:Name="Tree" SelectionChanged="OnTreeSelectionChanged">
-                <wb:ModelTree.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Zoom to Fit" />
-                        <MenuItem Header="Isolate" />
-                        <Separator />
-                        <MenuItem Header="Rename" InputGestureText="F2" Click="OnRenameClick" />
-                        <MenuItem Header="Delete" />
-                    </ContextMenu>
-                </wb:ModelTree.ContextMenu>
-            </wb:ModelTree>
-        </DockPanel>
+            <controls:GalleryPageHeader
+                Category="Data &amp; Visualization"
+                Title="ModelTree"
+                Description="UI-virtualized engineering hierarchy tree with propagating eye visibility toggles, Ctrl/Shift multi-selection, inline F2 rename, and standard TreeView comparison."
+                PackageName="WorkbenchUI.Wpf"
+                NamespaceName="WorkbenchUI.Wpf.Controls" />
 
-        <StackPanel Grid.Column="1" Margin="24,36,0,0">
-            <TextBlock Text="Demo Notes" FontWeight="SemiBold" Margin="0,0,0,8" />
-            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource Wb.Brush.Text.Secondary}">
-                <Run Text="• Single-click expand without chevrons or double-clicks" /><LineBreak />
-                <Run Text="• Ctrl / Shift multi-selection and arrow keys (← / → to collapse / expand)" /><LineBreak />
-                <Run Text="• Eye icon: clicking a parent propagates to all descendants;" /><LineBreak />
-                <Run Text="  partially hidden children show a mixed (dimmed) parent icon" /><LineBreak />
-                <Run Text="• Right-click selects the row and opens the context menu" /><LineBreak />
-                <Run Text="• Press F2 or click Rename for inline editing" /><LineBreak />
-                <Run Text="  (Enter commits / Esc cancels / blank names rejected; IRenamableNode only)" /><LineBreak />
-                <Run Text="• &quot;Result Sets&quot; contains 2,000 nodes (to verify UI virtualization)" />
-            </TextBlock>
-            <TextBlock x:Name="SelectionInfo"
-                       Margin="0,16,0,0"
-                       Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
-                       Text="Selected: 0" />
+            <!-- Card 1: Virtualized ModelTree -->
+            <controls:ControlExample x:Name="ModelTreeExample"
+                                     HeaderText="Virtualized ModelTree (2,000+ Nodes)"
+                                     Description="&quot;Result Sets&quot; holds 2,000 virtualized child nodes. Click the eye icon to toggle subtree visibility or press F2 / right-click Rename."
+                                     OptionsWidth="260">
+                <wb:ModelTree x:Name="Tree"
+                              Height="360"
+                              SelectionChanged="OnTreeSelectionChanged">
+                    <wb:ModelTree.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Zoom to Fit" />
+                            <MenuItem Header="Isolate" />
+                            <Separator />
+                            <MenuItem Header="Rename" InputGestureText="F2" Click="OnRenameClick" />
+                            <MenuItem Header="Delete" />
+                        </ContextMenu>
+                    </wb:ModelTree.ContextMenu>
+                </wb:ModelTree>
+
+                <controls:ControlExample.Options>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                            <Button Content="Expand All" Click="OnExpandAll" Margin="0,0,8,0" />
+                            <Button Content="Collapse All" Click="OnCollapseAll" />
+                        </StackPanel>
+
+                        <TextBlock x:Name="SelectionInfo"
+                                   Text="Selected: 0"
+                                   FontFamily="{DynamicResource Wb.FontFamily.Monospace}"
+                                   FontSize="{DynamicResource Wb.FontSize.S}"
+                                   Foreground="{DynamicResource Wb.Brush.Accent.Default}"
+                                   Margin="0,0,0,12" />
+
+                        <TextBlock Text="Interactions" Style="{StaticResource Gallery.OptionLabel}" Margin="0,0,0,4" />
+                        <TextBlock Text="• Single-click expands groups" Style="{StaticResource Gallery.HintText}" Margin="0,2" />
+                        <TextBlock Text="• Ctrl / Shift multi-select + ←/→ keys" Style="{StaticResource Gallery.HintText}" Margin="0,2" />
+                        <TextBlock Text="• Eye toggles cascade &amp; show mixed state" Style="{StaticResource Gallery.HintText}" Margin="0,2" />
+                        <TextBlock Text="• F2 or ContextMenu starts inline rename" Style="{StaticResource Gallery.HintText}" Margin="0,2" />
+                    </StackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+
+            <!-- Card 2: Standard TreeView Comparison -->
+            <controls:ControlExample x:Name="TreeViewExample"
+                                     HeaderText="Standard WPF TreeView"
+                                     Description="Styled standard TreeView for smaller configuration or dialog trees.">
+                <TreeView Height="200" Width="340" HorizontalAlignment="Left">
+                    <TreeViewItem Header="Assembly-1" IsExpanded="True">
+                        <TreeViewItem Header="Part: Bracket" IsExpanded="True">
+                            <TreeViewItem Header="Solid Body" />
+                            <TreeViewItem Header="Mesh (24,310 elements)" />
+                        </TreeViewItem>
+                        <TreeViewItem Header="Part: Shaft">
+                            <TreeViewItem Header="Solid Body" />
+                            <TreeViewItem Header="Mesh (8,102 elements)" />
+                        </TreeViewItem>
+                        <TreeViewItem Header="Boundary Conditions" IsExpanded="True">
+                            <TreeViewItem Header="Fixed Support (Face 3)" />
+                            <TreeViewItem Header="Force 500 N (Face 12)" />
+                        </TreeViewItem>
+                    </TreeViewItem>
+                </TreeView>
+            </controls:ControlExample>
+
         </StackPanel>
-    </Grid>
+    </ScrollViewer>
 </UserControl>
