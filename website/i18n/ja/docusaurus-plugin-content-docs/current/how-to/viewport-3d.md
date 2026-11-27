@@ -75,7 +75,7 @@ Voxels.Add(grid);
 
 ## プローブ・選択・注釈
 
-`PickMode`（`None`, `Part`, `Element`, `Node`, `Probe`, `Cell`）を設定し、`ProbePicked` または `VoxelProbePicked` を購読して `Viewport.Annotations` へ注釈を追加できます:
+`PickMode`（`None`, `Part`, `Face`, `Node`, `Probe`, `Cell`）を設定し、`ProbePicked` または `VoxelProbePicked` を購読して `Viewport.Annotations` へ注釈を追加できます:
 
 ```csharp
 Viewport.PickMode = ViewportPickMode.Probe;
@@ -85,9 +85,10 @@ Viewport.ProbePicked += (_, e) =>
     Viewport.Annotations.Add(new ViewportAnnotation
     {
         Mesh = r.Mesh,
-        NodeIndex = r.NearestNodeIndex,
+        NodeIndex = r.NodeIndex,
         X = r.X, Y = r.Y, Z = r.Z,
         Text = $"{r.ScalarValue:F2}",
     });
+    e.Handled = true;
 };
 ```

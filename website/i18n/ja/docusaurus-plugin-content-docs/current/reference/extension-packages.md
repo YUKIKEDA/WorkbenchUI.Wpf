@@ -59,8 +59,8 @@ sidebar_position: 4
 | `SectionPlane` | 断面カット平面定義 | `OriginX/Y/Z`, `NormalX/Y/Z` |
 | `ViewportAnnotation` | 3D 引き出し線注釈 | `Mesh`, `NodeIndex`, `X/Y/Z`, `Text`, `Tag` |
 | `ProbeResult` / `VoxelProbeResult` | プローブヒット情報 | ヒット座標、対象メッシュ/格子、節点/セル索引、スカラー値 |
-| `ViewportStatistics` | 統計情報 | メッシュ・三角形・エッジ・グリフ数、構築時間 |
-| `Bounds3D` | 軸平行境界ボックス | 最小/最大座標、中心、サイズ、対角長 |
+| `ViewportStatistics` | 統計情報 | `TriangleCount`, `VertexCount`, `MeshCount`, `ChunkCount`, `EdgeSkippedMeshCount`, `LodTriangleCount`, `IsLodActive`, `LastDrawnChunkCount`, `LastGeometryBuildTime`, `LastRenderTime` |
+| `Bounds3D` | 軸平行境界ボックス | `Empty`, `MinX`/`MinY`/`MinZ`, `MaxX`/`MaxY`/`MaxZ`, `IsEmpty`, `CenterX`/`CenterY`/`CenterZ`, `Radius`, `Union(...)` |
 | `ViewportHoverInfo` | ホバープリハイライト情報 | `Mesh`, `TriangleIndex`, `NodeIndex`, `IsPart` |
 
 ### `WorkbenchViewport` メンバー一覧
@@ -80,6 +80,6 @@ sidebar_position: 4
 | --- | --- |
 | `ViewportProjection` | 投影方式（`Perspective` / `Orthographic`） |
 | `ViewportUpAxis` | 上方向軸（`ZUp` / `YUp`） |
-| `ViewportPickMode` | ピック粒度（`None`, `Part`, `Element`, `Node`, `Probe`, `Cell`） |
+| `ViewportPickMode` | ピック粒度（`None`, `Part`, `Face`, `Node`, `Probe`, `Cell`） |
 | `ViewportStandardView` | 標準視点（`Front`, `Back`, `Left`, `Right`, `Top`, `Bottom`, `Isometric`） |
-| `ViewportRubberBandSelectionMode` | 矩形選択判定（`Window`, `Crossing`） |
+| `ViewportRubberBandSelectionMode` | 矩形選択判定（`VisibleOnly`, `Through`） |

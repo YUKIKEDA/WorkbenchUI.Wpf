@@ -89,7 +89,7 @@ series.Append(1.2e-3);
 
 - **`HistoryChart`**: Bind `SeriesSource` to `IEnumerable<ChartSeries>` (`X`, `Y`, `Name`, `Color`, `LineWidth`). Supports `ShowLegend` and `ShowCrosshair`.
 - **`FrequencyResponsePlot`**: Bind `SeriesSource` to `IEnumerable<FrequencyResponseSeries>` (`Frequencies`, `Magnitudes`, optional `Phases`) with `ShowPhase` and `MagnitudeInDecibels`.
-- **`HistogramChart`**: Bind `Values` (`double[]?`), `BinCount`, and `Normalize`.
+- **`HistogramChart`**: Bind `Values` (`IEnumerable?`), `BinCount`, and `Normalize`.
 
 ### Custom ScottPlot Charts (`WorkbenchPlot`)
 

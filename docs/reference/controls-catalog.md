@@ -15,12 +15,12 @@ All custom controls live in `WorkbenchUI.Wpf.Controls` (theming APIs live in `Wo
 | `WorkbenchWindow` | `Window` | Custom `WindowChrome` title bar, `TitleBarContent` slot for embedded menus/search |
 | `WorkbenchDialogWindow` | `WorkbenchWindow` | Dialog base with standardized button bar conventions |
 | `WorkbenchMessageBox` | `static` | `Show(...)` confirmation, warning, and error dialogs |
-| `WorkbenchRibbon` | `TabControl` | `ApplicationLabel`, `ApplicationMenu`, `QuickAccessContent` |
-| `WorkbenchRibbonTab` | `TabItem` | `Groups` (`ObservableCollection<WorkbenchRibbonGroup>`, content property) |
+| `WorkbenchRibbon` | `TabControl` | `ApplicationLabel`, `ApplicationMenu`, `AuxiliaryContent` |
+| `WorkbenchRibbonTab` | `TabItem` | `Groups` (`ObservableCollection<object>`, content property) |
 | `WorkbenchRibbonGroup` | `HeaderedItemsControl` | Labeled command group inside a ribbon tab |
 | `InfoBar` | `Control` | `Severity` (`Info`/`Success`/`Warning`/`Error`), `Title`, `Message`, `IsOpen`, `IsClosable`, `ActionContent`, `Closed` |
 | `ToastHost` | `Control` | `Show(message, level, duration)` explicit overlay host (`ToastLevel`, `ToastItem`) |
-| `BusyOverlay` | `ContentControl` | `IsBusy`, `Message` — blocks input inside the wrapped region |
+| `BusyOverlay` | `ContentControl` | `IsBusy`, `BusyText`, `BusyContent` — blocks input inside the wrapped region |
 
 ## Engineering & Numeric Inputs
 
@@ -28,9 +28,9 @@ All custom controls live in `WorkbenchUI.Wpf.Controls` (theming APIs live in `Wo
 | --- | --- | --- |
 | `NumericBox` | `Control` | `Value` (`double?`), `Minimum`, `Maximum`, `Increment`, `Unit`, `UnitProvider` (`IUnitProvider`), `Format`, `IsReadOnly` |
 | `Vector3Box` | `Control` | `X`, `Y`, `Z` (`double?`), `Minimum`, `Maximum`, `Increment`, `Unit`, `UnitProvider`, `Format` |
-| `MatrixBox` | `Control` | `Rows`, `Columns`, `Values` (`double[]?`), `IsSymmetric`, `IsReadOnly`, `UnitProvider`, `Format` |
+| `MatrixBox` | `Control` | `Rows`, `Columns`, `Values` (`double[,]?`), `IsSymmetric`, `IsReadOnly`, `UnitProvider`, `Format` |
 | `RangeSlider` | `Control` | `Minimum`, `Maximum`, `LowerValue`, `UpperValue`, `Orientation`, draggable selected range bar |
-| `PathBox` | `Control` | `Text`, `Mode` (`OpenFile`/`SaveFile`/`Folder`), `Filter`, `BrowseRequested` |
+| `PathBox` | `Control` | `SelectedPath`, `Mode` (`OpenFile`/`SaveFile`/`Folder`), `Filter`, `BrowseRequested` |
 | `SearchBox` | `Control` | `Text`, `SearchText` (debounced), `SearchDelay`, `Placeholder` |
 | `CheckComboBox` | `ItemsControl` | Multi-select dropdown (`CheckComboBoxItem`) |
 | `KeyGestureBox` | `Control` | Captures keyboard shortcut `KeyGesture` |
@@ -80,7 +80,7 @@ All custom controls live in `WorkbenchUI.Wpf.Controls` (theming APIs live in `Wo
 
 | Category | Controls |
 | --- | --- |
-| **Buttons** | `Button`, `ToggleButton`, `RepeatButton`, `CheckBox`, `RadioButton` |
+| **Buttons** | `Button`, `CheckBox`, `RadioButton` |
 | **Text Input** | `TextBox`, `PasswordBox`, `RichTextBox` |
 | **Selection & Lists** | `ComboBox`, `ListBox`, `ListView` (including `GridView`), `TreeView` |
 | **Data & Tables** | `DataGrid` (column/row headers, cell editing, validation tooltips, row details, grouping) |

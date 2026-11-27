@@ -72,7 +72,7 @@ export default function Home(): ReactNode {
             <div className={styles.grid}>
               <Link className={styles.card} to="/docs/reference/controls-catalog">
                 <h3>WorkbenchUI.Wpf</h3>
-                <p><Translate id="homepage.pkg.core">Zero-dependency core: semantic Dark/Light theme, 68 vector icons, and high-density workbench controls.</Translate></p>
+                <p><Translate id="homepage.pkg.core">Zero-dependency core: semantic Dark/Light theme, 67 vector icons, and high-density workbench controls.</Translate></p>
               </Link>
               <Link className={styles.card} to="/docs/reference/extension-packages#workbenchuiwpfcharts">
                 <h3>WorkbenchUI.Wpf.Charts</h3>

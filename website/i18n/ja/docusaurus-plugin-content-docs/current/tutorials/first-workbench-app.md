@@ -63,7 +63,7 @@ dotnet add package WorkbenchUI.Wpf
         </ToolBarTray>
 
         <!-- 下部ログコンソール -->
-        <wb:LogConsole x:Name="Console"
+        <wb:LogConsole x:Name="LogView"
                        DockPanel.Dock="Bottom"
                        Height="150"
                        BorderThickness="0,1,0,0"
@@ -112,7 +112,7 @@ public partial class MainWindow : WorkbenchWindow
     {
         InitializeComponent();
 
-        Console.Source = _log;
+        LogView.Source = _log;
         _log.Append(LogLevel.Info, "Workbench initialized.");
 
         var assembly = new TreeNode { Name = "Assembly", IsExpanded = true, Icon = WorkbenchIcons.Layers };

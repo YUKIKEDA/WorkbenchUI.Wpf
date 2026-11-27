@@ -59,8 +59,8 @@ Each extension package depends on `WorkbenchUI.Wpf` and isolates its external de
 | `SectionPlane` | Clipping plane definition | `OriginX/Y/Z`, `NormalX/Y/Z` |
 | `ViewportAnnotation` | 3D callout marker | `Mesh`, `NodeIndex`, `X/Y/Z`, `Text`, `Tag` |
 | `ProbeResult` / `VoxelProbeResult` | Probe hit records | Hit coordinates, mesh/grid, node/cell indices, scalar value |
-| `ViewportStatistics` | Build & frame telemetry | Mesh/triangle/edge/glyph counts, build timing |
-| `Bounds3D` | Axis-aligned bounding box | Min/max coordinates, center, size, diagonal |
+| `ViewportStatistics` | Build & frame telemetry | `TriangleCount`, `VertexCount`, `MeshCount`, `ChunkCount`, `EdgeSkippedMeshCount`, `LodTriangleCount`, `IsLodActive`, `LastDrawnChunkCount`, `LastGeometryBuildTime`, `LastRenderTime` |
+| `Bounds3D` | Axis-aligned bounding box | `Empty`, `MinX`/`MinY`/`MinZ`, `MaxX`/`MaxY`/`MaxZ`, `IsEmpty`, `CenterX`/`CenterY`/`CenterZ`, `Radius`, `Union(...)` |
 | `ViewportHoverInfo` | Hover pre-highlight payload | `Mesh`, `TriangleIndex`, `NodeIndex`, `IsPart` |
 
 ### `WorkbenchViewport` Members
@@ -80,6 +80,6 @@ Each extension package depends on `WorkbenchUI.Wpf` and isolates its external de
 | --- | --- |
 | `ViewportProjection` | `Perspective` or `Orthographic` projection |
 | `ViewportUpAxis` | World up-axis convention (`ZUp` or `YUp`) |
-| `ViewportPickMode` | Picking mode (`None`, `Part`, `Element`, `Node`, `Probe`, `Cell`) |
+| `ViewportPickMode` | Picking mode (`None`, `Part`, `Face`, `Node`, `Probe`, `Cell`) |
 | `ViewportStandardView` | Standard camera orientations (`Front`, `Back`, `Left`, `Right`, `Top`, `Bottom`, `Isometric`) |
-| `ViewportRubberBandSelectionMode` | Box selection inclusion rule (`Window`, `Crossing`) |
+| `ViewportRubberBandSelectionMode` | Box selection mode (`VisibleOnly`, `Through`) |

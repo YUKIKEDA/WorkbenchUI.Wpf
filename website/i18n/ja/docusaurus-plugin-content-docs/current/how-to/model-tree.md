@@ -54,7 +54,7 @@ XAML:
 // 選択中ノードの取得
 IReadOnlyList<ITreeNode> selected = MyModelTree.GetSelectedNodes();
 
-// プログラムから名前変更モードを開始（IRenamableNode.CanRename == true が必要）
+// プログラムから名前変更モードを開始（IRenamableNode 実装が必要）
 if (selected.FirstOrDefault() is { } first)
 {
     MyModelTree.BeginRename(first);

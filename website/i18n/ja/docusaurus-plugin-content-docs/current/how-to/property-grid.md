@@ -85,7 +85,7 @@ public sealed class RangePropertyItem : PropertyItem
 }
 ```
 
-2. `Window.Resources` または `App.Resources` に暗黙 `DataTemplate` を登録します:
+2. `Window.Resources` または `Application.Resources` に暗黙 `DataTemplate` を登録します（`App.xaml` で `WorkbenchTheme` と併用する場合は `ResourceDictionary` / `MergedDictionaries` 配下に配置してください）:
 
 ```xml
 <DataTemplate DataType="{x:Type local:RangePropertyItem}">

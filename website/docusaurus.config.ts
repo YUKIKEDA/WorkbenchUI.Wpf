@@ -12,8 +12,10 @@ const config: Config = {
 
   organizationName: 'YUKIKEDA',
   projectName: 'WorkbenchUI.Wpf',
+  trailingSlash: false,
 
   onBrokenLinks: 'throw',
+  onBrokenAnchors: 'throw',
   markdown: {
     hooks: {
       onBrokenMarkdownLinks: 'throw',

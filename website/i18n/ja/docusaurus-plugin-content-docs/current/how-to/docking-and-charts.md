@@ -89,7 +89,7 @@ series.Append(1.2e-3);
 
 - **`HistoryChart`**: `IEnumerable<ChartSeries>` (`X`, `Y`, `Name`, `Color`, `LineWidth`) を表示。`ShowLegend` と `ShowCrosshair` をサポート。
 - **`FrequencyResponsePlot`**: `IEnumerable<FrequencyResponseSeries>` (`Frequencies`, `Magnitudes`, 任意の `Phases`) を対数周波数軸で Bode 表示（`ShowPhase`, `MagnitudeInDecibels`）。
-- **`HistogramChart`**: `Values` (`double[]?`), `BinCount`, `Normalize` による分布表示。
+- **`HistogramChart`**: `Values` (`IEnumerable?`), `BinCount`, `Normalize` による分布表示。
 
 ### カスタム ScottPlot チャート (`WorkbenchPlot`)
 

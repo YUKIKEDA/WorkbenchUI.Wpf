@@ -42,7 +42,7 @@
     "message": "モジュラーパッケージ構成"
   },
   "homepage.pkg.core": {
-    "message": "外部依存ゼロのコア: Dark/Light テーマ基盤、68 種のベクタアイコン、高密度ワークベンチコントロール群。"
+    "message": "外部依存ゼロのコア: Dark/Light テーマ基盤、67 種のベクタアイコン、高密度ワークベンチコントロール群。"
   },
   "homepage.pkg.charts": {
     "message": "ScottPlot 5 テーマ同期と技術計算向け複合チャート（収束モニタ、履歴、Bode FRF、ヒストグラム）。"

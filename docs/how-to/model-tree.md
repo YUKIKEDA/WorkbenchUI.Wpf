@@ -54,7 +54,7 @@ When the user clicks the eye icon on a row (or you call `MyModelTree.ToggleVisib
 // Read selected nodes
 IReadOnlyList<ITreeNode> selected = MyModelTree.GetSelectedNodes();
 
-// Programmatically start inline rename (requires IRenamableNode with CanRename == true)
+// Programmatically start inline rename (requires IRenamableNode)
 if (selected.FirstOrDefault() is { } first)
 {
     MyModelTree.BeginRename(first);

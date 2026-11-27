@@ -15,12 +15,12 @@ sidebar_position: 2
 | `WorkbenchWindow` | `Window` | カスタム `WindowChrome` タイトルバー、メニューや検索欄を埋め込める `TitleBarContent` |
 | `WorkbenchDialogWindow` | `WorkbenchWindow` | ダイアログ基盤（ボタンバー規約内蔵） |
 | `WorkbenchMessageBox` | `static` | 確認・警告・エラーの定型ダイアログ (`Show(...)`) |
-| `WorkbenchRibbon` | `TabControl` | `ApplicationLabel`, `ApplicationMenu`, `QuickAccessContent` |
-| `WorkbenchRibbonTab` | `TabItem` | `Groups` (`ObservableCollection<WorkbenchRibbonGroup>`, コンテンツプロパティ) |
+| `WorkbenchRibbon` | `TabControl` | `ApplicationLabel`, `ApplicationMenu`, `AuxiliaryContent` |
+| `WorkbenchRibbonTab` | `TabItem` | `Groups` (`ObservableCollection<object>`, コンテンツプロパティ) |
 | `WorkbenchRibbonGroup` | `HeaderedItemsControl` | リボンタブ内のコマンドグループ |
 | `InfoBar` | `Control` | `Severity` (`Info`/`Success`/`Warning`/`Error`), `Title`, `Message`, `IsOpen`, `IsClosable`, `ActionContent`, `Closed` |
-| `ToastHost` | `Control` | 明示配置型トースト通知ホスト (`Show(message, level, duration)`) |
-| `BusyOverlay` | `ContentControl` | `IsBusy`, `Message` — 囲んだ領域の入力を遮断 |
+| `ToastHost` | `Control` | 明示配置型トースト通知ホスト (`Show(message, level, duration)`, `ToastLevel`, `ToastItem`) |
+| `BusyOverlay` | `ContentControl` | `IsBusy`, `BusyText`, `BusyContent` — 囲んだ領域の入力を遮断 |
 
 ## 数値・エンジニアリング入力
 
@@ -28,9 +28,9 @@ sidebar_position: 2
 | --- | --- | --- |
 | `NumericBox` | `Control` | `Value` (`double?`), `Minimum`, `Maximum`, `Increment`, `Unit`, `UnitProvider` (`IUnitProvider`), `Format`, `IsReadOnly` |
 | `Vector3Box` | `Control` | `X`, `Y`, `Z` (`double?`), `Minimum`, `Maximum`, `Increment`, `Unit`, `UnitProvider`, `Format` |
-| `MatrixBox` | `Control` | `Rows`, `Columns`, `Values` (`double[]?`), `IsSymmetric`, `IsReadOnly`, `UnitProvider`, `Format` |
+| `MatrixBox` | `Control` | `Rows`, `Columns`, `Values` (`double[,]?`), `IsSymmetric`, `IsReadOnly`, `UnitProvider`, `Format` |
 | `RangeSlider` | `Control` | `Minimum`, `Maximum`, `LowerValue`, `UpperValue`, `Orientation`, 中央範囲バーのドラッグ移動 |
-| `PathBox` | `Control` | `Text`, `Mode` (`OpenFile`/`SaveFile`/`Folder`), `Filter`, `BrowseRequested` |
+| `PathBox` | `Control` | `SelectedPath`, `Mode` (`OpenFile`/`SaveFile`/`Folder`), `Filter`, `BrowseRequested` |
 | `SearchBox` | `Control` | `Text`, `SearchText` (デバウンス確定), `SearchDelay`, `Placeholder` |
 | `CheckComboBox` | `ItemsControl` | 複数選択コンボボックス (`CheckComboBoxItem`) |
 | `KeyGestureBox` | `Control` | キーボードショートカット `KeyGesture` 入力欄 |
@@ -51,7 +51,7 @@ sidebar_position: 2
 | `ColorMap` | `sealed` | `Jet`, `Viridis`, `Coolwarm`, `Grayscale`, `BuiltIn`, `GetColor(t)` |
 | `ColorScale` | `sealed` | `ColorMap`, `Minimum`, `Maximum`, `IsLogarithmic`, `LevelCount`, `BelowRangeColor`, `AboveRangeColor`, `NaNColor`, `GetColor(value)` |
 | `ColorMapLegend` | `Control` | `Scale`, `TickCount`, `LabelFormat`, `Title` |
-| `ColorScaleEditor` | `Control` | 最小/最大、マップ、離散分割、対数スケールの対話エディタ |
+| `ColorScaleEditor` | `Control` | `Scale` — 最小/最大、マップ、離散分割、対数スケールの対話エディタ |
 | `LogConsole` | `Control` | `Source` (`LogBuffer`), `FlushInterval`, `ShowTimestamps` |
 | `LogBuffer` | `sealed` | スレッドセーフな `Append(LogLevel, string)` / `Append(LogEntry)`, `Clear()`, `Flush()`, `Capacity`, `Entries` |
 
@@ -80,7 +80,7 @@ sidebar_position: 2
 
 | カテゴリ | コントロール |
 | --- | --- |
-| **ボタン系** | `Button`, `ToggleButton`, `RepeatButton`, `CheckBox`, `RadioButton` |
+| **ボタン系** | `Button`, `CheckBox`, `RadioButton` |
 | **テキスト入力** | `TextBox`, `PasswordBox`, `RichTextBox` |
 | **選択・リスト** | `ComboBox`, `ListBox`, `ListView`（`GridView` 含む）, `TreeView` |
 | **表・データ** | `DataGrid`（列/行ヘッダー、セル編集、検証エラーツールチップ、行詳細、グループ化） |

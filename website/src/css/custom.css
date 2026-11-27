@@ -29,9 +29,11 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 122, 204, 0.25);
 }
 
-table {
-  display: table;
-  width: 100%;
+@media (min-width: 997px) {
+  table {
+    display: table;
+    width: 100%;
+  }
 }
 
 .wb-color-token {

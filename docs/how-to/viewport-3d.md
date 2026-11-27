@@ -75,7 +75,7 @@ Voxels.Add(grid);
 
 ## Probing, Selection & Annotations
 
-Set `PickMode` (`None`, `Part`, `Element`, `Node`, `Probe`, `Cell`), handle `ProbePicked` or `VoxelProbePicked`, and attach callouts to `Viewport.Annotations`:
+Set `PickMode` (`None`, `Part`, `Face`, `Node`, `Probe`, `Cell`), handle `ProbePicked` or `VoxelProbePicked`, and attach callouts to `Viewport.Annotations`:
 
 ```csharp
 Viewport.PickMode = ViewportPickMode.Probe;
@@ -85,9 +85,10 @@ Viewport.ProbePicked += (_, e) =>
     Viewport.Annotations.Add(new ViewportAnnotation
     {
         Mesh = r.Mesh,
-        NodeIndex = r.NearestNodeIndex,
+        NodeIndex = r.NodeIndex,
         X = r.X, Y = r.Y, Z = r.Z,
         Text = $"{r.ScalarValue:F2}",
     });
+    e.Handled = true;
 };
 ```

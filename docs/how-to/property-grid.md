@@ -85,7 +85,7 @@ public sealed class RangePropertyItem : PropertyItem
 }
 ```
 
-2. Add an implicit `DataTemplate` for your type in `Window.Resources` or `App.Resources`:
+2. Add an implicit `DataTemplate` for your type in `Window.Resources` or `Application.Resources` (inside `ResourceDictionary.MergedDictionaries` alongside `<wb:WorkbenchTheme />` when combining resources at the application level):
 
 ```xml
 <DataTemplate DataType="{x:Type local:RangePropertyItem}">
