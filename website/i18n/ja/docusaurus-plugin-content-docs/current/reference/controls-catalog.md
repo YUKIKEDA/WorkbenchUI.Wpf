@@ -59,6 +59,7 @@ sidebar_position: 2
 
 | 型 | 種別 | 主なメンバー・用途 |
 | --- | --- | --- |
+| `NavigationView` | `ContentControl` | 折りたたみ可能なサイドバー / アイコンレイル (`MenuItems`, `FooterMenuItems`, `SelectedItem`, `IsPaneOpen`, `PaneDisplayMode`, `NavigationViewItem`, `NavigationViewItemHeader`, `NavigationViewItemSeparator`) |
 | `PlaybackBar` | `Control` | フレーム再生コントロール（再生/一時停止、ステップ、速度、ループ、スライダー） |
 | `ProcessRail` | `Selector` | 工程レール (`ProcessRailItem`, `IProcessRailStep`, `ProcessChapterState`) |
 | `ChapterHost` | `ItemsControl` | アクティブな工程章を表示するホスト (`ChapterHostItem`) |

@@ -23,6 +23,7 @@
         <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/MatrixBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/KeyGestureBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/Wizard.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/NavigationView.xaml" />
         <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/ProcessRail.xaml" />
         <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/LogConsole.xaml" />
         <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/ProgressDisplay.xaml" />
