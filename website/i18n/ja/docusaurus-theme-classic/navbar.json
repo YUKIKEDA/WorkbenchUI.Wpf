@@ -1,0 +1,23 @@
+{
+  "title": {
+    "message": "WorkbenchUI.Wpf"
+  },
+  "item.label.Docs": {
+    "message": "ドキュメント"
+  },
+  "item.label.Tutorials": {
+    "message": "チュートリアル"
+  },
+  "item.label.How-to Guides": {
+    "message": "ハウツーガイド"
+  },
+  "item.label.Reference": {
+    "message": "リファレンス"
+  },
+  "item.label.Explanation": {
+    "message": "解説"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub"
+  }
+}

@@ -1,0 +1,144 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.RibbonPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             mc:Ignorable="d">
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="Ribbon"
+                   FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4" />
+        <TextBlock DockPanel.Dock="Top"
+                   Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                   TextWrapping="Wrap" Margin="0,0,0,12"
+                   Text="WorkbenchRibbon v1: tabs + labeled groups + large/small buttons (Wb.Ribbon.Button.* styles) + arbitrary control hosts + application button + auxiliary slot. Ordering tabs by workflow stage makes the user flow explicit." />
+
+        <!-- Mini CAE demo ribbon (workflow order: Model -> Analysis -> Results -> View) -->
+        <wb:WorkbenchRibbon x:Name="DemoRibbon" DockPanel.Dock="Top" ApplicationLabel="File">
+            <wb:WorkbenchRibbon.ApplicationMenu>
+                <ContextMenu>
+                    <MenuItem Header="_New" Click="OnAction" Tag="New" />
+                    <MenuItem Header="_Open..." Click="OnAction" Tag="Open" />
+                    <MenuItem Header="_Save" Click="OnAction" Tag="Save" />
+                    <Separator />
+                    <MenuItem Header="Se_ttings..." Click="OnAction" Tag="Settings" />
+                </ContextMenu>
+            </wb:WorkbenchRibbon.ApplicationMenu>
+            <wb:WorkbenchRibbon.AuxiliaryContent>
+                <Button Style="{StaticResource Wb.Button.Icon}"
+                        wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Help}"
+                        ToolTip="Help" Click="OnAction" Tag="Help" />
+            </wb:WorkbenchRibbon.AuxiliaryContent>
+
+            <wb:WorkbenchRibbonTab Header="Model">
+                <wb:WorkbenchRibbonGroup Header="Templates">
+                    <Button Style="{StaticResource Wb.Ribbon.Button.Large}"
+                            wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.NewFile}"
+                            Content="New" Click="OnAction" Tag="New Model" />
+                    <Button Style="{StaticResource Wb.Ribbon.Button.Large}"
+                            wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.FolderOpen}"
+                            Content="Open" Click="OnAction" Tag="Open Model" />
+                </wb:WorkbenchRibbonGroup>
+                <wb:WorkbenchRibbonGroup Header="Mesh">
+                    <Button Style="{StaticResource Wb.Ribbon.Button.Large}"
+                            wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Mesh}"
+                            Content="Remesh" Click="OnAction" Tag="Remesh" />
+                    <StackPanel VerticalAlignment="Center">
+                        <Button Style="{StaticResource Wb.Ribbon.Button.Small}"
+                                wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Add}"
+                                Content="Refine" Click="OnAction" Tag="Refine Mesh" />
+                        <Button Style="{StaticResource Wb.Ribbon.Button.Small}"
+                                wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Remove}"
+                                Content="Coarsen" Click="OnAction" Tag="Coarsen Mesh" />
+                        <Button Style="{StaticResource Wb.Ribbon.Button.Small}"
+                                wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Grid}"
+                                Content="Quality Check" Click="OnAction" Tag="Quality Check" />
+                    </StackPanel>
+                </wb:WorkbenchRibbonGroup>
+                <wb:WorkbenchRibbonGroup Header="Material">
+                    <ComboBox Width="140" SelectedIndex="0" VerticalAlignment="Center" Margin="4,0">
+                        <ComboBoxItem Content="Steel SS400" />
+                        <ComboBoxItem Content="Aluminum A5052" />
+                        <ComboBoxItem Content="Titanium Ti-6Al-4V" />
+                    </ComboBox>
+                </wb:WorkbenchRibbonGroup>
+            </wb:WorkbenchRibbonTab>
+
+            <wb:WorkbenchRibbonTab Header="Analysis">
+                <wb:WorkbenchRibbonGroup Header="Execution">
+                    <wb:SplitButton x:Name="RunSplit"
+                                     Style="{StaticResource Wb.Ribbon.SplitButton.Large.Accent}"
+                                     wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Play}"
+                                     Content="Run Solve" Click="OnAction" Tag="Run Solve (Local)">
+                        <wb:SplitButton.DropDownMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Run Locally" Click="OnAction" Tag="Run Locally" />
+                                <MenuItem Header="Submit as Job..." Click="OnAction" Tag="Submit as Job" />
+                            </ContextMenu>
+                        </wb:SplitButton.DropDownMenu>
+                    </wb:SplitButton>
+                    <Button Style="{StaticResource Wb.Ribbon.Button.Large}"
+                            wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Stop}"
+                            Content="Abort" IsEnabled="False" />
+                </wb:WorkbenchRibbonGroup>
+                <wb:WorkbenchRibbonGroup Header="Jobs">
+                    <Button Style="{StaticResource Wb.Ribbon.Button.Large}"
+                            wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Server}"
+                            Content="Job Monitor" Click="OnAction" Tag="Job Monitor" />
+                </wb:WorkbenchRibbonGroup>
+            </wb:WorkbenchRibbonTab>
+
+            <wb:WorkbenchRibbonTab Header="Results">
+                <wb:WorkbenchRibbonGroup Header="Contours">
+                    <Button Style="{StaticResource Wb.Ribbon.Button.Large}"
+                            wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Contour}"
+                            Content="Stress" Click="OnAction" Tag="Stress Contour" />
+                    <Button Style="{StaticResource Wb.Ribbon.Button.Large}"
+                            wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Vector}"
+                            Content="Displacement" Click="OnAction" Tag="Displacement Vector" />
+                </wb:WorkbenchRibbonGroup>
+                <wb:WorkbenchRibbonGroup Header="Measure">
+                    <ToggleButton Style="{StaticResource Wb.Ribbon.Toggle.Large}"
+                                  wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Probe}"
+                                  Content="Probe" Click="OnAction" Tag="Probe" />
+                    <Button Style="{StaticResource Wb.Ribbon.Button.Large}"
+                            wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Delete}"
+                            Content="Clear Annotations" Click="OnAction" Tag="Clear Annotations" />
+                </wb:WorkbenchRibbonGroup>
+            </wb:WorkbenchRibbonTab>
+
+            <wb:WorkbenchRibbonTab Header="View">
+                <wb:WorkbenchRibbonGroup Header="Overlays">
+                    <StackPanel VerticalAlignment="Center">
+                        <ToggleButton Style="{StaticResource Wb.Ribbon.Toggle.Small}"
+                                      wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Grid}"
+                                      Content="Edges" IsChecked="True" Click="OnAction" Tag="Edges" />
+                        <ToggleButton Style="{StaticResource Wb.Ribbon.Toggle.Small}"
+                                      wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Cube}"
+                                      Content="Undeformed" Click="OnAction" Tag="Undeformed" />
+                    </StackPanel>
+                </wb:WorkbenchRibbonGroup>
+                <wb:WorkbenchRibbonGroup Header="Camera">
+                    <Button Style="{StaticResource Wb.Ribbon.Button.Large}"
+                            wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.ZoomToFit}"
+                            Content="Fit" Click="OnAction" Tag="Fit to View" />
+                    <Button Style="{StaticResource Wb.Ribbon.Button.Large}"
+                            wb:ButtonAssist.Icon="{x:Static wb:WorkbenchIcons.Camera}"
+                            Content="Default View" Click="OnAction" Tag="Default View" />
+                </wb:WorkbenchRibbonGroup>
+            </wb:WorkbenchRibbonTab>
+        </wb:WorkbenchRibbon>
+
+        <!-- Click log (for verification) -->
+        <Border Background="{DynamicResource Wb.Brush.Surface.Window}" Padding="12">
+            <StackPanel>
+                <TextBlock Text="Action Log" FontWeight="SemiBold" Margin="0,4,0,6" />
+                <TextBlock x:Name="ActionLog"
+                           Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                           FontFamily="{StaticResource Wb.FontFamily.Monospace}"
+                           FontSize="{StaticResource Wb.FontSize.S}"
+                           Text="(Click any ribbon button to record an action here)" />
+            </StackPanel>
+        </Border>
+    </DockPanel>
+</UserControl>

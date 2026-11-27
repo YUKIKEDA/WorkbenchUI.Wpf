@@ -1,0 +1,49 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.TokensPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="SectionHeader" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="{StaticResource Wb.FontSize.L}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,16,0,8" />
+        </Style>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel MaxWidth="900" HorizontalAlignment="Left">
+
+            <TextBlock Text="Design Tokens"
+                       FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4" />
+            <TextBlock Text="All library styles reference only the design tokens shown on this page."
+                       Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
+
+            <!-- Runtime accent color switching demo -->
+            <TextBlock Text="Accent (runtime switch)" Style="{StaticResource SectionHeader}" />
+            <StackPanel x:Name="AccentPanel" Orientation="Horizontal" />
+
+            <!-- Semantic brush swatches (populated in code-behind) -->
+            <TextBlock Text="Semantic Brushes" Style="{StaticResource SectionHeader}" />
+            <WrapPanel x:Name="BrushPanel" />
+
+            <!-- Typography -->
+            <TextBlock Text="Typography" Style="{StaticResource SectionHeader}" />
+            <StackPanel>
+                <TextBlock Text="Wb.FontSize.S (11px) — Secondary text, unit labels"
+                           FontSize="{StaticResource Wb.FontSize.S}" Margin="0,2" />
+                <TextBlock Text="Wb.FontSize.M (12px) — Standard body text, input values"
+                           FontSize="{StaticResource Wb.FontSize.M}" Margin="0,2" />
+                <TextBlock Text="Wb.FontSize.L (14px) — Section headers"
+                           FontSize="{StaticResource Wb.FontSize.L}" Margin="0,2" />
+                <TextBlock Text="Wb.FontFamily.Monospace — 1.2345e-6 (logs and numeric readouts)"
+                           FontFamily="{StaticResource Wb.FontFamily.Monospace}" Margin="0,2" />
+            </StackPanel>
+
+            <!-- Spacing scale -->
+            <TextBlock Text="Spacing (4px grid)" Style="{StaticResource SectionHeader}" />
+            <StackPanel x:Name="SpacingPanel" />
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

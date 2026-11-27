@@ -1,0 +1,87 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.NumericPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="SectionHeader" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="{StaticResource Wb.FontSize.L}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,16,0,8" />
+        </Style>
+        <Style x:Key="Hint" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Secondary}" />
+            <Setter Property="FontSize" Value="{StaticResource Wb.FontSize.S}" />
+            <Setter Property="Margin" Value="0,2,0,0" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel MaxWidth="700" HorizontalAlignment="Left">
+
+            <TextBlock Text="NumericBox &amp; Expander"
+                       FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4" />
+
+            <TextBlock Text="Basic (Unit Label, Spin Buttons, Range)" Style="{StaticResource SectionHeader}" />
+            <StackPanel Orientation="Horizontal">
+                <wb:NumericBox x:Name="BasicBox" Width="160" Margin="0,0,8,0"
+                               Value="25" Minimum="0" Maximum="100" Increment="5" Unit="mm" />
+                <wb:NumericBox Width="160" Margin="0,0,8,0" Value="3.2" Unit="mm" IsReadOnly="True" />
+                <wb:NumericBox Width="160" Value="1.5" Unit="mm" IsEnabled="False" />
+            </StackPanel>
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Commit with Enter or focus loss; revert with Esc. Step by ±5 using ↑/↓ keys, mouse wheel, or spin buttons (range 0–100)." />
+            <TextBlock Margin="0,4,0,0"
+                       Text="{Binding ElementName=BasicBox, Path=Value, StringFormat='Value = {0}'}" />
+
+            <TextBlock Text="Scientific Notation" Style="{StaticResource SectionHeader}" />
+            <wb:NumericBox Width="160" HorizontalAlignment="Left" Value="0.00125" Format="G4" Unit="m" />
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Supports inputs such as &quot;1e-3&quot; or &quot;2.5E+6&quot;." />
+
+            <TextBlock Text="Unit Conversion (IUnitProvider: base m ↔ display mm)" Style="{StaticResource SectionHeader}" />
+            <wb:NumericBox x:Name="LengthBox" Width="160" HorizontalAlignment="Left"
+                           Value="0.05" Minimum="0" Maximum="1" Increment="10" />
+            <TextBlock Margin="0,4,0,0"
+                       Text="{Binding ElementName=LengthBox, Path=Value, StringFormat='Base Value = {0} m'}" />
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Displays in mm while storing meters internally. Accepts unit-suffixed inputs like &quot;500 mm&quot;, &quot;50 cm&quot;, or &quot;0.5 m&quot; (all store 0.5). Range is 0–1 m, so &quot;1500&quot; triggers a validation error." />
+
+            <TextBlock Text="Validation Error (Red Border + ToolTip)" Style="{StaticResource SectionHeader}" />
+            <wb:NumericBox Width="160" HorizontalAlignment="Left"
+                           Value="200" Minimum="0" Maximum="1000" Unit="MPa" />
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Enter &quot;abc&quot; or &quot;-5&quot; (out of range) and press Enter to display a red border and error tooltip." />
+
+            <TextBlock Text="Expander" Style="{StaticResource SectionHeader}" />
+            <StackPanel MaxWidth="400">
+                <Expander Header="Material Properties" IsExpanded="True" Margin="0,0,0,4">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Young's Modulus" VerticalAlignment="Center" />
+                        <wb:NumericBox Grid.Column="1" Value="205" Unit="GPa" Margin="0,2" />
+                        <TextBlock Grid.Row="1" Text="Poisson's Ratio" VerticalAlignment="Center" />
+                        <wb:NumericBox Grid.Row="1" Grid.Column="1" Value="0.3" Minimum="0" Maximum="0.5" Increment="0.05" Margin="0,2" />
+                        <TextBlock Grid.Row="2" Text="Density" VerticalAlignment="Center" />
+                        <wb:NumericBox Grid.Row="2" Grid.Column="1" Value="7850" Unit="kg/m³" Margin="0,2" />
+                    </Grid>
+                </Expander>
+                <Expander Header="Mesh Settings (Collapsed)">
+                    <TextBlock Text="Element size and meshing parameters go here."
+                               Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
+                </Expander>
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,112 @@
+<!--
+    Light theme color tokens (aligned with VS 2022 Light).
+    Layer 1: Semantic Colors (Wb.Color.Surface.*, etc.) - role-based color primitives.
+    Layer 2: Semantic Brushes (Wb.Brush.*).
+    Keep the key structure identical to Tokens.Dark.xaml.
+
+    Note: In compiled (deferred) resource dictionaries, StaticResource alias entries
+    cannot be referenced from other entries, so Colors are defined with literal values.
+-->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ================= Layer 1: Semantic Colors ================= -->
+
+    <!-- Surface (lighter toward the foreground; Window = VS chrome color, Input = white) -->
+    <Color x:Key="Wb.Color.Surface.Window">#EEEEF2</Color>
+    <Color x:Key="Wb.Color.Surface.Panel">#F5F5F7</Color>
+    <Color x:Key="Wb.Color.Surface.Elevated">#FAFAFC</Color>
+    <Color x:Key="Wb.Color.Surface.Input">#FFFFFF</Color>
+
+    <!-- Text -->
+    <Color x:Key="Wb.Color.Text.Primary">#1E1E1E</Color>
+    <Color x:Key="Wb.Color.Text.Muted">#4B4B52</Color>
+    <Color x:Key="Wb.Color.Text.Secondary">#6E6E76</Color>
+    <Color x:Key="Wb.Color.Text.Disabled">#9B9BA3</Color>
+    <Color x:Key="Wb.Color.Text.OnAccent">#FFFFFF</Color>
+
+    <!-- Control (surfaces for interactive controls such as buttons) -->
+    <Color x:Key="Wb.Color.Control.Background">#ECECF0</Color>
+    <Color x:Key="Wb.Color.Control.Hover">#DADAE0</Color>
+    <Color x:Key="Wb.Color.Control.Pressed">#C8C8D0</Color>
+
+    <!-- Border -->
+    <Color x:Key="Wb.Color.Border.Default">#CCCEDB</Color>
+    <Color x:Key="Wb.Color.Border.Strong">#A0A2AE</Color>
+
+    <!-- State -->
+    <Color x:Key="Wb.Color.State.Selected">#C7E0F4</Color>
+    <Color x:Key="Wb.Color.State.SelectedInactive">#E1E1E6</Color>
+
+    <!-- Status (darker tones readable on a white background) -->
+    <Color x:Key="Wb.Color.Error">#C42B1C</Color>
+    <Color x:Key="Wb.Color.Warning">#9D5D00</Color>
+    <Color x:Key="Wb.Color.Success">#107C10</Color>
+    <Color x:Key="Wb.Color.Info">#005FB8</Color>
+
+    <!-- Danger (surfaces for destructive action buttons; darkens on hover in light theme) -->
+    <Color x:Key="Wb.Color.Danger.Default">#C42B1C</Color>
+    <Color x:Key="Wb.Color.Danger.Hover">#A4262C</Color>
+    <Color x:Key="Wb.Color.Danger.Pressed">#8B1F17</Color>
+
+    <!--
+        Current accent color values (color keys that may be overridden at runtime by ThemeManager.SetAccent).
+        Unlike dark theme, Muted is a light tint (assuming dark text on selection backgrounds).
+    -->
+    <Color x:Key="Wb.Color.Accent.Default">#007ACC</Color>
+    <Color x:Key="Wb.Color.Accent.Hover">#1C97EA</Color>
+    <Color x:Key="Wb.Color.Accent.Pressed">#005A9E</Color>
+    <Color x:Key="Wb.Color.Accent.Muted">#C7E0F4</Color>
+
+    <!-- ================= Layer 2: Semantic Brushes ================= -->
+
+    <!-- Surface -->
+    <SolidColorBrush x:Key="Wb.Brush.Surface.Window" Color="{StaticResource Wb.Color.Surface.Window}" />
+    <SolidColorBrush x:Key="Wb.Brush.Surface.Panel" Color="{StaticResource Wb.Color.Surface.Panel}" />
+    <SolidColorBrush x:Key="Wb.Brush.Surface.Elevated" Color="{StaticResource Wb.Color.Surface.Elevated}" />
+    <SolidColorBrush x:Key="Wb.Brush.Surface.Input" Color="{StaticResource Wb.Color.Surface.Input}" />
+
+    <!-- Text -->
+    <SolidColorBrush x:Key="Wb.Brush.Text.Primary" Color="{StaticResource Wb.Color.Text.Primary}" />
+    <SolidColorBrush x:Key="Wb.Brush.Text.Secondary" Color="{StaticResource Wb.Color.Text.Secondary}" />
+    <SolidColorBrush x:Key="Wb.Brush.Text.Disabled" Color="{StaticResource Wb.Color.Text.Disabled}" />
+    <SolidColorBrush x:Key="Wb.Brush.Text.OnAccent" Color="{StaticResource Wb.Color.Text.OnAccent}" />
+
+    <!-- Control (surfaces for interactive controls such as buttons) -->
+    <SolidColorBrush x:Key="Wb.Brush.Control.Background" Color="{StaticResource Wb.Color.Control.Background}" />
+    <SolidColorBrush x:Key="Wb.Brush.Control.Hover" Color="{StaticResource Wb.Color.Control.Hover}" />
+    <SolidColorBrush x:Key="Wb.Brush.Control.Pressed" Color="{StaticResource Wb.Color.Control.Pressed}" />
+
+    <!-- Border -->
+    <SolidColorBrush x:Key="Wb.Brush.Border.Default" Color="{StaticResource Wb.Color.Border.Default}" />
+    <SolidColorBrush x:Key="Wb.Brush.Border.Strong" Color="{StaticResource Wb.Color.Border.Strong}" />
+    <SolidColorBrush x:Key="Wb.Brush.Border.Focus" Color="{StaticResource Wb.Color.Accent.Default}" />
+
+    <!-- Accent (keys that may be overridden by ThemeManager.SetAccent) -->
+    <SolidColorBrush x:Key="Wb.Brush.Accent.Default" Color="{StaticResource Wb.Color.Accent.Default}" />
+    <SolidColorBrush x:Key="Wb.Brush.Accent.Hover" Color="{StaticResource Wb.Color.Accent.Hover}" />
+    <SolidColorBrush x:Key="Wb.Brush.Accent.Pressed" Color="{StaticResource Wb.Color.Accent.Pressed}" />
+    <SolidColorBrush x:Key="Wb.Brush.Accent.Muted" Color="{StaticResource Wb.Color.Accent.Muted}" />
+
+    <!-- Subtle surface contrast such as alternating rows (semi-transparent black overlay) -->
+    <SolidColorBrush x:Key="Wb.Brush.Surface.Alternate" Color="#06000000" />
+
+    <!-- State (hover, etc. use semi-transparent black overlays) -->
+    <SolidColorBrush x:Key="Wb.Brush.State.Hover" Color="#0D000000" />
+    <SolidColorBrush x:Key="Wb.Brush.State.Pressed" Color="#1A000000" />
+    <SolidColorBrush x:Key="Wb.Brush.State.Selected" Color="{StaticResource Wb.Color.State.Selected}" />
+    <SolidColorBrush x:Key="Wb.Brush.State.SelectedInactive" Color="{StaticResource Wb.Color.State.SelectedInactive}" />
+
+    <!-- Status -->
+    <SolidColorBrush x:Key="Wb.Brush.Error" Color="{StaticResource Wb.Color.Error}" />
+    <SolidColorBrush x:Key="Wb.Brush.Warning" Color="{StaticResource Wb.Color.Warning}" />
+    <SolidColorBrush x:Key="Wb.Brush.Success" Color="{StaticResource Wb.Color.Success}" />
+    <SolidColorBrush x:Key="Wb.Brush.Info" Color="{StaticResource Wb.Color.Info}" />
+
+    <!-- Danger -->
+    <SolidColorBrush x:Key="Wb.Brush.Danger.Default" Color="{StaticResource Wb.Color.Danger.Default}" />
+    <SolidColorBrush x:Key="Wb.Brush.Danger.Hover" Color="{StaticResource Wb.Color.Danger.Hover}" />
+    <SolidColorBrush x:Key="Wb.Brush.Danger.Pressed" Color="{StaticResource Wb.Color.Danger.Pressed}" />
+
+</ResourceDictionary>

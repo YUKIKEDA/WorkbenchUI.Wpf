@@ -1,0 +1,72 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.IconsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="SectionHeader" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="{StaticResource Wb.FontSize.L}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,16,0,8" />
+        </Style>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel MaxWidth="860" HorizontalAlignment="Left">
+
+            <TextBlock Text="Icons" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4" />
+            <TextBlock Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                       TextWrapping="Wrap"
+                       Text="WorkbenchIcon + WorkbenchIcons: built-in zero-dependency stroke line icons on a 16×16 grid. Reference in XAML via {x:Static wb:WorkbenchIcons.Save} or Wb.Icon.* resource keys. Color follows Foreground (theme tokens), and Size scales uniformly inside a Viewbox." />
+
+            <TextBlock Text="Sizes (16 / 24 / 32 / 48)" Style="{StaticResource SectionHeader}" />
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Settings}" Size="16" Margin="0,0,12,0" />
+                <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Settings}" Size="24" Margin="0,0,12,0" />
+                <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Settings}" Size="32" Margin="0,0,12,0" />
+                <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Settings}" Size="48" />
+            </StackPanel>
+
+            <TextBlock Text="Colors (Foreground Tokens)" Style="{StaticResource SectionHeader}" />
+            <StackPanel Orientation="Horizontal">
+                <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Info}" Size="24" Margin="0,0,12,0"
+                             Foreground="{DynamicResource Wb.Brush.Info}" />
+                <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Warning}" Size="24" Margin="0,0,12,0"
+                             Foreground="{DynamicResource Wb.Brush.Warning}" />
+                <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Error}" Size="24" Margin="0,0,12,0"
+                             Foreground="{DynamicResource Wb.Brush.Error}" />
+                <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Success}" Size="24" Margin="0,0,12,0"
+                             Foreground="{DynamicResource Wb.Brush.Success}" />
+                <wb:WorkbenchIcon Icon="{x:Static wb:WorkbenchIcons.Play}" Size="24" Margin="0,0,12,0"
+                             Foreground="{DynamicResource Wb.Brush.Accent.Default}" />
+                <!-- Resource key reference example -->
+                <wb:WorkbenchIcon Icon="{StaticResource Wb.Icon.Save}" Size="24"
+                             Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
+            </StackPanel>
+
+            <TextBlock x:Name="IconCountHeader" Style="{StaticResource SectionHeader}" />
+            <ItemsControl x:Name="IconList">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Width="84" Margin="0,0,2,12" ToolTip="{Binding Name}">
+                            <wb:WorkbenchIcon Icon="{Binding Geometry}" Size="20" HorizontalAlignment="Center" />
+                            <TextBlock Text="{Binding Name}"
+                                       FontSize="{StaticResource Wb.FontSize.S}"
+                                       Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                                       HorizontalAlignment="Center"
+                                       TextTrimming="CharacterEllipsis"
+                                       Margin="2,3,2,0" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

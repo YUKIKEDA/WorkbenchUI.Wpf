@@ -1,0 +1,57 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.DockingPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="SectionHeader" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,20,0,8" />
+        </Style>
+        <Style x:Key="Hint" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Secondary}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="0,4,0,0" />
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel MaxWidth="760" HorizontalAlignment="Left">
+            <TextBlock Text="Docking (WorkbenchUI.Wpf.Docking)" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12" />
+
+            <wb:InfoBar Severity="Info"
+                        Title="Separate Assembly"
+                        Message="Because docking depends on Dirkster.AvalonDock (MS-PL), it is shipped in a separate WorkbenchUI.Wpf.Docking assembly so apps that don't need docking keep the core zero-dependency."
+                        IsClosable="False" />
+
+            <TextBlock Text="Full Shell Demo" Style="{StaticResource SectionHeader}" />
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Opens a typical CAE application layout (Model Tree / Viewports / Properties / Legend / Log) in a separate window. Try tab drag-and-drop, docking compasses, floating windows, auto-hide pinning, and saving/restoring layouts." />
+            <Button x:Name="LaunchButton"
+                    Content="Open Shell Demo"
+                    Style="{DynamicResource Wb.Button.Accent}"
+                    HorizontalAlignment="Left"
+                    Margin="0,10,0,0"
+                    Padding="16,6"
+                    Click="OnLaunchShell" />
+
+            <TextBlock Text="What's Included" Style="{StaticResource SectionHeader}" />
+            <TextBlock Style="{StaticResource Hint}">
+                <Run Text="• WorkbenchDockTheme — An AvalonDock VS2013-based theme populated with WorkbenchUI design tokens. Follows runtime theme and accent changes, including floating windows." /><LineBreak />
+                <Run Text="• DockLayout — Static save/restore helpers (Save / SaveToString / Load / LoadFromString). Delegates content resolution to a ContentId callback and automatically discards obsolete panes." /><LineBreak />
+                <Run Text="• Native AvalonDock types such as DockingManager and LayoutAnchorable remain directly usable (thin-wrapper design)." />
+            </TextBlock>
+
+            <TextBlock Text="Tips" Style="{StaticResource SectionHeader}" />
+            <TextBlock Style="{StaticResource Hint}">
+                <Run Text="• Drag a tool window's tab or caption to reveal the docking compasses and drop onto top/bottom/left/right or center tab targets." /><LineBreak />
+                <Run Text="• Drop outside the compasses to float a window (supports multi-monitor setups)." /><LineBreak />
+                <Run Text="• Click the pin button on a caption to auto-hide into a side tab, or × to hide it (restore via the View menu)." /><LineBreak />
+                <Run Text="• Use the Layout menu to save, restore, or reset the current pane arrangement." /><LineBreak />
+                <Run Text="• Press Ctrl+Tab to open the document/tool window navigator." />
+            </TextBlock>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

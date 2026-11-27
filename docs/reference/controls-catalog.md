@@ -1,0 +1,89 @@
+---
+title: Controls Catalog
+description: Complete reference of all custom controls, models, assistants, and styled standard controls in WorkbenchUI.Wpf.
+sidebar_position: 2
+---
+
+# Controls Catalog (`WorkbenchUI.Wpf`)
+
+All custom controls live in `WorkbenchUI.Wpf.Controls` (theming APIs live in `WorkbenchUI.Wpf.Theming`) and are exposed in XAML via `xmlns:wb="https://schemas.workbenchui.dev/wpf"`.
+
+## Windowing, Shell & Overlays
+
+| Type | Base Class | Key Members |
+| --- | --- | --- |
+| `WorkbenchWindow` | `Window` | Custom `WindowChrome` title bar, `TitleBarContent` slot for embedded menus/search |
+| `WorkbenchDialogWindow` | `WorkbenchWindow` | Dialog base with standardized button bar conventions |
+| `WorkbenchMessageBox` | `static` | `Show(...)` confirmation, warning, and error dialogs |
+| `WorkbenchRibbon` | `TabControl` | `ApplicationLabel`, `ApplicationMenu`, `AuxiliaryContent` |
+| `WorkbenchRibbonTab` | `TabItem` | `Groups` (`ObservableCollection<object>`, content property) |
+| `WorkbenchRibbonGroup` | `HeaderedItemsControl` | Labeled command group inside a ribbon tab |
+| `InfoBar` | `Control` | `Severity` (`Info`/`Success`/`Warning`/`Error`), `Title`, `Message`, `IsOpen`, `IsClosable`, `ActionContent`, `Closed` |
+| `ToastHost` | `Control` | `Show(message, level, duration)` explicit overlay host (`ToastLevel`, `ToastItem`) |
+| `BusyOverlay` | `ContentControl` | `IsBusy`, `BusyText`, `BusyContent` — blocks input inside the wrapped region |
+
+## Engineering & Numeric Inputs
+
+| Type | Base Class | Key Members |
+| --- | --- | --- |
+| `NumericBox` | `Control` | `Value` (`double?`), `Minimum`, `Maximum`, `Increment`, `Unit`, `UnitProvider` (`IUnitProvider`), `Format`, `IsReadOnly` |
+| `Vector3Box` | `Control` | `X`, `Y`, `Z` (`double?`), `Minimum`, `Maximum`, `Increment`, `Unit`, `UnitProvider`, `Format` |
+| `MatrixBox` | `Control` | `Rows`, `Columns`, `Values` (`double[,]?`), `IsSymmetric`, `IsReadOnly`, `UnitProvider`, `Format` |
+| `RangeSlider` | `Control` | `Minimum`, `Maximum`, `LowerValue`, `UpperValue`, `Orientation`, draggable selected range bar |
+| `PathBox` | `Control` | `SelectedPath`, `Mode` (`OpenFile`/`SaveFile`/`Folder`), `Filter`, `BrowseRequested` |
+| `SearchBox` | `Control` | `Text`, `SearchText` (debounced), `SearchDelay`, `Placeholder` |
+| `CheckComboBox` | `ItemsControl` | Multi-select dropdown (`CheckComboBoxItem`) |
+| `KeyGestureBox` | `Control` | Captures keyboard shortcut `KeyGesture` |
+| `ToggleSwitch` | `ToggleButton` | Compact `24 px`-compatible toggle switch |
+| `ColorPicker` | `Control` | Swatch button opening `ColorEditor` popup (`SelectedColor`, `IsAlphaEnabled`) |
+| `ColorEditor` | `Control` | Standalone HSV plane, hue/alpha sliders, hex/RGB inputs, swatches |
+| `DropDownButton` | `Button` | `DropDownMenu` (`ContextMenu`) |
+| `SplitButton` | `DropDownButton` | Left primary `Command` + right dropdown trigger |
+
+## Structured Data, Trees, Logs & Color Maps
+
+| Type | Kind | Key Members |
+| --- | --- | --- |
+| `PropertyGrid` | `Control` | `ItemsSource` (`PropertyItem`), `FilterText`, `ShowFilterBox`, `FilterPlaceholder` |
+| `PropertyItem` | `abstract` | `Name`, `Category`, `Description`, `IsReadOnly`; subclasses: `TextPropertyItem`, `BoolPropertyItem`, `NumericPropertyItem`, `ChoicePropertyItem`, `PathPropertyItem`, `ColorPropertyItem`, `Vector3PropertyItem` |
+| `ModelTree` | `Control` | `ItemsSource` (`IEnumerable<ITreeNode>`), `SelectionMode`, `ShowVisibilityToggles`, `FlatItems`, `ToggleVisibility`, `SetVisibility`, `GetSelectedNodes`, `BeginRename` |
+| `ITreeNode` / `IRenamableNode` / `TreeNode` | Model / Contract | `Name`, `Children`, `IsExpanded`, `IsVisible` (`bool?`), `IsSelected`, `Icon` |
+| `ColorMap` | `sealed` | `Jet`, `Viridis`, `Coolwarm`, `Grayscale`, `BuiltIn`, `GetColor(t)` |
+| `ColorScale` | `sealed` | `ColorMap`, `Minimum`, `Maximum`, `IsLogarithmic`, `LevelCount`, `BelowRangeColor`, `AboveRangeColor`, `NaNColor`, `GetColor(value)` |
+| `ColorMapLegend` | `Control` | `Scale`, `TickCount`, `LabelFormat`, `Title` |
+| `ColorScaleEditor` | `Control` | `Scale` — interactive min/max, map, levels, and log-scale editor |
+| `LogConsole` | `Control` | `Source` (`LogBuffer`), `FlushInterval`, `ShowTimestamps` |
+| `LogBuffer` | `sealed` | Thread-safe `Append(LogLevel, string)` / `Append(LogEntry)`, `Clear()`, `Flush()`, `Capacity`, `Entries` |
+
+## Workflow, Progress, Icons & Helpers
+
+| Type | Kind | Key Members & Purpose |
+| --- | --- | --- |
+| `PlaybackBar` | `Control` | Frame playback controls (play/pause, step, speed, loop, frame slider) |
+| `ProcessRail` | `Selector` | Multi-step workflow rail (`ProcessRailItem`, `IProcessRailStep`, `ProcessChapterState`) |
+| `ChapterHost` | `ItemsControl` | Hosts the active workflow chapter view (`ChapterHostItem`) |
+| `Wizard` | `ItemsControl` | Multi-step guided wizard (`WizardStep`, `WizardNavigatingEventArgs`) |
+| `StepIndicator` | `ItemsControl` | Progress step display (`StepIndicatorItem`, `StepState`) |
+| `ProgressDisplay` | `Control` | Single-job progress bar, status text, elapsed time, and cancel `ICommand` |
+| `ProgressRing` | `Control` | Indeterminate circular activity indicator |
+| `WorkbenchIcon` | `Control` | Renders a vector `Geometry` (`Icon`, `Size`) scaled via `Viewbox` |
+| `WorkbenchIcons` | `static` | 67 frozen `16×16` `Geometry` properties and `Wb.Icon.*` resources |
+| `ButtonAssist` | `static` | Attached properties `Icon` and `IconSize` for button templates |
+| `DataGridAssist` | `static` | Attached `AutoApplyColumnStyles` helper for standard `DataGrid` columns |
+| `ColorMapToBrushConverter` | `IValueConverter` | Converts a `ColorMap` into a horizontal `LinearGradientBrush` |
+| `TreeIndentConverter` | `IValueConverter` | Converts tree node depth level into left `Thickness` indentation |
+| `VisibilityToBooleanConverter` | `IValueConverter` | Two-way converter between `Visibility` and `bool` |
+
+## Styled Standard WPF Controls
+
+`WorkbenchTheme` includes implicit Dark and Light styles for the following standard WPF controls:
+
+| Category | Controls |
+| --- | --- |
+| **Buttons** | `Button`, `CheckBox`, `RadioButton` |
+| **Text Input** | `TextBox`, `PasswordBox`, `RichTextBox` |
+| **Selection & Lists** | `ComboBox`, `ListBox`, `ListView` (including `GridView`), `TreeView` |
+| **Data & Tables** | `DataGrid` (column/row headers, cell editing, validation tooltips, row details, grouping) |
+| **Navigation & Menus** | `TabControl`, `Menu`, `ContextMenu`, `ToolBar`, `ToolBarTray`, `StatusBar` |
+| **Layout & Containers** | `Expander`, `GroupBox`, `GridSplitter`, `Separator` |
+| **Feedback & Chrome** | `Slider`, `ProgressBar`, `ScrollBar`, `ToolTip`, `Label`, `Hyperlink` |

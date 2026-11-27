@@ -1,0 +1,54 @@
+:root {
+  --ifm-color-primary: #007acc;
+  --ifm-color-primary-dark: #006bb3;
+  --ifm-color-primary-darker: #0065a8;
+  --ifm-color-primary-darkest: #00538b;
+  --ifm-color-primary-light: #1c97ea;
+  --ifm-color-primary-lighter: #33a3ed;
+  --ifm-color-primary-lightest: #5bb5f1;
+  --ifm-code-font-size: 92%;
+  --ifm-background-color: #eeeef2;
+  --ifm-background-surface-color: #f5f5f7;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 122, 204, 0.12);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #3794ff;
+  --ifm-color-primary-dark: #1c85ff;
+  --ifm-color-primary-darker: #0d7dff;
+  --ifm-color-primary-darkest: #0065da;
+  --ifm-color-primary-light: #52a3ff;
+  --ifm-color-primary-lighter: #61abff;
+  --ifm-color-primary-lightest: #8bc2ff;
+  --ifm-background-color: #1e1e1e;
+  --ifm-background-surface-color: #252526;
+  --ifm-navbar-background-color: #252526;
+  --ifm-footer-background-color: #1a1a1b;
+  --ifm-toc-border-color: #3f3f46;
+  --ifm-hr-border-color: #3f3f46;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 122, 204, 0.25);
+}
+
+@media (min-width: 997px) {
+  table {
+    display: table;
+    width: 100%;
+  }
+}
+
+.wb-color-token {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.wb-color-swatch {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 3px;
+  border: 1px solid rgba(128, 128, 128, 0.45);
+  flex-shrink: 0;
+}

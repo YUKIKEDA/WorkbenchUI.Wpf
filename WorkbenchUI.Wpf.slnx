@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/WorkbenchUI.Wpf/WorkbenchUI.Wpf.csproj" />
+    <Project Path="src/WorkbenchUI.Wpf.Charts/WorkbenchUI.Wpf.Charts.csproj" />
+    <Project Path="src/WorkbenchUI.Wpf.Docking/WorkbenchUI.Wpf.Docking.csproj" />
+    <Project Path="src/WorkbenchUI.Wpf.Viewport3D/WorkbenchUI.Wpf.Viewport3D.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/WorkbenchUI.Wpf.Tests/WorkbenchUI.Wpf.Tests.csproj" />
+    <Project Path="tests/WorkbenchUI.Wpf.Charts.Tests/WorkbenchUI.Wpf.Charts.Tests.csproj" />
+    <Project Path="tests/WorkbenchUI.Wpf.Docking.Tests/WorkbenchUI.Wpf.Docking.Tests.csproj" />
+    <Project Path="tests/WorkbenchUI.Wpf.Viewport3D.Tests/WorkbenchUI.Wpf.Viewport3D.Tests.csproj" />
+  </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/WorkbenchUI.Wpf.Gallery/WorkbenchUI.Wpf.Gallery.csproj" />
+  </Folder>
+</Solution>

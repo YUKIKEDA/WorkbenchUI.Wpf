@@ -1,0 +1,116 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.ChartsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="SectionHeader" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="{StaticResource Wb.FontSize.L}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,16,0,8" />
+        </Style>
+        <Style x:Key="Hint" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Secondary}" />
+            <Setter Property="FontSize" Value="{StaticResource Wb.FontSize.S}" />
+            <Setter Property="Margin" Value="0,2,0,0" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style x:Key="ChartPanel" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource Wb.Brush.Surface.Panel}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Border.Default}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="2" />
+            <Setter Property="Padding" Value="6" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+        </Style>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel MaxWidth="760" HorizontalAlignment="Left">
+
+            <TextBlock Text="Charts (ScottPlot)" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4" />
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="WorkbenchUI.Wpf.Charts is a separate assembly built on ScottPlot 5 (MIT), providing WorkbenchPlot styled with WorkbenchUI design tokens plus four composite CAE chart controls while keeping the core assembly zero-dependency. Zoom charts with Ctrl+Wheel (left-drag = pan, right-drag = zoom); plain mouse wheel passes through to page scrolling." />
+
+            <TextBlock Text="ConvergenceMonitor (Streaming Solver Residuals)" Style="{StaticResource SectionHeader}" />
+            <Border Style="{StaticResource ChartPanel}">
+                <StackPanel Width="620">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                        <Button x:Name="SolveButton" Content="Run Solver" Click="OnSolveClick" MinWidth="90" />
+                        <Button x:Name="StopButton" Content="Stop" Click="OnStopClick"
+                                MinWidth="70" Margin="8,0,0,0" IsEnabled="False" />
+                        <TextBlock x:Name="SolveStatus" Text="Idle"
+                                   VerticalAlignment="Center" Margin="16,0,0,0"
+                                   Foreground="{DynamicResource Wb.Brush.Text.Secondary}" />
+                    </StackPanel>
+                    <wb:ConvergenceMonitor x:Name="Convergence"
+                                           Height="260"
+                                           Threshold="1e-6"
+                                           XLabel="Iteration"
+                                           YLabel="Residual" />
+                </StackPanel>
+            </Border>
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="ConvergenceSeries.Append(residual) is thread-safe and can be called directly from a solver worker thread. Redraws are throttled to ~100 ms. The Y-axis is logarithmic (IsLogScale), and the dashed line shows the convergence Threshold." />
+
+            <TextBlock Text="HistoryChart (Load–Displacement &amp; Time History)" Style="{StaticResource SectionHeader}" />
+            <Border Style="{StaticResource ChartPanel}">
+                <wb:HistoryChart x:Name="History"
+                                 Width="620" Height="280"
+                                 XLabel="Displacement [mm]"
+                                 YLabel="Load [kN]" />
+            </Border>
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Bind a collection of ChartSeries (Name / X / Y / Color) to SeriesSource. Notify updates by replacing array instances. Hover shows a crosshair and coordinate readout (ShowCrosshair)." />
+
+            <TextBlock Text="FrequencyResponsePlot (FRF / Bode Plot)" Style="{StaticResource SectionHeader}" />
+            <Border Style="{StaticResource ChartPanel}">
+                <StackPanel Width="620">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                        <wb:ToggleSwitch x:Name="PhaseToggle" Content="Show Phase" IsChecked="True" />
+                        <wb:ToggleSwitch x:Name="DecibelToggle" Content="dB Scale" IsChecked="True" Margin="24,0,0,0" />
+                    </StackPanel>
+                    <wb:FrequencyResponsePlot x:Name="Frf"
+                                              Height="340"
+                                              ShowPhase="{Binding IsChecked, ElementName=PhaseToggle}"
+                                              MagnitudeInDecibels="{Binding IsChecked, ElementName=DecibelToggle}"
+                                              XLabel="Frequency [Hz]" />
+                </StackPanel>
+            </Border>
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Two-tier layout (top = magnitude, bottom = phase) with synchronized logarithmic frequency X-axes during zoom and pan. Bind FrequencyResponseSeries (Frequencies / Magnitudes / Phases) to SeriesSource." />
+
+            <TextBlock Text="HistogramChart (Stress Distribution)" Style="{StaticResource SectionHeader}" />
+            <Border Style="{StaticResource ChartPanel}">
+                <StackPanel Width="620">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                        <TextBlock Text="Bins" VerticalAlignment="Center" />
+                        <Slider x:Name="BinSlider" Width="160" Minimum="5" Maximum="60"
+                                Value="24" TickFrequency="1" IsSnapToTickEnabled="True"
+                                VerticalAlignment="Center" Margin="8,0,0,0" />
+                        <TextBlock Text="{Binding Value, ElementName=BinSlider, StringFormat={}{0:0}}"
+                                   VerticalAlignment="Center" Margin="8,0,0,0" MinWidth="24" />
+                        <wb:ToggleSwitch x:Name="NormalizeToggle" Content="Normalize to Density" Margin="24,0,0,0" />
+                    </StackPanel>
+                    <wb:HistogramChart x:Name="Histogram"
+                                       Height="240"
+                                       BinCount="{Binding Value, ElementName=BinSlider}"
+                                       Normalize="{Binding IsChecked, ElementName=NormalizeToggle}"
+                                       XLabel="von Mises stress [MPa]" />
+                </StackPanel>
+            </Border>
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Pass a numeric sequence to Values to bin automatically with BinCount. Set Normalize=true to display probability density." />
+
+            <TextBlock Text="Raw WorkbenchPlot (Direct ScottPlot API)" Style="{StaticResource SectionHeader}" />
+            <Border Style="{StaticResource ChartPanel}">
+                <wb:WorkbenchPlot x:Name="FreePlot" Width="620" Height="240" />
+            </Border>
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="When composite controls aren't enough, use WorkbenchPlot directly to access the full ScottPlot API (FreePlot.Plot.Add.*). WorkbenchUI theme colors are applied automatically and follow theme/accent changes. You can also apply the same palette to offscreen export Plots via WorkbenchChartTheme.Apply(plot)." />
+
+            <Border Height="24" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

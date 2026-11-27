@@ -1,0 +1,96 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.ViewportSectionPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="Hint" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Secondary}" />
+            <Setter Property="FontSize" Value="{StaticResource Wb.FontSize.S}" />
+            <Setter Property="Margin" Value="0,2,0,0" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel MaxWidth="860" HorizontalAlignment="Left">
+
+            <TextBlock Text="3D Section (Clipping Plane)" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4" />
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="GPU clipping plane via WorkbenchViewport.SectionPlane (origin + normal). The positive-normal half-space remains visible and cut boundaries appear open. The demo shows von Mises stress contours on a pressurized thick-walled cylinder (Lamé analytical solution), with an application-computed slice mesh (IsClippable=false) overlaid on the cut plane. Left-click/drag selects visible faces only—clipped geometry cannot be picked." />
+
+            <!-- Section plane definition -->
+            <WrapPanel Margin="0,12,0,4" ItemHeight="28">
+                <wb:ToggleSwitch x:Name="ClipToggle" Content="Section Cut" IsChecked="True"
+                                 AutomationProperties.AutomationId="ClipToggle"
+                                 Checked="OnSectionOptionChanged" Unchecked="OnSectionOptionChanged" />
+                <TextBlock Text="Normal Axis:" VerticalAlignment="Center" Margin="20,0,8,0" />
+                <ComboBox x:Name="AxisCombo" MinWidth="70" VerticalAlignment="Center"
+                          AutomationProperties.AutomationId="AxisCombo"
+                          SelectionChanged="OnSectionOptionChanged">
+                    <ComboBoxItem Content="X" IsSelected="True" />
+                    <ComboBoxItem Content="Y" />
+                    <ComboBoxItem Content="Z" />
+                </ComboBox>
+                <TextBlock Text="Offset:" VerticalAlignment="Center" Margin="20,0,8,0" />
+                <Slider x:Name="OffsetSlider" Width="180" VerticalAlignment="Center"
+                        AutomationProperties.AutomationId="OffsetSlider"
+                        Minimum="-48" Maximum="48" Value="0"
+                        ValueChanged="OnSectionOptionChanged" />
+                <TextBlock VerticalAlignment="Center" Margin="8,0,0,0"
+                           AutomationProperties.AutomationId="OffsetText"
+                           Text="{Binding Value, ElementName=OffsetSlider, StringFormat={}{0:0} mm}" />
+                <wb:ToggleSwitch x:Name="FlipToggle" Content="Flip" Margin="20,0,0,0"
+                                 AutomationProperties.AutomationId="FlipToggle"
+                                 Checked="OnSectionOptionChanged" Unchecked="OnSectionOptionChanged" />
+            </WrapPanel>
+
+            <!-- Display options -->
+            <WrapPanel Margin="0,0,0,8" ItemHeight="28">
+                <wb:ToggleSwitch x:Name="IndicatorToggle" Content="Plane Indicator" IsChecked="True"
+                                 AutomationProperties.AutomationId="IndicatorToggle" />
+                <wb:ToggleSwitch x:Name="SliceToggle" Content="Section Slice (App Cap)" IsChecked="True" Margin="20,0,0,0"
+                                 AutomationProperties.AutomationId="SliceToggle"
+                                 Checked="OnSectionOptionChanged" Unchecked="OnSectionOptionChanged" />
+                <wb:ToggleSwitch x:Name="ContourToggle" Content="Contours" IsChecked="True" Margin="20,0,0,0" />
+                <Button Content="Fit" Click="OnFitClick" MinWidth="60" Margin="20,0,0,0" />
+                <Button Content="Clear Selection" Click="OnClearSelectionClick" Margin="12,0,0,0"
+                        AutomationProperties.AutomationId="ClearSelectionButton" />
+            </WrapPanel>
+
+            <!-- Viewport + Legend -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <wb:WorkbenchViewport x:Name="Viewport"
+                                Grid.Column="0"
+                                Height="420"
+                                PickMode="Face"
+                                ShowSectionPlaneIndicator="{Binding IsChecked, ElementName=IndicatorToggle}"
+                                ShowContours="{Binding IsChecked, ElementName=ContourToggle}" />
+
+                <wb:ColorMapLegend x:Name="Legend"
+                                   Grid.Column="1"
+                                   Height="280"
+                                   Margin="16,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Title="σ_vM [MPa]" />
+            </Grid>
+            <TextBlock x:Name="SelectionSummary" Style="{StaticResource Hint}"
+                       AutomationProperties.AutomationId="SelectionSummary"
+                       Text="Parts: 0, Faces: 0, Nodes: 0" />
+            <TextBlock x:Name="RendererInfo" Style="{StaticResource Hint}" />
+
+            <TextBlock Style="{StaticResource Hint}" Margin="0,12,0,0"
+                       Text="Clipping uses SV_ClipDistance across all render passes (signed distance computed in the vertex shader). Because cut openings are hollow by default, apps that need cross-section contours can mesh the plane intersection and add it with IsClippable=false (as demonstrated by the Section Slice toggle). Edges, selection highlights, and GPU ID picking share the same clip plane so visuals and picking always agree." />
+            <TextBlock Style="{StaticResource Hint}" Margin="0,6,0,0"
+                       Text="Lamé solution (closed-end): σr = A − B/r², σθ = A + B/r², σz = A, where A = p·a²/(b²−a²) and B = A·b². von Mises stress peaks on the inner wall. Flipping reverses the SectionPlane normal sign to switch which half-space remains visible." />
+
+            <Border Height="24" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

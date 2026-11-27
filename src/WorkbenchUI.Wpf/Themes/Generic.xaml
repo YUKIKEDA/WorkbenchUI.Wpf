@@ -1,0 +1,39 @@
+<!--
+    Default styles for custom controls.
+    Individual control styles are split into Themes/Controls/*.xaml and merged here.
+    (Design tokens are resolved at runtime via DynamicResource from WorkbenchTheme in App.Resources.)
+-->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/NumericBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/SearchBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/DropDownButton.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/PathBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/RangeSlider.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/Vector3Box.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/ColorPicker.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/PropertyGrid.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/ModelTree.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/ColorMapLegend.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/ColorScaleEditor.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/PlaybackBar.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/CheckComboBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/MatrixBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/KeyGestureBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/Wizard.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/ProcessRail.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/LogConsole.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/ProgressDisplay.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/WorkbenchWindow.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/ToastHost.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/BusyOverlay.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/DataGrid.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/ProgressRing.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/ToggleSwitch.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/InfoBar.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/Icon.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/WorkbenchUI.Wpf;component/Themes/Controls/Ribbon.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

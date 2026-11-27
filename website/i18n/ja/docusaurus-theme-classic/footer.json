@@ -1,0 +1,29 @@
+{
+  "link.title.Documentation": {
+    "message": "ドキュメント"
+  },
+  "link.title.Packages": {
+    "message": "パッケージ"
+  },
+  "link.title.Project": {
+    "message": "プロジェクト"
+  },
+  "link.item.label.Introduction": {
+    "message": "はじめに"
+  },
+  "link.item.label.Tutorials": {
+    "message": "チュートリアル"
+  },
+  "link.item.label.How-to Guides": {
+    "message": "ハウツーガイド"
+  },
+  "link.item.label.Reference": {
+    "message": "リファレンス"
+  },
+  "link.item.label.Explanation": {
+    "message": "解説"
+  },
+  "link.item.label.MIT License": {
+    "message": "MIT ライセンス"
+  }
+}

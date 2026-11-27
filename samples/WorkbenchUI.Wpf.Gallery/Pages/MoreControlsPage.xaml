@@ -1,0 +1,173 @@
+<UserControl x:Class="WorkbenchUI.Wpf.Gallery.Pages.MoreControlsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wb="https://schemas.workbenchui.dev/wpf"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="SectionHeader" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="{StaticResource Wb.FontSize.L}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,16,0,8" />
+        </Style>
+        <Style x:Key="Hint" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Secondary}" />
+            <Setter Property="FontSize" Value="{StaticResource Wb.FontSize.S}" />
+            <Setter Property="Margin" Value="0,2,0,0" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel MaxWidth="760" HorizontalAlignment="Left">
+
+            <TextBlock Text="More Controls" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4" />
+
+            <TextBlock Text="InfoBar (Inline Notification)" Style="{StaticResource SectionHeader}" />
+            <StackPanel>
+                <wb:InfoBar x:Name="InfoBarInfo"
+                            Severity="Info"
+                            Title="Info"
+                            Message="Mesh is up to date." Margin="0,0,0,6" />
+                <wb:InfoBar x:Name="InfoBarSuccess"
+                            Severity="Success"
+                            Title="Completed"
+                            Message="Analysis finished successfully (elapsed 00:12:34)." Margin="0,0,0,6" />
+                <wb:InfoBar x:Name="InfoBarWarning"
+                            Severity="Warning"
+                            Message="24 elements exceed an aspect ratio of 10. Close button disabled (IsClosable=False)."
+                            IsClosable="False" Margin="0,0,0,6" />
+                <wb:InfoBar x:Name="InfoBarError"
+                            Severity="Error"
+                            Title="Error"
+                            Message="Failed to connect to the license server."
+                            Closed="InfoBar_Closed"
+                            Margin="0,0,0,6">
+                    <wb:InfoBar.ActionContent>
+                        <Button Content="Retry" Click="Retry_Click" />
+                    </wb:InfoBar.ActionContent>
+                </wb:InfoBar>
+                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                    <Button x:Name="ReopenButton" Content="Show All Again" Click="Reopen_Click" />
+                    <TextBlock x:Name="InfoBarStatus" Margin="12,0,0,0" VerticalAlignment="Center"
+                               Style="{StaticResource Hint}" />
+                </StackPanel>
+            </StackPanel>
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Persistent inline notice until dismissed by the user. IsOpen binds TwoWay by default so it connects directly to a ViewModel flag. Use Toast for transient auto-dismissing notifications." />
+
+            <TextBlock Text="ToggleSwitch" Style="{StaticResource SectionHeader}" />
+            <StackPanel>
+                <wb:ToggleSwitch x:Name="AutoSaveSwitch" Content="Auto-save" IsChecked="True" Margin="0,0,0,6" />
+                <wb:ToggleSwitch Content="Live-update results during solve" Margin="0,0,0,6" />
+                <wb:ToggleSwitch Content="Disabled" IsEnabled="False" IsChecked="True" Margin="0,0,0,6" />
+                <TextBlock Style="{StaticResource Hint}"
+                           Text="{Binding ElementName=AutoSaveSwitch, Path=IsChecked, StringFormat='Auto-save IsChecked = {0}'}" />
+            </StackPanel>
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Derives from ToggleButton, so IsChecked and Command work directly. Use CheckBox for multi-select choices and ToggleSwitch for immediate ON/OFF settings." />
+
+            <TextBlock Text="ProgressRing" Style="{StaticResource SectionHeader}" />
+            <StackPanel Orientation="Horizontal">
+                <wb:ProgressRing x:Name="DemoRing" VerticalAlignment="Center" />
+                <wb:ProgressRing Width="16" Height="16" Margin="16,0,0,0" VerticalAlignment="Center"
+                                 IsActive="{Binding ElementName=RingSwitch, Path=IsChecked}" />
+                <wb:ProgressRing Width="48" Height="48" Margin="16,0,0,0" VerticalAlignment="Center"
+                                 Foreground="{DynamicResource Wb.Brush.Warning}"
+                                 IsActive="{Binding ElementName=RingSwitch, Path=IsChecked}" />
+                <wb:ToggleSwitch x:Name="RingSwitch" Content="IsActive" IsChecked="True"
+                                 Margin="24,0,0,0" VerticalAlignment="Center" />
+            </StackPanel>
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Specify size with Width/Height and color with Foreground. BusyOverlay uses this same spinner internally. Use ProgressBar or ProgressDisplay when showing determinate percentage." />
+
+            <TextBlock Text="TreeView (Standard Tree)" Style="{StaticResource SectionHeader}" />
+            <TreeView Height="220" Width="320" HorizontalAlignment="Left">
+                <TreeViewItem Header="Assembly-1" IsExpanded="True">
+                    <TreeViewItem Header="Part: Bracket" IsExpanded="True">
+                        <TreeViewItem Header="Solid Body" />
+                        <TreeViewItem Header="Mesh (24,310 elements)" />
+                    </TreeViewItem>
+                    <TreeViewItem Header="Part: Shaft">
+                        <TreeViewItem Header="Solid Body" />
+                        <TreeViewItem Header="Mesh (8,102 elements)" />
+                    </TreeViewItem>
+                    <TreeViewItem Header="Boundary Conditions" IsExpanded="True">
+                        <TreeViewItem Header="Fixed Support (Face 3)" />
+                        <TreeViewItem Header="Force 500 N (Face 12)" />
+                    </TreeViewItem>
+                    <TreeViewItem Header="Contact Definitions" />
+                </TreeViewItem>
+            </TreeView>
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Standard TreeView for small hierarchical UIs (e.g. settings dialogs). For large model trees with tens of thousands of nodes, use ModelTree with virtualization and visibility toggles." />
+
+            <TextBlock Text="ListView + GridView (Read-only Columns)" Style="{StaticResource SectionHeader}" />
+            <ListView x:Name="MaterialList" Height="180" Width="560" HorizontalAlignment="Left">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Material" Width="160"
+                                        DisplayMemberBinding="{Binding Name}" />
+                        <GridViewColumn Header="Young's Modulus [GPa]" Width="140"
+                                        DisplayMemberBinding="{Binding YoungsModulus}" />
+                        <GridViewColumn Header="Poisson's Ratio" Width="100"
+                                        DisplayMemberBinding="{Binding PoissonsRatio}" />
+                        <GridViewColumn Header="Density [kg/m³]" Width="120"
+                                        DisplayMemberBinding="{Binding Density}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Drag headers to reorder columns or drag dividers to resize. Use DataGrid when sorting or inline editing is needed." />
+
+            <TextBlock Text="PasswordBox / RichTextBox" Style="{StaticResource SectionHeader}" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="360" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Text="License Key" VerticalAlignment="Center" />
+                <PasswordBox Grid.Column="1" Margin="0,2" Password="secret123" />
+                <TextBlock Grid.Row="1" Text="Analysis Notes" VerticalAlignment="Top" Margin="0,8,0,0" />
+                <RichTextBox Grid.Row="1" Grid.Column="1" Margin="0,8,0,0" Height="90">
+                    <FlowDocument>
+                        <Paragraph>
+                            Re-ran with <Bold>Rev.3</Bold> mesh. Refined element size at the stress concentration zone to
+                            <Italic>0.5 mm</Italic>.
+                        </Paragraph>
+                        <Paragraph>Next: add a contact stiffness study.</Paragraph>
+                    </FlowDocument>
+                </RichTextBox>
+            </Grid>
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Both share the TextBox appearance (accent border on focus). RichTextBox is styled for multiline input with top alignment and vertical scrolling." />
+
+            <TextBlock Text="Label / Hyperlink" Style="{StaticResource SectionHeader}" />
+            <StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                    <Label Content="_Solver:" Target="{Binding ElementName=SolverCombo}"
+                           VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <ComboBox x:Name="SolverCombo" Width="160" SelectedIndex="0">
+                        <ComboBoxItem Content="Direct (MUMPS)" />
+                        <ComboBoxItem Content="Iterative (PCG)" />
+                    </ComboBox>
+                </StackPanel>
+                <TextBlock>
+                    See
+                    <Hyperlink Click="HelpLink_Click">Solver Configuration Help</Hyperlink>
+                    for details. A disabled link looks
+                    <Hyperlink IsEnabled="False">like this</Hyperlink>.
+                </TextBlock>
+                <TextBlock x:Name="LinkStatus" Style="{StaticResource Hint}" />
+            </StackPanel>
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Label removes WPF's default 5 px padding (Padding=0) and forwards access keys (Alt+S) to Target. Hyperlink underlines on hover." />
+
+            <Border Height="24" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

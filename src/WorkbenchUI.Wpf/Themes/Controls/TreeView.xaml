@@ -1,0 +1,149 @@
+<!--
+    Default styles for standard TreeView / TreeViewItem.
+    Intended for small hierarchies; use virtualized ModelTree for large model trees.
+    Chevrons and selection colors share the same tokens as ModelTree.
+-->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Expand/collapse chevron (matches ModelTree) -->
+    <Style x:Key="Wb.TreeViewItem.Expander" TargetType="{x:Type ToggleButton}">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="ClickMode" Value="Press" />
+        <Setter Property="Width" Value="16" />
+        <Setter Property="Height" Value="16" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border x:Name="Root" Background="Transparent" CornerRadius="2">
+                        <Path x:Name="Chevron"
+                              Data="M 0,0 L 4,4 L 0,8"
+                              Stroke="{DynamicResource Wb.Brush.Text.Secondary}"
+                              StrokeThickness="1.4"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              RenderTransformOrigin="0.5,0.5">
+                            <Path.RenderTransform>
+                                <RotateTransform Angle="0" />
+                            </Path.RenderTransform>
+                        </Path>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Root" Property="Background"
+                                    Value="{DynamicResource Wb.Brush.State.Hover}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Chevron" Property="RenderTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="90" />
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Wb.TreeViewItem" TargetType="{x:Type TreeViewItem}">
+        <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Primary}" />
+        <Setter Property="Padding" Value="4,2" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="IsExpanded" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TreeViewItem}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border x:Name="HeaderRow"
+                                Background="Transparent"
+                                CornerRadius="2">
+                            <StackPanel Orientation="Horizontal">
+                                <ToggleButton x:Name="Expander"
+                                              Style="{StaticResource Wb.TreeViewItem.Expander}"
+                                              IsChecked="{Binding IsExpanded,
+                                                          RelativeSource={RelativeSource TemplatedParent},
+                                                          Mode=TwoWay}" />
+                                <ContentPresenter x:Name="PART_Header"
+                                                  ContentSource="Header"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <!-- Indent children by 16px (matches ModelTree) -->
+                        <ItemsPresenter x:Name="ItemsHost"
+                                        Grid.Row="1"
+                                        Margin="16,0,0,0"
+                                        Visibility="Collapsed" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsExpanded" Value="True">
+                            <Setter TargetName="ItemsHost" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <!-- Leaf node: chevron hidden while reserving space for indent alignment -->
+                        <Trigger Property="HasItems" Value="False">
+                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
+                        </Trigger>
+                        <Trigger SourceName="HeaderRow" Property="IsMouseOver" Value="True">
+                            <Setter TargetName="HeaderRow" Property="Background"
+                                    Value="{DynamicResource Wb.Brush.State.Hover}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="HeaderRow" Property="Background"
+                                    Value="{DynamicResource Wb.Brush.State.Selected}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True" />
+                                <Condition Property="Selector.IsSelectionActive" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="HeaderRow" Property="Background"
+                                    Value="{DynamicResource Wb.Brush.State.SelectedInactive}" />
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Disabled}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Wb.TreeView" TargetType="{x:Type TreeView}">
+        <Setter Property="Background" Value="{DynamicResource Wb.Brush.Surface.Panel}" />
+        <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Primary}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Border.Default}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="2" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TreeView}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{DynamicResource Wb.CornerRadius}">
+                        <ScrollViewer Padding="{TemplateBinding Padding}" Focusable="False">
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.6" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="{x:Type TreeView}" BasedOn="{StaticResource Wb.TreeView}" />
+    <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource Wb.TreeViewItem}" />
+
+</ResourceDictionary>

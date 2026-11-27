@@ -1,0 +1,96 @@
+<!-- Default style for LogConsole. Rows use virtualization + recycling for large log volumes -->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:wb="clr-namespace:WorkbenchUI.Wpf.Controls">
+
+    <BooleanToVisibilityConverter x:Key="Wb.LogConsole.BoolToVisibility" />
+
+    <DataTemplate x:Key="Wb.LogConsole.ItemTemplate" DataType="{x:Type wb:LogEntry}">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock x:Name="TimestampText"
+                       Text="{Binding Timestamp, StringFormat='{}{0:HH:mm:ss.fff}'}"
+                       Foreground="{DynamicResource Wb.Brush.Text.Secondary}"
+                       Margin="0,0,8,0"
+                       Visibility="{Binding ShowTimestamps,
+                                            RelativeSource={RelativeSource AncestorType={x:Type wb:LogConsole}},
+                                            Converter={StaticResource Wb.LogConsole.BoolToVisibility}}" />
+            <TextBlock x:Name="MessageText"
+                       Text="{Binding Message}"
+                       Foreground="{DynamicResource Wb.Brush.Text.Primary}" />
+        </StackPanel>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Level}" Value="Debug">
+                <Setter TargetName="MessageText" Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Secondary}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Level}" Value="Warning">
+                <Setter TargetName="MessageText" Property="Foreground" Value="{DynamicResource Wb.Brush.Warning}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Level}" Value="Error">
+                <Setter TargetName="MessageText" Property="Foreground" Value="{DynamicResource Wb.Brush.Error}" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <Style x:Key="Wb.LogConsole.ItemContainer" TargetType="{x:Type ListBoxItem}">
+        <Setter Property="Padding" Value="8,0" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                    <Border x:Name="Root"
+                            Background="Transparent"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource Wb.Brush.State.Selected}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True" />
+                                <Condition Property="Selector.IsSelectionActive" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource Wb.Brush.State.SelectedInactive}" />
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type wb:LogConsole}">
+        <Setter Property="Background" Value="{DynamicResource Wb.Brush.Surface.Window}" />
+        <Setter Property="Foreground" Value="{DynamicResource Wb.Brush.Text.Primary}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Wb.Brush.Border.Default}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FontFamily" Value="{DynamicResource Wb.FontFamily.Monospace}" />
+        <Setter Property="FontSize" Value="{DynamicResource Wb.FontSize.S}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type wb:LogConsole}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{DynamicResource Wb.CornerRadius}">
+                        <ListBox x:Name="PART_List"
+                                 ItemsSource="{Binding Source.Entries, RelativeSource={RelativeSource TemplatedParent}}"
+                                 SelectionMode="Extended"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Padding="0,2"
+                                 Foreground="{TemplateBinding Foreground}"
+                                 ItemContainerStyle="{StaticResource Wb.LogConsole.ItemContainer}"
+                                 ItemTemplate="{StaticResource Wb.LogConsole.ItemTemplate}"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                 VirtualizingPanel.IsVirtualizing="True"
+                                 VirtualizingPanel.VirtualizationMode="Recycling" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

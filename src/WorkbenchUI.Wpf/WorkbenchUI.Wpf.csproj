@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>WorkbenchUI.Wpf</PackageId>
+    <AssemblyName>WorkbenchUI.Wpf</AssemblyName>
+    <RootNamespace>WorkbenchUI.Wpf.Controls</RootNamespace>
+    <Description>Zero-dependency, high-density theme foundation and engineering workbench UI controls for WPF desktop applications.</Description>
+    <IsPackable>true</IsPackable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="WorkbenchUI.Wpf.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
