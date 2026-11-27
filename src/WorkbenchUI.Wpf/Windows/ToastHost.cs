@@ -46,9 +46,10 @@ public sealed class ToastItem
 public class ToastHost : Control
 {
     /// <summary>Template part name used to identify each toast's close button.</summary>
-    public const string ClosePartName = "PART_ToastClose";
+    internal const string ClosePartName = "PART_ToastClose";
 
     private readonly ObservableCollection<ToastItem> _items = [];
+    private readonly Dictionary<ToastItem, DispatcherTimer> _timers = [];
 
     static ToastHost()
     {
@@ -66,6 +67,7 @@ public class ToastHost : Control
 
         // Handle clicks from close buttons inside item templates centrally.
         AddHandler(ButtonBase.ClickEvent, new RoutedEventHandler(OnCloseButtonClick));
+        Unloaded += OnUnloaded;
     }
 
     private static readonly DependencyPropertyKey ItemsPropertyKey =
@@ -100,22 +102,54 @@ public class ToastHost : Control
         _items.Add(item);
 
         var timer = new DispatcherTimer { Interval = duration ?? DefaultDuration };
-        timer.Tick += (_, _) =>
+        void OnTick(object? sender, EventArgs e)
         {
-            timer.Stop();
-            _items.Remove(item);
-        };
+            timer.Tick -= OnTick;
+            RemoveToast(item);
+        }
+
+        timer.Tick += OnTick;
+        _timers[item] = timer;
         timer.Start();
     }
 
     /// <summary>Dismisses all currently visible toast notifications.</summary>
-    public void Clear() => _items.Clear();
+    public void Clear()
+    {
+        foreach (var timer in _timers.Values)
+        {
+            timer.Stop();
+        }
+
+        _timers.Clear();
+        _items.Clear();
+    }
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        foreach (var timer in _timers.Values)
+        {
+            timer.Stop();
+        }
+
+        _timers.Clear();
+    }
+
+    private void RemoveToast(ToastItem item)
+    {
+        if (_timers.Remove(item, out var timer))
+        {
+            timer.Stop();
+        }
+
+        _items.Remove(item);
+    }
 
     private void OnCloseButtonClick(object sender, RoutedEventArgs e)
     {
         if (e.OriginalSource is FrameworkElement { Name: ClosePartName, DataContext: ToastItem item })
         {
-            _items.Remove(item);
+            RemoveToast(item);
             e.Handled = true;
         }
     }

@@ -175,15 +175,24 @@ internal sealed unsafe class ViewportRenderer : IDisposable
 
     // Full-frame staging texture for hover pre-highlight ID readback (lazily created on first capture)
     private ComPtr<ID3D11Texture2D> _hoverStagingTexture;
+    private bool _disposed;
 
     public ViewportRenderer()
     {
         _d3d11 = D3D11.GetApi(null);
         _compiler = D3DCompiler.GetApi();
 
-        CreateDevice();
-        TryCreateD3D9();
-        CreatePipeline();
+        try
+        {
+            CreateDevice();
+            TryCreateD3D9();
+            CreatePipeline();
+        }
+        catch
+        {
+            Dispose();
+            throw;
+        }
     }
 
     /// <summary>Whether rendering uses the WARP software rasterizer.</summary>
@@ -297,7 +306,7 @@ internal sealed unsafe class ViewportRenderer : IDisposable
     {
         if (rgba.Length != ColorMapWidth * 4)
         {
-            throw new ArgumentException($"カラーマップは {ColorMapWidth} texel の RGBA データが必要です。", nameof(rgba));
+            throw new ArgumentException($"Color map requires {ColorMapWidth} texels of RGBA data.", nameof(rgba));
         }
 
         _colorMapSrv.Dispose();
@@ -1513,7 +1522,7 @@ internal sealed unsafe class ViewportRenderer : IDisposable
                 ? SilkMarshal.PtrToString((nint)errors.GetBufferPointer())
                 : $"HRESULT 0x{hr.Value:X8}";
             errors.Dispose();
-            throw new InvalidOperationException($"シェーダのコンパイルに失敗しました ({entryPoint}): {message}");
+            throw new InvalidOperationException($"Failed to compile shader ({entryPoint}): {message}");
         }
 
         errors.Dispose();
@@ -1679,6 +1688,12 @@ internal sealed unsafe class ViewportRenderer : IDisposable
 
     public void Dispose()
     {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _disposed = true;
         ReleaseSizedResources();
         ReleaseD3D9();
 
@@ -1713,7 +1728,39 @@ internal sealed unsafe class ViewportRenderer : IDisposable
         _context.Dispose();
         _device.Dispose();
 
+        _colorMapSrv = default;
+        _colorMapTexture = default;
+        _colorMapSampler = default;
+        _alphaBlendState = default;
+        _highlightDepthState = default;
+        _depthState = default;
+        _rasterizerState = default;
+        _zeroDisplacementBuffer = default;
+        _frameCompleteQuery = default;
+        _glyphIndexBuffer = default;
+        _glyphVertexBuffer = default;
+        _sectionIndicatorBuffer = default;
+        _constantBuffer = default;
+        _glyphLayout = default;
+        _pointLayout = default;
+        _pickLayout = default;
+        _lineLayout = default;
+        _meshLayout = default;
+        _glyphPs = default;
+        _glyphVs = default;
+        _pointPs = default;
+        _pointVs = default;
+        _pickPs = default;
+        _pickVs = default;
+        _linePs = default;
+        _lineVs = default;
+        _meshPs = default;
+        _meshVs = default;
+        _context = default;
+        _device = default;
+
         _d3d9Api?.Dispose();
+        _d3d9Api = null;
         _compiler.Dispose();
         _d3d11.Dispose();
     }

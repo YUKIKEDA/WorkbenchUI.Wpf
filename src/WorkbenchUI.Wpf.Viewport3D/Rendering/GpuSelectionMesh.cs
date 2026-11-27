@@ -112,26 +112,34 @@ internal sealed unsafe class GpuSelectionMesh : IDisposable
             NodeVertexCount = (uint)(validNodes.Count * 6),
         };
 
-        if (faceVertices.Count > 0)
+        try
         {
-            var array = faceVertices.ToArray();
-            fixed (float* pVertices = array)
+            if (faceVertices.Count > 0)
             {
-                result._faceVertexBuffer = CreateImmutableBuffer(
-                    device, pVertices, (uint)(array.Length * sizeof(float)), BindFlag.VertexBuffer);
+                var array = faceVertices.ToArray();
+                fixed (float* pVertices = array)
+                {
+                    result._faceVertexBuffer = CreateImmutableBuffer(
+                        device, pVertices, (uint)(array.Length * sizeof(float)), BindFlag.VertexBuffer);
+                }
             }
-        }
 
-        if (nodeVertices.Length > 0)
+            if (nodeVertices.Length > 0)
+            {
+                fixed (float* pVertices = nodeVertices)
+                {
+                    result._nodeVertexBuffer = CreateImmutableBuffer(
+                        device, pVertices, (uint)(nodeVertices.Length * sizeof(float)), BindFlag.VertexBuffer);
+                }
+            }
+
+            return result;
+        }
+        catch
         {
-            fixed (float* pVertices = nodeVertices)
-            {
-                result._nodeVertexBuffer = CreateImmutableBuffer(
-                    device, pVertices, (uint)(nodeVertices.Length * sizeof(float)), BindFlag.VertexBuffer);
-            }
+            result.Dispose();
+            throw;
         }
-
-        return result;
     }
 
     private static ComPtr<ID3D11Buffer> CreateImmutableBuffer(

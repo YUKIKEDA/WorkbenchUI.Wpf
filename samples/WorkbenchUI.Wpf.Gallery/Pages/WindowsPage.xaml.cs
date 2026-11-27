@@ -8,9 +8,18 @@ namespace WorkbenchUI.Wpf.Gallery.Pages
 {
     public partial class WindowsPage : UserControl
     {
+        private DispatcherTimer? _busyTimer;
+
         public WindowsPage()
         {
             InitializeComponent();
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            _busyTimer?.Stop();
+            _busyTimer = null;
         }
 
         // ---------------- WorkbenchMessageBox ----------------
@@ -117,6 +126,7 @@ namespace WorkbenchUI.Wpf.Gallery.Pages
 
         private void StartBusy_Click(object sender, RoutedEventArgs e)
         {
+            _busyTimer?.Stop();
             DefaultBusyOverlay.IsBusy = true;
             ProgressBusyOverlay.IsBusy = true;
             BusyProgress.IsRunning = true;
@@ -125,10 +135,16 @@ namespace WorkbenchUI.Wpf.Gallery.Pages
             timer.Tick += (_, _) =>
             {
                 timer.Stop();
+                if (ReferenceEquals(_busyTimer, timer))
+                {
+                    _busyTimer = null;
+                }
+
                 DefaultBusyOverlay.IsBusy = false;
                 ProgressBusyOverlay.IsBusy = false;
                 BusyProgress.IsRunning = false;
             };
+            _busyTimer = timer;
             timer.Start();
         }
     }

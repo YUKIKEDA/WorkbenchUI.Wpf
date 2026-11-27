@@ -215,6 +215,8 @@ public class WorkbenchViewport : Control
     private readonly List<RenderItem> _renderItems = [];
     private readonly List<GpuMesh> _visibleGpus = [];
     private readonly List<ViewportMesh> _visibleSources = [];
+    private readonly HashSet<ViewportMesh> _subscribedMeshes = [];
+    private readonly HashSet<ViewportVoxelGrid> _subscribedVoxels = [];
     private readonly Dictionary<ViewportMesh, GpuSelectionMesh> _selectionGpu = [];
     private readonly Dictionary<ViewportMesh, VoxelMeshBinding> _voxelBindings = [];
 
@@ -917,7 +919,7 @@ public class WorkbenchViewport : Control
     /// <summary>Schedules an asynchronous viewport redraw (coalesced on the Dispatcher at Render priority).</summary>
     public void InvalidateViewport()
     {
-        if (_renderQueued)
+        if (_renderQueued || Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished)
         {
             return;
         }
@@ -939,7 +941,12 @@ public class WorkbenchViewport : Control
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+        Dispatcher.ShutdownStarted -= OnDispatcherShutdownStarted;
+        Dispatcher.ShutdownStarted += OnDispatcherShutdownStarted;
+        ThemeManager.ThemeChanged -= OnThemeChanged;
         ThemeManager.ThemeChanged += OnThemeChanged;
+        HookAllMeshes(MeshSource);
+        HookAllVoxels(VoxelSource);
         _renderBroken = false;
         UpdateDeformationAnimation();
         InvalidateViewport();
@@ -947,9 +954,31 @@ public class WorkbenchViewport : Control
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
+        Dispatcher.ShutdownStarted -= OnDispatcherShutdownStarted;
         ThemeManager.ThemeChanged -= OnThemeChanged;
+        UnhookAllMeshes();
+        UnhookAllVoxels();
         StopViewAnimation();
         UpdateDeformationAnimation();
+        CancelPicking();
+        _lodRestoreTimer?.Stop();
+        _lodRequested = false;
+        ReleaseRenderer();
+    }
+
+    private void OnDispatcherShutdownStarted(object? sender, EventArgs e)
+    {
+        Dispatcher.ShutdownStarted -= OnDispatcherShutdownStarted;
+        ThemeManager.ThemeChanged -= OnThemeChanged;
+        UnhookAllMeshes();
+        UnhookAllVoxels();
+        StopViewAnimation();
+        if (_isDeformationTickAttached)
+        {
+            CompositionTarget.Rendering -= OnDeformationAnimationTick;
+            _isDeformationTickAttached = false;
+        }
+
         CancelPicking();
         _lodRestoreTimer?.Stop();
         _lodRequested = false;
@@ -982,6 +1011,22 @@ public class WorkbenchViewport : Control
         {
             _renderer ??= new ViewportRenderer();
             var sizeChanged = pixelWidth != _renderer.Width || pixelHeight != _renderer.Height;
+            if (sizeChanged && _d3dImage is not null)
+            {
+                // Detach the existing IDirect3DSurface9 before Resize releases it in D3D9.
+                _d3dImage.Lock();
+                try
+                {
+                    _d3dImage.SetBackBuffer(D3DResourceType.IDirect3DSurface9, nint.Zero);
+                }
+                finally
+                {
+                    _d3dImage.Unlock();
+                }
+
+                _lastBackBuffer = 0;
+            }
+
             _renderer.Resize(pixelWidth, pixelHeight);
 
             EnsureGeometryAsync();
@@ -1065,12 +1110,7 @@ public class WorkbenchViewport : Control
         if (_d3dImage is null)
         {
             _d3dImage = new D3DImage();
-            _d3dImage.IsFrontBufferAvailableChanged += (_, _) =>
-            {
-                // Rebind back buffer when front buffer recovers (WPF may temporarily release it during theme switches)
-                _lastBackBuffer = 0;
-                InvalidateViewport();
-            };
+            _d3dImage.IsFrontBufferAvailableChanged += OnFrontBufferAvailableChanged;
             _softwareBitmap = null;
             _lastBackBuffer = 0;
         }
@@ -1099,12 +1139,46 @@ public class WorkbenchViewport : Control
                 clipPlane, sectionIndicator, sectionFill, sectionLine,
                 useLod: _lodRequested);
 
-            _d3dImage.AddDirtyRect(new Int32Rect(0, 0, _renderer.Width, _renderer.Height));
+            var dirtyWidth = Math.Min(_renderer.Width, _d3dImage.PixelWidth);
+            var dirtyHeight = Math.Min(_renderer.Height, _d3dImage.PixelHeight);
+            if (dirtyWidth > 0 && dirtyHeight > 0)
+            {
+                _d3dImage.AddDirtyRect(new Int32Rect(0, 0, dirtyWidth, dirtyHeight));
+            }
         }
         finally
         {
             _d3dImage.Unlock();
         }
+    }
+
+    private void OnFrontBufferAvailableChanged(object? sender, DependencyPropertyChangedEventArgs e)
+    {
+        // Rebind back buffer when front buffer recovers (WPF may temporarily release it during theme switches)
+        _lastBackBuffer = 0;
+        InvalidateViewport();
+    }
+
+    private void DetachD3DImage()
+    {
+        if (_d3dImage is null)
+        {
+            return;
+        }
+
+        _d3dImage.IsFrontBufferAvailableChanged -= OnFrontBufferAvailableChanged;
+        _d3dImage.Lock();
+        try
+        {
+            _d3dImage.SetBackBuffer(D3DResourceType.IDirect3DSurface9, nint.Zero);
+        }
+        finally
+        {
+            _d3dImage.Unlock();
+        }
+
+        _d3dImage = null;
+        _lastBackBuffer = 0;
     }
 
     private void PresentViaWriteableBitmap(
@@ -1125,7 +1199,7 @@ public class WorkbenchViewport : Control
         {
             _softwareBitmap = new WriteableBitmap(
                 _renderer.Width, _renderer.Height, 96, 96, PixelFormats.Bgra32, null);
-            _d3dImage = null;
+            DetachD3DImage();
         }
 
         if (!ReferenceEquals(_image!.Source, _softwareBitmap))
@@ -1164,114 +1238,124 @@ public class WorkbenchViewport : Control
     /// </summary>
     private async void EnsureGeometryAsync()
     {
-        // Retry on the next RenderFrame if the renderer is not yet initialized
-        if (_renderer is null || !_geometryDirty)
-        {
-            return;
-        }
-
-        _geometryDirty = false;
-        var (generation, token) = _buildCoordinator.Begin();
-        var renderer = _renderer;
-        var meshes = MeshSource?.OfType<ViewportMesh>().ToList() ?? [];
-        var voxels = VoxelSource?.OfType<ViewportVoxelGrid>().ToList() ?? [];
-        var edgeLimit = EdgeExtractionLimit;
-        var lodThreshold = InteractiveLodThreshold;
-
-        SetValue(IsGeometryBuildingPropertyKey, true);
-        GeometryBuildProgressChanged?.Invoke(this, new ViewportBuildProgressEventArgs("準備", 0.0));
-
-        // Hold an AddRef'd device lease so background CreateBuffer calls stay safe if the renderer is disposed mid-build;
-        // RentDevice adds a reference balanced by the using statement.
-        using var lease = renderer.AcquireDeviceLease();
-        using var device = lease.RentDevice();
-
-        GeometryBuildResult? result = null;
-        Dictionary<ViewportMesh, VoxelMeshBinding>? voxelBindings = null;
         try
         {
-            // Pass ComPtr by value (ownership stays with device/lease)
-            var deviceForBuild = device;
-            (result, voxelBindings) = await Task.Run(
-                () =>
-                {
-                    var bindings = new Dictionary<ViewportMesh, VoxelMeshBinding>();
-                    var combined = new List<ViewportMesh>(meshes.Count + voxels.Count);
-                    combined.AddRange(meshes);
-                    foreach (var voxel in voxels)
-                    {
-                        token.ThrowIfCancellationRequested();
-                        if (!voxel.IsVisible || voxel.ActiveCount == 0)
-                        {
-                            continue;
-                        }
-
-                        var usedBrick = voxel.ActiveCount > ViewportVoxelLod.DefaultActiveThreshold;
-                        var display = ViewportVoxelLod.CreateDisplayGrid(voxel);
-                        var surface = ViewportVoxelSurface.Extract(display);
-                        if (surface.TriangleIndices.Length == 0)
-                        {
-                            continue;
-                        }
-
-                        var mesh = ViewportVoxelSurface.ToMesh(display, surface);
-                        bindings[mesh] = new VoxelMeshBinding(voxel, display, surface, usedBrick);
-                        combined.Add(mesh);
-                    }
-
-                    var geo = BuildGeometryCore(
-                        deviceForBuild, combined, edgeLimit, lodThreshold, token,
-                        (stage, progress) => ReportBuildProgress(generation, stage, progress));
-                    return (geo, bindings);
-                },
-                CancellationToken.None);
-        }
-        catch (OperationCanceledException)
-        {
-            // Superseded by a newer generation or unloaded; cleanup is handled below
-        }
-        catch (Exception e) when (e is not OutOfMemoryException)
-        {
-            // Device-level build failure; recreate the renderer as in RenderFrame
-            if (_buildCoordinator.IsCurrent(generation))
+            // Retry on the next RenderFrame if the renderer is not yet initialized
+            if (_renderer is null || !_geometryDirty)
             {
-                SetValue(IsGeometryBuildingPropertyKey, false);
-                // Dispose partial build resources before releasing the device
-                DisposeBuildResult(result);
-                ReleaseRenderer();
-                if (++_consecutiveFailures >= 2)
+                return;
+            }
+
+            _geometryDirty = false;
+            var (generation, token) = _buildCoordinator.Begin();
+            var renderer = _renderer;
+            var meshes = MeshSource?.OfType<ViewportMesh>().ToList() ?? [];
+            var voxels = VoxelSource?.OfType<ViewportVoxelGrid>().ToList() ?? [];
+            var edgeLimit = EdgeExtractionLimit;
+            var lodThreshold = InteractiveLodThreshold;
+
+            SetValue(IsGeometryBuildingPropertyKey, true);
+            GeometryBuildProgressChanged?.Invoke(this, new ViewportBuildProgressEventArgs("Preparing", 0.0));
+
+            // Hold an AddRef'd device lease so background CreateBuffer calls stay safe if the renderer is disposed mid-build;
+            // RentDevice adds a reference balanced by the using statement.
+            using var lease = renderer.AcquireDeviceLease();
+            using var device = lease.RentDevice();
+
+            GeometryBuildResult? result = null;
+            Dictionary<ViewportMesh, VoxelMeshBinding>? voxelBindings = null;
+            try
+            {
+                // Pass ComPtr by value (ownership stays with device/lease)
+                var deviceForBuild = device;
+                (result, voxelBindings) = await Task.Run(
+                    () =>
+                    {
+                        var bindings = new Dictionary<ViewportMesh, VoxelMeshBinding>();
+                        var combined = new List<ViewportMesh>(meshes.Count + voxels.Count);
+                        combined.AddRange(meshes);
+                        foreach (var voxel in voxels)
+                        {
+                            token.ThrowIfCancellationRequested();
+                            if (!voxel.IsVisible || voxel.ActiveCount == 0)
+                            {
+                                continue;
+                            }
+
+                            var usedBrick = voxel.ActiveCount > ViewportVoxelLod.DefaultActiveThreshold;
+                            var display = ViewportVoxelLod.CreateDisplayGrid(voxel);
+                            var surface = ViewportVoxelSurface.Extract(display);
+                            if (surface.TriangleIndices.Length == 0)
+                            {
+                                continue;
+                            }
+
+                            var mesh = ViewportVoxelSurface.ToMesh(display, surface);
+                            bindings[mesh] = new VoxelMeshBinding(voxel, display, surface, usedBrick);
+                            combined.Add(mesh);
+                        }
+
+                        var geo = BuildGeometryCore(
+                            deviceForBuild, combined, edgeLimit, lodThreshold, token,
+                            (stage, progress) => ReportBuildProgress(generation, stage, progress));
+                        return (geo, bindings);
+                    },
+                    CancellationToken.None);
+            }
+            catch (OperationCanceledException)
+            {
+                // Superseded by a newer generation or unloaded; cleanup is handled below
+            }
+            catch (Exception e) when (e is not OutOfMemoryException)
+            {
+                // Device-level build failure; recreate the renderer as in RenderFrame
+                if (_buildCoordinator.IsCurrent(generation))
                 {
-                    _renderBroken = true;
+                    SetValue(IsGeometryBuildingPropertyKey, false);
+                    // Dispose partial build resources before releasing the device
+                    DisposeBuildResult(result);
+                    ReleaseRenderer();
+                    if (++_consecutiveFailures >= 2)
+                    {
+                        _renderBroken = true;
+                    }
+                    else
+                    {
+                        InvalidateViewport();
+                    }
                 }
                 else
                 {
-                    InvalidateViewport();
+                    DisposeBuildResult(result);
                 }
+
+                return;
             }
-            else
+
+            // Discard results from superseded or unloaded generations
+            if (!_buildCoordinator.IsCurrent(generation) || !ReferenceEquals(renderer, _renderer))
             {
                 DisposeBuildResult(result);
+                return;
             }
 
-            return;
-        }
+            SetValue(IsGeometryBuildingPropertyKey, false);
+            if (result is null)
+            {
+                return;
+            }
 
-        // Discard results from superseded or unloaded generations
-        if (!_buildCoordinator.IsCurrent(generation) || !ReferenceEquals(renderer, _renderer))
+            ApplyBuildResult(result, voxelBindings);
+            GeometryBuildCompleted?.Invoke(this, EventArgs.Empty);
+            InvalidateViewport();
+        }
+        catch (OperationCanceledException)
         {
-            DisposeBuildResult(result);
-            return;
         }
-
-        SetValue(IsGeometryBuildingPropertyKey, false);
-        if (result is null)
+        catch (Exception ex)
         {
-            return;
+            System.Diagnostics.Trace.TraceError($"WorkbenchViewport geometry build failed: {ex}");
         }
-
-        ApplyBuildResult(result, voxelBindings);
-        GeometryBuildCompleted?.Invoke(this, EventArgs.Empty);
-        InvalidateViewport();
     }
 
     /// <summary>
@@ -1312,8 +1396,8 @@ public class WorkbenchViewport : Control
             {
                 token.ThrowIfCancellationRequested();
                 var stage = meshes.Count == 1
-                    ? "ジオメトリ構築"
-                    : FormattableString.Invariant($"ジオメトリ構築 ({i + 1}/{meshes.Count})");
+                    ? "Building geometry"
+                    : FormattableString.Invariant($"Building geometry ({i + 1}/{meshes.Count})");
                 var meshIndex = i;
                 var gpu = GpuMesh.Create(
                     device, meshes[i], ox, oy, oz, edgeExtractionLimit, interactiveLodThreshold,
@@ -1649,7 +1733,7 @@ public class WorkbenchViewport : Control
             oldIncc.CollectionChanged -= viewport.OnMeshCollectionChanged;
         }
 
-        viewport.UnhookAllMeshes(e.OldValue as IEnumerable);
+        viewport.UnhookAllMeshes();
 
         if (e.NewValue is INotifyCollectionChanged newIncc)
         {
@@ -1671,7 +1755,7 @@ public class WorkbenchViewport : Control
             oldIncc.CollectionChanged -= viewport.OnVoxelCollectionChanged;
         }
 
-        viewport.UnhookAllVoxels(e.OldValue as IEnumerable);
+        viewport.UnhookAllVoxels();
 
         if (e.NewValue is INotifyCollectionChanged newIncc)
         {
@@ -1690,20 +1774,26 @@ public class WorkbenchViewport : Control
         {
             foreach (var item in e.OldItems.OfType<ViewportVoxelGrid>())
             {
-                item.PropertyChanged -= OnVoxelPropertyChanged;
+                if (_subscribedVoxels.Remove(item))
+                {
+                    item.PropertyChanged -= OnVoxelPropertyChanged;
+                }
             }
         }
 
         if (e.Action == NotifyCollectionChangedAction.Reset)
         {
-            UnhookAllVoxels(VoxelSource);
+            UnhookAllVoxels();
             HookAllVoxels(VoxelSource);
         }
         else if (e.NewItems is not null)
         {
             foreach (var item in e.NewItems.OfType<ViewportVoxelGrid>())
             {
-                item.PropertyChanged += OnVoxelPropertyChanged;
+                if (_subscribedVoxels.Add(item))
+                {
+                    item.PropertyChanged += OnVoxelPropertyChanged;
+                }
             }
         }
 
@@ -1721,21 +1811,21 @@ public class WorkbenchViewport : Control
 
         foreach (var voxel in voxels.OfType<ViewportVoxelGrid>())
         {
-            voxel.PropertyChanged += OnVoxelPropertyChanged;
+            if (_subscribedVoxels.Add(voxel))
+            {
+                voxel.PropertyChanged += OnVoxelPropertyChanged;
+            }
         }
     }
 
-    private void UnhookAllVoxels(IEnumerable? voxels)
+    private void UnhookAllVoxels()
     {
-        if (voxels is null)
-        {
-            return;
-        }
-
-        foreach (var voxel in voxels.OfType<ViewportVoxelGrid>())
+        foreach (var voxel in _subscribedVoxels)
         {
             voxel.PropertyChanged -= OnVoxelPropertyChanged;
         }
+
+        _subscribedVoxels.Clear();
     }
 
     private void OnVoxelPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -1783,21 +1873,27 @@ public class WorkbenchViewport : Control
         {
             foreach (var item in e.OldItems.OfType<ViewportMesh>())
             {
-                item.PropertyChanged -= OnMeshPropertyChanged;
+                if (_subscribedMeshes.Remove(item))
+                {
+                    item.PropertyChanged -= OnMeshPropertyChanged;
+                }
             }
         }
 
         if (e.Action == NotifyCollectionChangedAction.Reset)
         {
             // Reset does not supply OldItems; unhook and re-hook the full collection
-            UnhookAllMeshes(MeshSource);
+            UnhookAllMeshes();
             HookAllMeshes(MeshSource);
         }
         else if (e.NewItems is not null)
         {
             foreach (var item in e.NewItems.OfType<ViewportMesh>())
             {
-                item.PropertyChanged += OnMeshPropertyChanged;
+                if (_subscribedMeshes.Add(item))
+                {
+                    item.PropertyChanged += OnMeshPropertyChanged;
+                }
             }
         }
 
@@ -1815,21 +1911,21 @@ public class WorkbenchViewport : Control
 
         foreach (var mesh in meshes.OfType<ViewportMesh>())
         {
-            mesh.PropertyChanged += OnMeshPropertyChanged;
+            if (_subscribedMeshes.Add(mesh))
+            {
+                mesh.PropertyChanged += OnMeshPropertyChanged;
+            }
         }
     }
 
-    private void UnhookAllMeshes(IEnumerable? meshes)
+    private void UnhookAllMeshes()
     {
-        if (meshes is null)
-        {
-            return;
-        }
-
-        foreach (var mesh in meshes.OfType<ViewportMesh>())
+        foreach (var mesh in _subscribedMeshes)
         {
             mesh.PropertyChanged -= OnMeshPropertyChanged;
         }
+
+        _subscribedMeshes.Clear();
     }
 
     private void OnMeshPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -3262,8 +3358,7 @@ public class WorkbenchViewport : Control
         _hasAnyLod = false;
         _lodRequested = false;
         _lodRestoreTimer?.Stop();
-        _lastBackBuffer = 0;
-        _d3dImage = null;
+        DetachD3DImage();
         _softwareBitmap = null;
         if (_image is not null)
         {

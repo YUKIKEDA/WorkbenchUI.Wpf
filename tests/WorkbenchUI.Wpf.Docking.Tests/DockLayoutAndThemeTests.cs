@@ -1,6 +1,4 @@
 using System.IO;
-using System.Runtime.ExceptionServices;
-using System.Windows;
 using System.Windows.Controls;
 using AvalonDock;
 using AvalonDock.Layout;
@@ -10,49 +8,30 @@ namespace WorkbenchUI.Wpf.Docking.Tests;
 
 public class DockLayoutAndThemeTests
 {
-    private static void EnsurePackSchemeRegistered()
-    {
-        if (Application.Current is null)
-        {
-            _ = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
-        }
-    }
-
-    private static void RunSta(Action action)
-    {
-        Exception? error = null;
-        var thread = new Thread(() =>
-        {
-            try
-            {
-                EnsurePackSchemeRegistered();
-                action();
-            }
-            catch (Exception ex)
-            {
-                error = ex;
-            }
-        });
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        thread.Join();
-
-        if (error is not null)
-        {
-            ExceptionDispatchInfo.Capture(error).Throw();
-        }
-    }
-
     [Fact]
     public void Save_NullManager_ThrowsArgumentNullException()
     {
         Assert.Throws<ArgumentNullException>(() => DockLayout.Save(null!, "layout.xml"));
     }
 
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void SaveAndLoad_InvalidPathOrXml_ThrowArgumentException(string value)
+    {
+        StaTestRunner.Run(() =>
+        {
+            var manager = new DockingManager();
+            Assert.Throws<ArgumentException>(() => DockLayout.Save(manager, value));
+            Assert.Throws<ArgumentException>(() => DockLayout.Load(manager, value, _ => null));
+            Assert.Throws<ArgumentException>(() => DockLayout.LoadFromString(manager, value, _ => null));
+        });
+    }
+
     [Fact]
     public void Load_MissingFile_ReturnsFalse()
     {
-        RunSta(() =>
+        StaTestRunner.Run(() =>
         {
             var manager = new DockingManager();
             var missing = Path.Combine(Path.GetTempPath(), $"missing-{Guid.NewGuid():N}.xml");
@@ -64,7 +43,7 @@ public class DockLayoutAndThemeTests
     [Fact]
     public void SaveToString_And_LoadFromString_RoundTripsKnownPanesAndDropsUnknown()
     {
-        RunSta(() =>
+        StaTestRunner.Run(() =>
         {
             var pane = new LayoutAnchorablePane();
             pane.Children.Add(new LayoutAnchorable
@@ -105,7 +84,7 @@ public class DockLayoutAndThemeTests
     [Fact]
     public void WorkbenchDockTheme_LoadsResourceDictionary()
     {
-        RunSta(() =>
+        StaTestRunner.Run(() =>
         {
             var theme = new WorkbenchDockTheme();
             Assert.NotNull(theme.ThemeResourceDictionary);

@@ -46,16 +46,20 @@ public partial class ViewportProbePage : UserControl
         AnnotationList.ItemsSource = Viewport.Annotations;
         Viewport.Annotations.CollectionChanged += (_, _) =>
             AnnotationSummary.Text = $"Annotations: {Viewport.Annotations.Count}";
+        Viewport.GeometryBuildCompleted += (_, _) => UpdateRendererInfo();
 
         Loaded += (_, _) =>
         {
             // Start in Top view facing the plate for convenient probing
             Viewport.SetStandardView(ViewportStandardView.Top, animate: false);
-            RendererInfo.Text = Viewport.IsSoftwareRendering
-                ? "Rendering path: WARP (software) + WriteableBitmap fallback"
-                : "Rendering path: Hardware D3D11 + D3DImage (shared surface)";
+            UpdateRendererInfo();
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, UpdateRendererInfo);
         };
     }
+
+    private void UpdateRendererInfo() => RendererInfo.Text = Viewport.IsSoftwareRendering
+        ? "Rendering path: WARP (software) + WriteableBitmap fallback"
+        : "Rendering path: Hardware D3D11 + D3DImage (shared surface)";
 
     /// <summary>
     /// Plate with circular hole (structured ring grid radially blended to the rectangular boundary),

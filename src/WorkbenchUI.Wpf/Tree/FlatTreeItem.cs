@@ -4,7 +4,6 @@ namespace WorkbenchUI.Wpf.Controls;
 
 /// <summary>
 /// Represents a single row in a flattened tree list, associating an <see cref="ITreeNode"/> with its depth and parent.
-/// Created and managed by <see cref="FlatTreeSource"/>.
 /// </summary>
 public sealed class FlatTreeItem : INotifyPropertyChanged
 {

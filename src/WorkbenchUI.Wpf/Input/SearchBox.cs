@@ -121,7 +121,7 @@ public class SearchBox : Control
             box._syncingFromSearchText = true;
             try
             {
-                box.Text = (string?)e.NewValue ?? string.Empty;
+                box.SetCurrentValue(TextProperty, (string?)e.NewValue ?? string.Empty);
             }
             finally
             {
@@ -134,13 +134,13 @@ public class SearchBox : Control
     public void Commit()
     {
         _timer.Stop();
-        SearchText = Text;
+        SetCurrentValue(SearchTextProperty, Text);
     }
 
     /// <summary>Clears the text and commits immediately.</summary>
     public void Clear()
     {
-        Text = string.Empty;
+        SetCurrentValue(TextProperty, string.Empty);
         Commit();
     }
 

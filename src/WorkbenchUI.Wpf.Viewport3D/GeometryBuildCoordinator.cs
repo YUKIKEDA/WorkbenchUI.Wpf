@@ -21,8 +21,14 @@ internal sealed class GeometryBuildCoordinator
     /// </summary>
     public (int Generation, CancellationToken Token) Begin()
     {
-        _cts?.Cancel();
+        var prev = _cts;
         _cts = new CancellationTokenSource();
+        if (prev is not null)
+        {
+            prev.Cancel();
+            prev.Dispose();
+        }
+
         return (++CurrentGeneration, _cts.Token);
     }
 
@@ -35,8 +41,14 @@ internal sealed class GeometryBuildCoordinator
     /// </summary>
     public void CancelAll()
     {
-        _cts?.Cancel();
+        var prev = _cts;
         _cts = null;
+        if (prev is not null)
+        {
+            prev.Cancel();
+            prev.Dispose();
+        }
+
         CurrentGeneration++;
     }
 }

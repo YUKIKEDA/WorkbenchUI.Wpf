@@ -117,6 +117,11 @@ public sealed class ColorScale : INotifyPropertyChanged
     {
         if (UseLog)
         {
+            if (value <= 0.0)
+            {
+                return double.NegativeInfinity;
+            }
+
             var logMin = Math.Log10(_minimum);
             var logMax = Math.Log10(_maximum);
             return logMax == logMin ? 0.0 : (Math.Log10(value) - logMin) / (logMax - logMin);
@@ -164,13 +169,19 @@ public sealed class ColorScale : INotifyPropertyChanged
     /// <summary>Samples a color at normalized position <paramref name="t"/>, applying discrete level quantization if configured.</summary>
     public Color Sample(double t)
     {
+        if (double.IsNaN(t))
+        {
+            return _naNColor;
+        }
+
+        var clamped = Math.Clamp(t, 0.0, 1.0);
         if (_levelCount is int levels and > 0)
         {
-            var band = Math.Min((int)(t * levels), levels - 1);
+            var band = Math.Min((int)(clamped * levels), levels - 1);
             return _colorMap.GetColor((band + 0.5) / levels);
         }
 
-        return _colorMap.GetColor(t);
+        return _colorMap.GetColor(clamped);
     }
 
     private void SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)

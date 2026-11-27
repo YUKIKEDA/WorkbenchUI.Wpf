@@ -1,4 +1,3 @@
-using System.Runtime.ExceptionServices;
 using System.Windows.Controls;
 using System.Windows.Markup;
 using WorkbenchUI.Wpf.Controls;
@@ -8,31 +7,6 @@ namespace WorkbenchUI.Wpf.Tests.Ribbon;
 /// <summary>Verifies ribbon structural logic. Instantiates UI elements without displaying windows.</summary>
 public class WorkbenchRibbonTests
 {
-    /// <summary>Creates WPF elements on an STA thread.</summary>
-    private static void RunSta(Action action)
-    {
-        Exception? error = null;
-        var thread = new Thread(() =>
-        {
-            try
-            {
-                action();
-            }
-            catch (Exception ex)
-            {
-                error = ex;
-            }
-        });
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        thread.Join();
-
-        if (error is not null)
-        {
-            ExceptionDispatchInfo.Capture(error).Throw();
-        }
-    }
-
     [Fact]
     public void RibbonTab_GroupsIsContentProperty()
     {
@@ -45,10 +19,10 @@ public class WorkbenchRibbonTests
     [Fact]
     public void RibbonTab_GroupsAreHostedInContentItemsControl()
     {
-        RunSta(() =>
+        StaTestRunner.Run(() =>
         {
             var tab = new WorkbenchRibbonTab();
-            var group = new WorkbenchRibbonGroup { Header = "テスト" };
+            var group = new WorkbenchRibbonGroup { Header = "Test" };
             tab.Groups.Add(group);
 
             var host = Assert.IsAssignableFrom<ItemsControl>(tab.Content);
@@ -60,10 +34,10 @@ public class WorkbenchRibbonTests
     [Fact]
     public void Ribbon_GeneratesRibbonTabContainers()
     {
-        RunSta(() =>
+        StaTestRunner.Run(() =>
         {
             var ribbon = new WorkbenchRibbon();
-            var tab = new WorkbenchRibbonTab { Header = "モデル" };
+            var tab = new WorkbenchRibbonTab { Header = "Model" };
             ribbon.Items.Add(tab);
 
             // WorkbenchRibbonTab is its own container (same convention as TabControl/TabItem)
@@ -75,7 +49,7 @@ public class WorkbenchRibbonTests
     [Fact]
     public void Ribbon_ApplicationLabelDefaultsToEnglish()
     {
-        RunSta(() =>
+        StaTestRunner.Run(() =>
         {
             // Library has no built-in localized resources (defaults to English)
             var ribbon = new WorkbenchRibbon();
@@ -86,7 +60,7 @@ public class WorkbenchRibbonTests
     [Fact]
     public void ButtonAssist_IconRoundTrips()
     {
-        RunSta(() =>
+        StaTestRunner.Run(() =>
         {
             var button = new Button();
             Assert.Null(ButtonAssist.GetIcon(button));

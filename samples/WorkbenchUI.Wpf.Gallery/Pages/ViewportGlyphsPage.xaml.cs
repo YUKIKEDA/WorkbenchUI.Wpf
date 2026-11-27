@@ -51,6 +51,7 @@ public partial class ViewportGlyphsPage : UserControl
         Viewport.MeshSource = _meshes;
         Viewport.GlyphColorScale = _glyphScale;
         Viewport.GlyphStride = 4; // Matches StrideCombo default selection
+        Viewport.GeometryBuildCompleted += (_, _) => UpdateRendererInfo();
         GlyphLegend.Scale = _glyphScale;
 
         Loaded += (_, _) =>
@@ -58,11 +59,14 @@ public partial class ViewportGlyphsPage : UserControl
             // Scale relative to the suggested scale (max arrow = 5% of model diagonal)
             _suggestedGlyphScale = Viewport.GetSuggestedGlyphScale();
             ApplyGlyphScale();
-            RendererInfo.Text = Viewport.IsSoftwareRendering
-                ? "Rendering path: WARP (software) + WriteableBitmap fallback"
-                : "Rendering path: Hardware D3D11 + D3DImage (shared surface)";
+            UpdateRendererInfo();
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, UpdateRendererInfo);
         };
     }
+
+    private void UpdateRendererInfo() => RendererInfo.Text = Viewport.IsSoftwareRendering
+        ? "Rendering path: WARP (software) + WriteableBitmap fallback"
+        : "Rendering path: Hardware D3D11 + D3DImage (shared surface)";
 
     // ================= Lamé solution (thick-walled cylinder under internal pressure) =================
 

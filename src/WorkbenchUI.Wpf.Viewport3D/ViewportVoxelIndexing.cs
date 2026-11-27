@@ -18,15 +18,15 @@ public static class ViewportVoxelIndexing
             return false;
         }
 
-        var slab = resolutionX * resolutionY;
+        var slab = (long)resolutionX * resolutionY;
         var max = slab * resolutionZ;
         if (linear >= max)
         {
             return false;
         }
 
-        k = linear / slab;
-        var rem = linear - k * slab;
+        k = (int)(linear / slab);
+        var rem = (int)(linear - k * slab);
         j = rem / resolutionX;
         i = rem - j * resolutionX;
         return true;

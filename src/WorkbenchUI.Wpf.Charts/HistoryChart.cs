@@ -47,6 +47,7 @@ public class HistoryChart : Control
             nameof(ShowCrosshair), typeof(bool), typeof(HistoryChart),
             new PropertyMetadata(true));
 
+    private readonly List<INotifyPropertyChanged> _subscribedSeries = [];
     private WorkbenchPlot? _plot;
     private ScottPlot.Plottables.Crosshair? _crosshair;
 
@@ -54,6 +55,13 @@ public class HistoryChart : Control
     {
         DefaultStyleKeyProperty.OverrideMetadata(
             typeof(HistoryChart), new FrameworkPropertyMetadata(typeof(HistoryChart)));
+    }
+
+    /// <summary>Initializes a new instance of <see cref="HistoryChart"/>.</summary>
+    public HistoryChart()
+    {
+        Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
     }
 
     /// <summary>Collection of <see cref="ChartSeries"/> instances to display.</summary>
@@ -115,6 +123,14 @@ public class HistoryChart : Control
         }
     }
 
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        AttachSeriesHandlers(SeriesSource);
+        Rebuild();
+    }
+
+    private void OnUnloaded(object sender, RoutedEventArgs e) => DetachSeriesHandlers();
+
     private static void OnSeriesSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         var chart = (HistoryChart)d;
@@ -124,7 +140,7 @@ public class HistoryChart : Control
             oldIncc.CollectionChanged -= chart.OnCollectionChanged;
         }
 
-        chart.DetachSeriesHandlers(e.OldValue as IEnumerable);
+        chart.DetachSeriesHandlers();
 
         if (e.NewValue is INotifyCollectionChanged newIncc)
         {
@@ -140,14 +156,14 @@ public class HistoryChart : Control
 
     private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        // Reattach all series handlers for simplicity and reliability, assuming a small number of series.
-        DetachSeriesHandlers(SeriesSource);
+        // Detach all tracked series before reattaching so removed/cleared items never keep handlers.
         AttachSeriesHandlers(SeriesSource);
         Rebuild();
     }
 
     private void AttachSeriesHandlers(IEnumerable? source)
     {
+        DetachSeriesHandlers();
         if (source is null)
         {
             return;
@@ -155,27 +171,22 @@ public class HistoryChart : Control
 
         foreach (var item in source)
         {
-            if (item is INotifyPropertyChanged inpc)
+            if (item is INotifyPropertyChanged inpc && !_subscribedSeries.Contains(inpc))
             {
                 inpc.PropertyChanged += OnSeriesPropertyChanged;
+                _subscribedSeries.Add(inpc);
             }
         }
     }
 
-    private void DetachSeriesHandlers(IEnumerable? source)
+    private void DetachSeriesHandlers()
     {
-        if (source is null)
+        foreach (var inpc in _subscribedSeries)
         {
-            return;
+            inpc.PropertyChanged -= OnSeriesPropertyChanged;
         }
 
-        foreach (var item in source)
-        {
-            if (item is INotifyPropertyChanged inpc)
-            {
-                inpc.PropertyChanged -= OnSeriesPropertyChanged;
-            }
-        }
+        _subscribedSeries.Clear();
     }
 
     private void OnSeriesPropertyChanged(object? sender, PropertyChangedEventArgs e) => Rebuild();
@@ -200,12 +211,20 @@ public class HistoryChart : Control
             foreach (var item in SeriesSource)
             {
                 if (item is not ChartSeries series ||
-                    series.X is null || series.Y is null || series.X.Length == 0)
+                    series.X is null || series.Y is null)
                 {
                     continue;
                 }
 
-                var line = plot.Add.ScatterLine(series.X, series.Y);
+                var count = Math.Min(series.X.Length, series.Y.Length);
+                if (count == 0)
+                {
+                    continue;
+                }
+
+                var xs = series.X.Length == count ? series.X : series.X[..count];
+                var ys = series.Y.Length == count ? series.Y : series.Y[..count];
+                var line = plot.Add.ScatterLine(xs, ys);
                 line.LineWidth = (float)series.LineWidth;
 
                 if (series.Color is { } color)

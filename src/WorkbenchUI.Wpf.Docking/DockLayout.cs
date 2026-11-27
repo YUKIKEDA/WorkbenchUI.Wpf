@@ -1,4 +1,5 @@
 using System.IO;
+using System.Xml;
 using AvalonDock;
 using AvalonDock.Layout.Serialization;
 
@@ -23,6 +24,7 @@ public static class DockLayout
     public static void Save(DockingManager manager, string path)
     {
         ArgumentNullException.ThrowIfNull(manager);
+        ArgumentException.ThrowIfNullOrWhiteSpace(path);
 
         var directory = Path.GetDirectoryName(Path.GetFullPath(path));
         if (!string.IsNullOrEmpty(directory))
@@ -58,6 +60,7 @@ public static class DockLayout
     public static bool Load(DockingManager manager, string path, Func<string, object?> resolveContent)
     {
         ArgumentNullException.ThrowIfNull(manager);
+        ArgumentException.ThrowIfNullOrWhiteSpace(path);
         ArgumentNullException.ThrowIfNull(resolveContent);
 
         if (!File.Exists(path))
@@ -79,6 +82,7 @@ public static class DockLayout
     public static void LoadFromString(DockingManager manager, string xml, Func<string, object?> resolveContent)
     {
         ArgumentNullException.ThrowIfNull(manager);
+        ArgumentException.ThrowIfNullOrWhiteSpace(xml);
         ArgumentNullException.ThrowIfNull(resolveContent);
 
         using var reader = new StringReader(xml);
@@ -104,6 +108,13 @@ public static class DockLayout
                 e.Content = content;
             }
         };
-        serializer.Deserialize(reader);
+
+        var settings = new XmlReaderSettings
+        {
+            DtdProcessing = DtdProcessing.Prohibit,
+            XmlResolver = null,
+        };
+        using var xmlReader = XmlReader.Create(reader, settings);
+        serializer.Deserialize(xmlReader);
     }
 }

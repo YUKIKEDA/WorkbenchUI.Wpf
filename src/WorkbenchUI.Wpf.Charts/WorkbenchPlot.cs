@@ -20,6 +20,9 @@ namespace WorkbenchUI.Wpf.Charts;
 /// </summary>
 public class WorkbenchPlot : ScottPlot.WPF.WpfPlot
 {
+    private WorkbenchThemeVariant _appliedTheme;
+    private System.Windows.Media.Color? _appliedAccent;
+
     /// <summary>Identifies the <see cref="WheelZoomRequiresCtrl"/> dependency property.</summary>
     public static readonly DependencyProperty WheelZoomRequiresCtrlProperty =
         DependencyProperty.Register(
@@ -32,6 +35,8 @@ public class WorkbenchPlot : ScottPlot.WPF.WpfPlot
     public WorkbenchPlot()
     {
         WorkbenchChartTheme.Apply(Plot);
+        _appliedTheme = ThemeManager.CurrentTheme;
+        _appliedAccent = ThemeManager.CurrentAccent;
 
         // ScottPlot's default MouseWheelZoom uses Ctrl to lock the vertical axis, which conflicts
         // with the Ctrl+Wheel zoom gate. Reassign axis lock keys to Shift (horizontal) and Alt (vertical).
@@ -102,6 +107,11 @@ public class WorkbenchPlot : ScottPlot.WPF.WpfPlot
         // Subscribe only while loaded to prevent leaks from the static ThemeChanged event.
         ThemeManager.ThemeChanged -= OnThemeChanged;
         ThemeManager.ThemeChanged += OnThemeChanged;
+
+        if (_appliedTheme != ThemeManager.CurrentTheme || _appliedAccent != ThemeManager.CurrentAccent)
+        {
+            ApplyCurrentTheme();
+        }
     }
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -109,9 +119,13 @@ public class WorkbenchPlot : ScottPlot.WPF.WpfPlot
         ThemeManager.ThemeChanged -= OnThemeChanged;
     }
 
-    private void OnThemeChanged(object? sender, EventArgs e)
+    private void OnThemeChanged(object? sender, EventArgs e) => ApplyCurrentTheme();
+
+    private void ApplyCurrentTheme()
     {
         WorkbenchChartTheme.Apply(Plot);
+        _appliedTheme = ThemeManager.CurrentTheme;
+        _appliedAccent = ThemeManager.CurrentAccent;
         ThemeApplied?.Invoke(this, EventArgs.Empty);
         Refresh();
     }

@@ -50,6 +50,7 @@ public class ConvergenceMonitor : Control
             new PropertyMetadata("Residual", OnPlotPropertyChanged));
 
     private readonly DispatcherTimer _timer;
+    private readonly List<ConvergenceSeries> _subscribedSeries = [];
     private WorkbenchPlot? _plot;
     private volatile bool _dirty;
 
@@ -70,8 +71,17 @@ public class ConvergenceMonitor : Control
         };
         _timer.Tick += OnTimerTick;
 
-        Loaded += (_, _) => _timer.Start();
-        Unloaded += (_, _) => _timer.Stop();
+        Loaded += (_, _) =>
+        {
+            AttachSeriesHandlers(SeriesSource);
+            _timer.Start();
+            Rebuild();
+        };
+        Unloaded += (_, _) =>
+        {
+            _timer.Stop();
+            DetachSeriesHandlers();
+        };
     }
 
     /// <summary>Collection of <see cref="ConvergenceSeries"/> instances to display.</summary>
@@ -137,7 +147,7 @@ public class ConvergenceMonitor : Control
             oldIncc.CollectionChanged -= monitor.OnCollectionChanged;
         }
 
-        monitor.DetachSeriesHandlers(e.OldValue as IEnumerable);
+        monitor.DetachSeriesHandlers();
 
         if (e.NewValue is INotifyCollectionChanged newIncc)
         {
@@ -153,13 +163,13 @@ public class ConvergenceMonitor : Control
 
     private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        DetachSeriesHandlers(SeriesSource);
         AttachSeriesHandlers(SeriesSource);
         Rebuild();
     }
 
     private void AttachSeriesHandlers(IEnumerable? source)
     {
+        DetachSeriesHandlers();
         if (source is null)
         {
             return;
@@ -167,27 +177,22 @@ public class ConvergenceMonitor : Control
 
         foreach (var item in source)
         {
-            if (item is ConvergenceSeries series)
+            if (item is ConvergenceSeries series && !_subscribedSeries.Contains(series))
             {
                 series.Changed += OnSeriesChanged;
+                _subscribedSeries.Add(series);
             }
         }
     }
 
-    private void DetachSeriesHandlers(IEnumerable? source)
+    private void DetachSeriesHandlers()
     {
-        if (source is null)
+        foreach (var series in _subscribedSeries)
         {
-            return;
+            series.Changed -= OnSeriesChanged;
         }
 
-        foreach (var item in source)
-        {
-            if (item is ConvergenceSeries series)
-            {
-                series.Changed -= OnSeriesChanged;
-            }
-        }
+        _subscribedSeries.Clear();
     }
 
     // May be invoked from a worker thread, so only set the dirty flag here.

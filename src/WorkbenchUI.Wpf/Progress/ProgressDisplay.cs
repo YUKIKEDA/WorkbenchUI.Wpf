@@ -36,6 +36,7 @@ public class ProgressDisplay : Control
             if (IsRunning)
             {
                 _timer.Start();
+                UpdateElapsedText();
             }
         };
         Unloaded += (_, _) => _timer.Stop();
@@ -179,7 +180,10 @@ public class ProgressDisplay : Control
         if ((bool)e.NewValue)
         {
             display._stopwatch.Restart();
-            display._timer.Start();
+            if (display.IsLoaded)
+            {
+                display._timer.Start();
+            }
         }
         else
         {

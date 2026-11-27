@@ -130,12 +130,12 @@ public static class DataGridAssist
 
     private static object? FindResource(FrameworkElement element, object key)
     {
-        if (Application.Current?.TryFindResource(key) is { } appResource)
+        if (element.TryFindResource(key) is { } elementResource)
         {
-            return appResource;
+            return elementResource;
         }
 
-        return element.TryFindResource(key);
+        return Application.Current?.TryFindResource(key);
     }
 
     private static ControlTemplate CreateEmptyErrorTemplate()

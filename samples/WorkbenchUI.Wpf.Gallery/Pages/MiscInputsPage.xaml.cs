@@ -13,10 +13,15 @@ namespace WorkbenchUI.Wpf.Gallery.Pages
 
         private readonly ObservableCollection<string> _selectedComponents = [];
         private readonly ObservableCollection<LoadCase> _selectedCases = [];
+        private readonly EventHandler _matrixValuesHandler;
+        private readonly EventHandler _gestureHandler;
+        private bool _descriptorsHooked;
 
         public MiscInputsPage()
         {
             InitializeComponent();
+            _matrixValuesHandler = (_, _) => UpdateMatrixInfo();
+            _gestureHandler = (_, _) => UpdateGestureInfo();
 
             // CheckComboBox: result components (count display + Select All)
             ComponentCombo.ItemsSource = new[]
@@ -48,7 +53,6 @@ namespace WorkbenchUI.Wpf.Gallery.Pages
                 { 80.0, 210.0, 80.0 },
                 { 80.0, 80.0, 210.0 },
             };
-            StiffnessMatrix.ValuesChangedHook(UpdateMatrixInfo);
 
             TransformMatrix.Values = new[,]
             {
@@ -60,9 +64,6 @@ namespace WorkbenchUI.Wpf.Gallery.Pages
             // KeyGestureBox
             RunGestureBox.Gesture = new System.Windows.Input.KeyGesture(
                 System.Windows.Input.Key.F5, System.Windows.Input.ModifierKeys.Control);
-            System.ComponentModel.DependencyPropertyDescriptor
-                .FromProperty(KeyGestureBox.GestureProperty, typeof(KeyGestureBox))
-                .AddValueChanged(RunGestureBox, (_, _) => UpdateGestureInfo());
             UpdateGestureInfo();
 
             // Wizard: control CanGoNext via the Step 2 checkbox
@@ -71,6 +72,37 @@ namespace WorkbenchUI.Wpf.Gallery.Pages
 
             UpdateComboInfo();
             UpdateMatrixInfo();
+
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (!_descriptorsHooked)
+            {
+                System.ComponentModel.DependencyPropertyDescriptor
+                    .FromProperty(MatrixBox.ValuesProperty, typeof(MatrixBox))
+                    .AddValueChanged(StiffnessMatrix, _matrixValuesHandler);
+                System.ComponentModel.DependencyPropertyDescriptor
+                    .FromProperty(KeyGestureBox.GestureProperty, typeof(KeyGestureBox))
+                    .AddValueChanged(RunGestureBox, _gestureHandler);
+                _descriptorsHooked = true;
+            }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (_descriptorsHooked)
+            {
+                System.ComponentModel.DependencyPropertyDescriptor
+                    .FromProperty(MatrixBox.ValuesProperty, typeof(MatrixBox))
+                    .RemoveValueChanged(StiffnessMatrix, _matrixValuesHandler);
+                System.ComponentModel.DependencyPropertyDescriptor
+                    .FromProperty(KeyGestureBox.GestureProperty, typeof(KeyGestureBox))
+                    .RemoveValueChanged(RunGestureBox, _gestureHandler);
+                _descriptorsHooked = false;
+            }
         }
 
         private void OnSelectionChanged(object? sender, NotifyCollectionChangedEventArgs e) => UpdateComboInfo();
@@ -127,17 +159,6 @@ namespace WorkbenchUI.Wpf.Gallery.Pages
         {
             WizardInfo.Text = "Cancelled event raised.";
             SetupWizard.CurrentIndex = 0;
-        }
-    }
-
-    file static class MatrixBoxExtensions
-    {
-        /// <summary>Small helper to subscribe to Values DP changes in code-behind (demo only).</summary>
-        public static void ValuesChangedHook(this MatrixBox box, Action callback)
-        {
-            System.ComponentModel.DependencyPropertyDescriptor
-                .FromProperty(MatrixBox.ValuesProperty, typeof(MatrixBox))
-                .AddValueChanged(box, (_, _) => callback());
         }
     }
 }

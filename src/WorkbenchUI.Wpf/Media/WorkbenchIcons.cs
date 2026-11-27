@@ -102,7 +102,6 @@ public static class WorkbenchIcons
 
     private static readonly Dictionary<string, Geometry> Cache = [];
     private static readonly object CacheLock = new();
-    private static ResourceDictionary? _resourceDictionary;
 
     /// <summary>Gets the sorted list of all built-in icon names.</summary>
     public static IReadOnlyCollection<string> Names => PathData.Keys;
@@ -147,23 +146,17 @@ public static class WorkbenchIcons
     }
 
     /// <summary>
-    /// Creates or returns a <see cref="ResourceDictionary"/> containing all icons keyed as <c>Wb.Icon.&lt;Name&gt;</c>.
+    /// Creates a new <see cref="ResourceDictionary"/> containing all icons keyed as <c>Wb.Icon.&lt;Name&gt;</c>.
     /// Merged by <c>WorkbenchTheme</c> so applications can reference icons via StaticResource or DynamicResource.
     /// </summary>
     public static ResourceDictionary CreateResourceDictionary()
     {
-        if (_resourceDictionary is { } existing)
-        {
-            return existing;
-        }
-
         var dictionary = new ResourceDictionary();
         foreach (var name in PathData.Keys)
         {
             dictionary[$"Wb.Icon.{name}"] = Get(name);
         }
 
-        _resourceDictionary = dictionary;
         return dictionary;
     }
 

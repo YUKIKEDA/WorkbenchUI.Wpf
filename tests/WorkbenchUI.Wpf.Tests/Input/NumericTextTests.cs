@@ -50,6 +50,9 @@ namespace WorkbenchUI.Wpf.Tests.Input
         [InlineData("12.3.4")]
         [InlineData("1/3")]
         [InlineData("--5")]
+        [InlineData("NaN")]
+        [InlineData("Infinity")]
+        [InlineData("-Infinity")]
         public void TryParse_InvalidInput_ReturnsFalse(string text)
         {
             var ok = NumericText.TryParse(text, Invariant, out _, out _);

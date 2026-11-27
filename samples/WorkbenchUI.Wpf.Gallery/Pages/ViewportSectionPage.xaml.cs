@@ -43,14 +43,21 @@ public partial class ViewportSectionPage : UserControl
         Viewport.ColorScale = _scale;
         Viewport.MeshSource = _meshes;
         Viewport.SelectionChanged += OnSelectionChanged;
+        Viewport.GeometryBuildCompleted += (_, _) => UpdateRendererInfo();
         Legend.Scale = _scale;
 
         UpdateSection();
 
-        Loaded += (_, _) => RendererInfo.Text = Viewport.IsSoftwareRendering
-            ? "Rendering path: WARP (software) + WriteableBitmap fallback"
-            : "Rendering path: Hardware D3D11 + D3DImage (shared surface)";
+        Loaded += (_, _) =>
+        {
+            UpdateRendererInfo();
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, UpdateRendererInfo);
+        };
     }
+
+    private void UpdateRendererInfo() => RendererInfo.Text = Viewport.IsSoftwareRendering
+        ? "Rendering path: WARP (software) + WriteableBitmap fallback"
+        : "Rendering path: Hardware D3D11 + D3DImage (shared surface)";
 
     // ================= Lamé solution (pressurized thick-walled cylinder, closed-end) =================
 

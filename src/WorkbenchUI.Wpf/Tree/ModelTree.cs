@@ -10,7 +10,7 @@ namespace WorkbenchUI.Wpf.Controls;
 
 /// <summary>
 /// Virtualized hierarchical model tree control.
-/// Projects the node hierarchy into a flat list via <see cref="FlatTreeSource"/> and delegates virtualization,
+/// Projects the node hierarchy into a flat list and delegates virtualization,
 /// multi-selection (including Shift range selection), and keyboard navigation to an internal <see cref="ListBox"/>,
 /// with built-in tri-state visibility toggle propagation.
 /// </summary>
@@ -47,6 +47,9 @@ public class ModelTree : Control
         // The inline rename TextBox also lives inside virtualized rows, so handle its bubbling events centrally.
         AddHandler(KeyDownEvent, new KeyEventHandler(OnRenameBoxKeyDown));
         AddHandler(LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnRenameBoxLostFocus));
+
+        Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
     }
 
     /// <summary>Occurs when the selection in the internal <see cref="ListBox"/> changes.</summary>
@@ -98,9 +101,29 @@ public class ModelTree : Control
     public ReadOnlyObservableCollection<FlatTreeItem>? FlatItems =>
         (ReadOnlyObservableCollection<FlatTreeItem>?)GetValue(FlatItemsProperty);
 
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        if (_source is null && ItemsSource is IEnumerable<ITreeNode> roots)
+        {
+            _source = new FlatTreeSource(roots);
+            SetValue(FlatItemsPropertyKey, _source.Items);
+        }
+    }
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        EndRename(commit: false);
+        _renamingItem = null;
+        _source?.Dispose();
+        _source = null;
+        SetValue(FlatItemsPropertyKey, null);
+    }
+
     private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         var tree = (ModelTree)d;
+        tree.EndRename(commit: false);
+        tree._renamingItem = null;
         tree._source?.Dispose();
         tree._source = e.NewValue is IEnumerable<ITreeNode> roots ? new FlatTreeSource(roots) : null;
         tree.SetValue(FlatItemsPropertyKey, tree._source?.Items);

@@ -29,7 +29,7 @@ public class CheckComboBox : ItemsControl
 
     private ToggleButton? _toggleButton;
     private Popup? _popup;
-    private int _popupClosedTick;
+    private long _popupClosedTick = long.MinValue;
     private bool _updating;
 
     static CheckComboBox()
@@ -45,6 +45,8 @@ public class CheckComboBox : ItemsControl
         // Use Checked/Unchecked rather than Click because UI Automation Toggle does not raise Click.
         AddHandler(ToggleButton.CheckedEvent, new RoutedEventHandler(OnItemToggled));
         AddHandler(ToggleButton.UncheckedEvent, new RoutedEventHandler(OnItemToggled));
+        Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
     }
 
     #region Dependency properties
@@ -230,7 +232,7 @@ public class CheckComboBox : ItemsControl
 
     private void OnPopupClosed(object? sender, EventArgs e)
     {
-        _popupClosedTick = Environment.TickCount;
+        _popupClosedTick = Environment.TickCount64;
     }
 
     private void OnToggleButtonPreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -238,7 +240,9 @@ public class CheckComboBox : ItemsControl
         // Clicking the toggle button while the popup is open closes it on capture loss,
         // which would otherwise immediately re-open it on the same click (standard WPF Popup pitfall).
         // Ignore clicks immediately after closing so clicking the toggle cleanly dismisses the popup.
-        if (Environment.TickCount - _popupClosedTick < 200 && !IsDropDownOpen)
+        if (_popupClosedTick != long.MinValue &&
+            Environment.TickCount64 - _popupClosedTick < 200 &&
+            !IsDropDownOpen)
         {
             e.Handled = true;
         }
@@ -314,6 +318,25 @@ public class CheckComboBox : ItemsControl
         UpdateSummary();
     }
 
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        if (SelectedItems is INotifyCollectionChanged incc)
+        {
+            incc.CollectionChanged -= OnSelectedItemsCollectionChanged;
+            incc.CollectionChanged += OnSelectedItemsCollectionChanged;
+        }
+
+        RefreshFromSelection();
+    }
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        if (SelectedItems is INotifyCollectionChanged incc)
+        {
+            incc.CollectionChanged -= OnSelectedItemsCollectionChanged;
+        }
+    }
+
     private static void OnSelectedItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         var box = (CheckComboBox)d;
@@ -324,6 +347,7 @@ public class CheckComboBox : ItemsControl
 
         if (e.NewValue is INotifyCollectionChanged newIncc)
         {
+            newIncc.CollectionChanged -= box.OnSelectedItemsCollectionChanged;
             newIncc.CollectionChanged += box.OnSelectedItemsCollectionChanged;
         }
 

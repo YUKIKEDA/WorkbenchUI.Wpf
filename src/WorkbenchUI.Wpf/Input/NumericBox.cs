@@ -28,6 +28,8 @@ public class NumericBox : Control
     private TextBox? _textBox;
     private ButtonBase? _increaseButton;
     private ButtonBase? _decreaseButton;
+    private bool _isTextDirty;
+    private bool _suppressTextChanged;
 
     static NumericBox()
     {
@@ -217,6 +219,7 @@ public class NumericBox : Control
     {
         if (_textBox != null)
         {
+            _textBox.TextChanged -= OnTextBoxTextChanged;
             _textBox.PreviewKeyDown -= OnTextBoxPreviewKeyDown;
             _textBox.LostKeyboardFocus -= OnTextBoxLostKeyboardFocus;
         }
@@ -239,6 +242,7 @@ public class NumericBox : Control
 
         if (_textBox != null)
         {
+            _textBox.TextChanged += OnTextBoxTextChanged;
             _textBox.PreviewKeyDown += OnTextBoxPreviewKeyDown;
             _textBox.LostKeyboardFocus += OnTextBoxLostKeyboardFocus;
         }
@@ -293,6 +297,14 @@ public class NumericBox : Control
         }
     }
 
+    private void OnTextBoxTextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (!_suppressTextChanged)
+        {
+            _isTextDirty = true;
+        }
+    }
+
     private void OnTextBoxLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => Commit();
 
     private void OnIncreaseClick(object sender, RoutedEventArgs e) => Spin(+1);
@@ -302,7 +314,7 @@ public class NumericBox : Control
     /// <summary>Parses, validates, and commits the current text to <see cref="Value"/>.</summary>
     private void Commit()
     {
-        if (_textBox is null)
+        if (_textBox is null || IsReadOnly || !_isTextDirty)
         {
             return;
         }
@@ -389,15 +401,26 @@ public class NumericBox : Control
             return;
         }
 
-        var value = Value;
-        if (value is null)
+        _suppressTextChanged = true;
+        try
         {
-            _textBox.Text = string.Empty;
-            return;
-        }
+            var value = Value;
+            if (value is null)
+            {
+                _textBox.Text = string.Empty;
+            }
+            else
+            {
+                var display = UnitProvider?.ToDisplay(value.Value) ?? value.Value;
+                _textBox.Text = FormatNumber(display);
+            }
 
-        var display = UnitProvider?.ToDisplay(value.Value) ?? value.Value;
-        _textBox.Text = FormatNumber(display);
+            _isTextDirty = false;
+        }
+        finally
+        {
+            _suppressTextChanged = false;
+        }
     }
 
     private void UpdateUnitText() =>

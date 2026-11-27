@@ -108,14 +108,18 @@ public class RangeSlider : Control
     {
         var slider = (RangeSlider)d;
         var value = (double)baseValue;
-        return Math.Clamp(value, slider.Minimum, Math.Min(slider.UpperValue, slider.Maximum));
+        var min = slider.Minimum;
+        var max = Math.Max(min, slider.Maximum);
+        return Math.Clamp(value, min, Math.Clamp(slider.UpperValue, min, max));
     }
 
     private static object CoerceUpperValue(DependencyObject d, object baseValue)
     {
         var slider = (RangeSlider)d;
         var value = (double)baseValue;
-        return Math.Clamp(value, Math.Max(slider.LowerValue, slider.Minimum), slider.Maximum);
+        var min = slider.Minimum;
+        var max = Math.Max(min, slider.Maximum);
+        return Math.Clamp(value, Math.Clamp(slider.LowerValue, min, max), max);
     }
 
     private static void OnRangeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

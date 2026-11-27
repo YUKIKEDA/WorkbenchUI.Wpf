@@ -7,7 +7,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:wb="clr-namespace:WorkbenchUI.Wpf.Controls">
 
-    <Geometry x:Key="Wb.Icon.Search">M6.5,1.5 A5,5 0 1 1 6.5,11.5 A5,5 0 1 1 6.5,1.5 Z M6.5,3 A3.5,3.5 0 1 0 6.5,10 A3.5,3.5 0 1 0 6.5,3 Z M10.6,9.5 L14.6,13.5 L13.5,14.6 L9.5,10.6 Z</Geometry>
+    <Geometry x:Key="Wb.SearchBox.Icon.Search">M6.5,1.5 A5,5 0 1 1 6.5,11.5 A5,5 0 1 1 6.5,1.5 Z M6.5,3 A3.5,3.5 0 1 0 6.5,10 A3.5,3.5 0 1 0 6.5,3 Z M10.6,9.5 L14.6,13.5 L13.5,14.6 L9.5,10.6 Z</Geometry>
     <Geometry x:Key="Wb.Icon.Clear">M3.2,2.5 L8,7.3 L12.8,2.5 L13.5,3.2 L8.7,8 L13.5,12.8 L12.8,13.5 L8,8.7 L3.2,13.5 L2.5,12.8 L7.3,8 L2.5,3.2 Z</Geometry>
 
     <Style TargetType="{x:Type wb:SearchBox}">
@@ -27,7 +27,7 @@
                             CornerRadius="{DynamicResource Wb.CornerRadius}">
                         <DockPanel>
                             <Path DockPanel.Dock="Left"
-                                  Data="{StaticResource Wb.Icon.Search}"
+                                  Data="{StaticResource Wb.SearchBox.Icon.Search}"
                                   Fill="{DynamicResource Wb.Brush.Text.Secondary}"
                                   Width="13" Height="13"
                                   Stretch="Uniform"

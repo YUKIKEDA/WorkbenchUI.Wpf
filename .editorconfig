@@ -14,8 +14,11 @@ indent_size = 2
 [*.md]
 trim_trailing_whitespace = false
 
-[*.{props,targets,csproj,slnx,xaml}]
+[*.{props,targets,csproj,slnx}]
 indent_size = 2
+
+[*.xaml]
+indent_size = 4
 
 [*.cs]
 csharp_style_namespace_declarations = file_scoped:suggestion
