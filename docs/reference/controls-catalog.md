@@ -59,6 +59,7 @@ All custom controls live in `WorkbenchUI.Wpf.Controls` (theming APIs live in `Wo
 
 | Type | Kind | Key Members & Purpose |
 | --- | --- | --- |
+| `NavigationView` | `ContentControl` | Collapsible sidebar / compact icon rail (`MenuItems`, `FooterMenuItems`, `SelectedItem`, `IsPaneOpen`, `PaneDisplayMode`, `NavigationViewItem`, `NavigationViewItemHeader`, `NavigationViewItemSeparator`) |
 | `PlaybackBar` | `Control` | Frame playback controls (play/pause, step, speed, loop, frame slider) |
 | `ProcessRail` | `Selector` | Multi-step workflow rail (`ProcessRailItem`, `IProcessRailStep`, `ProcessChapterState`) |
 | `ChapterHost` | `ItemsControl` | Hosts the active workflow chapter view (`ChapterHostItem`) |
